@@ -205,6 +205,16 @@ main.site-main {
   background: rgba(255, 255, 255, 0.55);
 }
 
+.metric-card {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.metric-card strong {
+  display: block;
+  line-height: 1.3;
+}
+
 .metric-card h3,
 .city-card h3,
 .collection-card h3 {
@@ -372,6 +382,11 @@ main.site-main {
   font-size: clamp(1.8rem, 3vw, 2.7rem);
 }
 
+.filter-panel-actions-bottom {
+  justify-content: flex-end;
+  padding-top: 0.25rem;
+}
+
 .filter-meta-row {
   align-items: flex-start;
 }
@@ -459,11 +474,15 @@ main.site-main {
 }
 
 .classes-hero-main {
+  display: grid;
+  align-content: start;
+  gap: 0.95rem;
   padding: 2rem;
 }
 
 .classes-hero .lead {
   max-width: 44rem;
+  margin: 0;
 }
 
 .classes-stat-grid {
@@ -579,6 +598,20 @@ main.site-main {
   color: var(--muted);
 }
 
+.chip-row .chip-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  max-width: 100%;
+  white-space: normal;
+  line-height: 1.25;
+}
+
+.chip-row .chip-option input {
+  margin: 0;
+  flex: 0 0 auto;
+}
+
 .session-day-group {
   padding: 1.3rem;
   border: 1px solid rgba(24, 20, 18, 0.08);
@@ -617,53 +650,63 @@ main.site-main {
   border: 1px solid rgba(24, 20, 18, 0.08);
 }
 
-.fallback-map {
+.map-panel-live {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.map-panel-setup {
   background:
     linear-gradient(160deg, rgba(31, 111, 122, 0.15), transparent 40%),
     linear-gradient(15deg, rgba(255, 112, 74, 0.2), transparent 35%),
     rgba(255, 255, 255, 0.6);
 }
 
-.map-grid {
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(rgba(24, 20, 18, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(24, 20, 18, 0.05) 1px, transparent 1px);
-  background-size: 32px 32px;
+.map-panel .mapboxgl-canvas-container,
+.map-panel .mapboxgl-canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
 
-.map-fallback-copy {
+.map-setup-state {
   position: absolute;
-  top: 1rem;
-  left: 1rem;
-  z-index: 1;
-  padding: 0.45rem 0.7rem;
-  border-radius: 999px;
+  inset: 1rem;
+  display: grid;
+  align-content: center;
+  gap: 0.55rem;
+  padding: 1rem;
+  border-radius: 20px;
+  border: 1px solid rgba(24, 20, 18, 0.12);
   background: rgba(255, 255, 255, 0.84);
+}
+
+.map-setup-state strong {
+  font-family: var(--display);
+  font-size: 1.45rem;
+}
+
+.map-setup-state span {
   color: var(--muted);
 }
 
-.map-dot {
-  position: absolute;
+.view-switcher-panel {
+  padding: 0.85rem 1rem;
+}
+
+.view-switcher {
   display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  transform: translate(-50%, -50%);
+  flex-wrap: wrap;
+  gap: 0.65rem;
 }
 
-.map-dot span {
-  width: 0.8rem;
-  height: 0.8rem;
-  border-radius: 999px;
-  background: var(--brand);
-  box-shadow: 0 0 0 8px rgba(255, 112, 74, 0.12);
+.chip-option {
+  border: 1px solid transparent;
+  font-weight: 600;
 }
 
-.map-dot small {
-  display: inline-block;
-  max-width: 10rem;
-  padding: 0.25rem 0.45rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.8);
+.chip-option-active {
+  color: var(--brand-deep);
+  border-color: rgba(201, 71, 29, 0.34);
+  background: rgba(255, 112, 74, 0.12);
 }
 
 .map-venue-list .detail-header {
@@ -673,6 +716,91 @@ main.site-main {
 .map-venue-item strong {
   display: block;
   margin-bottom: 0.2rem;
+}
+
+.pagination-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.calendar-view-shell {
+  overflow-x: auto;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: 70px minmax(760px, 1fr);
+  gap: 0.8rem;
+  min-height: 34rem;
+}
+
+.calendar-time-column {
+  display: grid;
+  grid-template-rows: repeat(17, 1fr);
+  padding-top: 2.6rem;
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+
+.calendar-time-column span {
+  transform: translateY(-0.5rem);
+}
+
+.calendar-days-row {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(110px, 1fr));
+  gap: 0.65rem;
+}
+
+.calendar-day-column {
+  border: 1px solid rgba(24, 20, 18, 0.1);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.62);
+  overflow: hidden;
+}
+
+.calendar-day-head {
+  padding: 0.7rem 0.65rem;
+  border-bottom: 1px solid rgba(24, 20, 18, 0.08);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.calendar-day-lane {
+  position: relative;
+  min-height: 31rem;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent calc(100% / 16 - 1px),
+    rgba(24, 20, 18, 0.06) calc(100% / 16 - 1px),
+    rgba(24, 20, 18, 0.06) calc(100% / 16)
+  );
+}
+
+.calendar-session-pill {
+  position: absolute;
+  left: 0.3rem;
+  right: 0.3rem;
+  display: grid;
+  gap: 0.1rem;
+  padding: 0.4rem 0.45rem;
+  border-radius: 12px;
+  border: 1px solid rgba(201, 71, 29, 0.22);
+  background: rgba(255, 112, 74, 0.14);
+  font-size: 0.72rem;
+}
+
+.calendar-session-pill strong {
+  font-size: 0.79rem;
+  line-height: 1.15;
+}
+
+.calendar-session-pill small {
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .detail-hero,
@@ -758,6 +886,24 @@ main.site-main {
 
   .classes-stat-grid {
     grid-template-columns: 1fr;
+  }
+
+  .pagination-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .calendar-grid {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .calendar-time-column {
+    display: none;
+  }
+
+  .calendar-days-row {
+    min-width: 740px;
   }
 
   .profile-metrics {
