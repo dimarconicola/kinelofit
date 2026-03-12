@@ -97,7 +97,8 @@ export default async function ClassesPage({
       in_person: locale === 'it' ? 'In presenza' : 'In person',
       hybrid: 'Hybrid',
       online: 'Online'
-    }
+    },
+    drop_in: locale === 'it' ? 'Solo drop-in' : 'Drop-in only'
   } as const;
 
   const activeFilters = [
@@ -109,7 +110,8 @@ export default async function ClassesPage({
     filters.language ? filters.language : null,
     filters.neighborhood ? neighborhoods.find((item) => item.slug === filters.neighborhood)?.name[locale] ?? filters.neighborhood : null,
     filters.format ? filterValueToLabel.format[filters.format] : null,
-    filters.open_now === 'true' ? (locale === 'it' ? 'Aperto ora' : 'Open now') : null
+    filters.open_now === 'true' ? (locale === 'it' ? 'Aperto ora' : 'Open now') : null,
+    filters.drop_in === 'true' ? filterValueToLabel.drop_in : null
   ].filter((item): item is string => Boolean(item));
 
   const basePath = `/${locale}/${citySlug}/classes`;

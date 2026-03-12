@@ -1251,6 +1251,38 @@ const inferSessionMetadata = (template: RecurringSessionTemplate) => {
   };
 };
 
+const getFallbackPriceNote = (template: Pick<RecurringSessionTemplate, 'venueSlug' | 'categorySlug'>) => {
+  if (template.venueSlug.startsWith('diaria-')) {
+    if (template.categorySlug === 'kids-activities') {
+      return buildLocalized(
+        'Diaria 2025 kids pricing: monthly plans from EUR 35, drop-in EUR 10-15 by class, plus EUR 20 annual membership.',
+        'Listino Diaria 2025 area bimbi: mensili da 35 EUR, spot 10-15 EUR secondo corso, piu 20 EUR di quota associativa annua.'
+      );
+    }
+
+    return buildLocalized(
+      'Diaria 2025 Yoga/Pilates pricing: EUR 10 drop-in, 10-class pass EUR 85, monthly plans from EUR 35, plus EUR 20 annual membership.',
+      'Listino Diaria 2025 Yoga/Pilates: spot 10 EUR, carnet 10 lezioni 85 EUR, mensili da 35 EUR, piu 20 EUR di quota associativa annua.'
+    );
+  }
+
+  if (template.venueSlug === 'circo-pificio-palermo') {
+    return buildLocalized(
+      'Pricing is not publicly listed online; trial lesson booking is available via Circo Pificio contacts.',
+      'Prezzo non pubblicato online; prenotazione lezione di prova disponibile via contatti Circo Pificio.'
+    );
+  }
+
+  if (template.venueSlug === 'spazio-terra-palermo') {
+    return buildLocalized(
+      'Pricing is not publicly listed online; booking and pricing details are shared via the official social contact channel.',
+      'Prezzo non pubblicato online; dettagli su costo e prenotazione condivisi tramite canale social ufficiale.'
+    );
+  }
+
+  return undefined;
+};
+
 const generateSessions = () => {
   const zone = 'Europe/Rome';
   const start = DateTime.now().setZone(zone).startOf('day');
@@ -1294,7 +1326,7 @@ const generateSessions = () => {
         ageMax: metadata.ageMax,
         ageBand: metadata.ageBand,
         guardianRequired: metadata.guardianRequired,
-        priceNote: template.priceNote
+        priceNote: template.priceNote ?? getFallbackPriceNote(template)
       });
     }
   }

@@ -43,6 +43,7 @@ export const applySessionFilters = (sessions: Session[], filters: DiscoveryFilte
     }
     if (filters.format && session.format !== filters.format) return false;
     if (filters.open_now === 'true' && !(start <= now && end >= now)) return false;
+    if (filters.drop_in === 'true' && session.attendanceModel !== 'drop_in') return false;
 
     return start >= now.minus({ hours: 2 });
   });
@@ -61,6 +62,7 @@ export const parseFilters = (searchParams: Record<string, string | string[] | un
     neighborhood: one(searchParams.neighborhood),
     format: one(searchParams.format) as DiscoveryFilters['format'],
     open_now: one(searchParams.open_now) as DiscoveryFilters['open_now'],
+    drop_in: one(searchParams.drop_in) as DiscoveryFilters['drop_in'],
     view: one(searchParams.view) as DiscoveryFilters['view']
   };
 };

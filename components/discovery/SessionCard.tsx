@@ -41,7 +41,8 @@ export function SessionCard({ session, locale, signedInEmail, saveLabel, savedLa
             in_person: 'In presenza',
             hybrid: 'Hybrid',
             online: 'Online'
-          }
+          },
+          price: 'Prezzo'
         }
       : {
           verified: 'Verified',
@@ -60,7 +61,8 @@ export function SessionCard({ session, locale, signedInEmail, saveLabel, savedLa
             in_person: 'In person',
             hybrid: 'Hybrid',
             online: 'Online'
-          }
+          },
+          price: 'Price'
         };
 
   if (!venue || !instructor || !style || !target) {
@@ -104,6 +106,11 @@ export function SessionCard({ session, locale, signedInEmail, saveLabel, savedLa
             <span>{session.language}</span>
             <span>{labels.format[session.format]}</span>
           </div>
+          {session.priceNote ? (
+            <p className="muted">
+              <strong>{labels.price}:</strong> {session.priceNote[locale]}
+            </p>
+          ) : null}
           <div className="session-card-footer">
             <div className="stack-list">
               <p className="session-freshness">

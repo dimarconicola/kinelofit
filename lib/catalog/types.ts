@@ -160,6 +160,7 @@ export interface DiscoveryFilters {
   neighborhood?: string;
   format?: SessionFormat;
   open_now?: 'true';
+  drop_in?: 'true';
   view?: ClassView;
 }
 

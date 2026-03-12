@@ -38,7 +38,8 @@ const copy = {
     format: 'Format',
     any: 'Any',
     inPerson: 'In person',
-    openNow: 'Open now'
+    openNow: 'Open now',
+    dropIn: 'Drop-in only'
   },
   it: {
     eyebrow: 'Affina la settimana',
@@ -63,7 +64,8 @@ const copy = {
     format: 'Formato',
     any: 'Qualsiasi',
     inPerson: 'In presenza',
-    openNow: 'Aperto ora'
+    openNow: 'Aperto ora',
+    dropIn: 'Solo drop-in'
   }
 } as const;
 
@@ -213,6 +215,10 @@ export function FilterBar({
         <label className="filter-checkbox">
           <input type="checkbox" name="open_now" value="true" defaultChecked={filters.open_now === 'true'} />
           <span>{labels.openNow}</span>
+        </label>
+        <label className="filter-checkbox">
+          <input type="checkbox" name="drop_in" value="true" defaultChecked={filters.drop_in === 'true'} />
+          <span>{labels.dropIn}</span>
         </label>
       </div>
 
