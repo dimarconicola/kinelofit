@@ -1,114 +1,327 @@
 import Link from 'next/link';
+import { DateTime } from 'luxon';
 
 import { DigestForm } from '@/components/forms/DigestForm';
-import { getCity, getCityMetrics, getLocaleLabel, getPublicCities } from '@/lib/catalog/data';
-import { getDictionary } from '@/lib/i18n/dictionaries';
+import { getCityMetrics, getFeaturedSessions, getStyle, getVenue } from '@/lib/catalog/data';
 import { resolveLocale } from '@/lib/i18n/routing';
+
+type IconName = 'map' | 'calendar' | 'mail' | 'leaf' | 'heart' | 'sun';
+
+function InlineIcon({ name }: { name: IconName }) {
+  if (name === 'map') {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M3 7.5 8.5 5l7 2.5L21 5v11.5l-5.5 2.5-7-2.5L3 19V7.5Z" stroke="currentColor" strokeWidth="1.7" />
+        <path d="M8.5 5v11.5m7-9V19" stroke="currentColor" strokeWidth="1.7" />
+      </svg>
+    );
+  }
+  if (name === 'calendar') {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="3.5" y="5.5" width="17" height="15" rx="2.6" stroke="currentColor" strokeWidth="1.7" />
+        <path d="M8 3.5v4m8-4v4M3.5 9.5h17" stroke="currentColor" strokeWidth="1.7" />
+      </svg>
+    );
+  }
+  if (name === 'mail') {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="3.5" y="5.5" width="17" height="13" rx="2.6" stroke="currentColor" strokeWidth="1.7" />
+        <path d="m4.5 7 7.5 6 7.5-6" stroke="currentColor" strokeWidth="1.7" />
+      </svg>
+    );
+  }
+  if (name === 'leaf') {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M19.5 4.5C13.5 4.7 8 7.2 5.5 12.5A7 7 0 0 0 18 19c3-2.5 4.5-8 1.5-14.5Z" stroke="currentColor" strokeWidth="1.7" />
+        <path d="M8 14c2.5-.8 4.8-2.2 7-4.5" stroke="currentColor" strokeWidth="1.7" />
+      </svg>
+    );
+  }
+  if (name === 'heart') {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 20s-7.5-4.6-7.5-10.1A4.4 4.4 0 0 1 8.9 5.5c1.5 0 2.5.6 3.1 1.7.6-1.1 1.7-1.7 3.1-1.7a4.4 4.4 0 0 1 4.4 4.4C19.5 15.4 12 20 12 20Z" stroke="currentColor" strokeWidth="1.7" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="5.2" stroke="currentColor" strokeWidth="1.7" />
+      <path d="M12 2.8v2.8M12 18.4v2.8M4.8 12h2.8m8.8 0h2.8M6.7 6.7 8.7 8.7m6.6 6.6 2 2m0-10.6-2 2m-6.6 6.6-2 2" stroke="currentColor" strokeWidth="1.7" />
+    </svg>
+  );
+}
 
 export default async function LocaleHome({ params }: { params: Promise<{ locale: string }> }) {
   const locale = resolveLocale((await params).locale);
-  const dict = getDictionary(locale);
-  const publicCities = getPublicCities();
-  const catania = getCity('catania');
-  const labels =
+  const metrics = getCityMetrics('palermo');
+  const featured = getFeaturedSessions('palermo').slice(0, 4);
+
+  const levelLabel = (level: string) => {
+    if (locale === 'it') {
+      if (level === 'beginner') return 'Principianti';
+      if (level === 'intermediate') return 'Intermedio';
+      if (level === 'advanced') return 'Avanzato';
+      return 'Aperti a tutti';
+    }
+    if (level === 'beginner') return 'Beginner';
+    if (level === 'intermediate') return 'Intermediate';
+    if (level === 'advanced') return 'Advanced';
+    return 'All Levels';
+  };
+
+  const copy =
     locale === 'it'
       ? {
-          venues: 'studi',
-          neighborhoods: 'quartieri',
-          styles: 'stili'
+          heroBadge: 'Discovery locale Palermo-first',
+          heroTitle: 'Trova la classe giusta nella tua citta',
+          heroBody:
+            'kinelo.fit e un utility cittadino curato: mappa, orari verificati e percorsi reali verso prenotazione o contatto.',
+          ctaPrimary: 'Esplora le classi',
+          ctaSecondary: 'Palermo hub',
+          featuresEyebrow: 'Perche e diverso',
+          featuresTitle: 'Un utility cittadino selezionato al millimetro',
+          featuresBody:
+            'Trovare la pratica giusta deve essere semplice e piacevole quanto praticarla. Niente rumore, solo chiarezza.',
+          cityTitle: 'Palermo Hub',
+          cityBody: 'Il calendario cittadino per yoga, mind-body e attivita benessere affidabili.',
+          classes: 'Classi',
+          venues: 'Studi',
+          neighborhoods: 'Quartieri',
+          styles: 'Stili',
+          viewDetails: 'Apri dettaglio',
+          fullSchedule: 'Vedi calendario completo',
+          newsletterTitle: 'Muoviti meglio, ogni settimana.',
+          newsletterBody:
+            'Ricevi solo aggiornamenti utili: classi verificate, cambi orario, nuove aperture e selezioni curate per Palermo.',
+          newsletterOne: 'Aggiornamenti utili, zero rumore',
+          newsletterTwo: 'Niente spam',
+          weeklyArticles: 'Aggiornamenti settimanali',
+          weeklyArticlesBody: 'Novita, nuove attivita e variazioni di calendario in un unico digest.',
+          noSpam: 'Solo contenuti rilevanti',
+          noSpamBody: 'Ti scriviamo solo quando c e qualcosa di davvero utile da sapere.'
         }
       : {
-          venues: 'venues',
-          neighborhoods: 'neighborhoods',
-          styles: 'styles'
+          heroBadge: 'Palermo-seeded discovery',
+          heroTitle: 'Find the right class in your city',
+          heroBody:
+            'kinelo.fit is a sharply edited city utility: map-led discovery, verified schedules, and clear action paths.',
+          ctaPrimary: 'Explore classes',
+          ctaSecondary: 'Palermo hub',
+          featuresEyebrow: 'Why it is different',
+          featuresTitle: 'A sharply edited city utility',
+          featuresBody:
+            'We believe finding the right mind-body practice should be as calming as the practice itself. No noise, just clarity.',
+          cityTitle: 'Palermo Hub',
+          cityBody: 'The citywide yoga and mind-body calendar for Palermo.',
+          classes: 'Classes',
+          venues: 'Venues',
+          neighborhoods: 'Neighborhoods',
+          styles: 'Styles',
+          viewDetails: 'View details',
+          fullSchedule: 'View full schedule',
+          newsletterTitle: 'Stay close to the best-fit classes.',
+          newsletterBody:
+            'Get only useful updates: verified classes, timetable changes, new openings, and curated picks for Palermo.',
+          newsletterOne: 'Useful updates only',
+          newsletterTwo: 'No spam',
+          weeklyArticles: 'Weekly articles',
+          weeklyArticlesBody: 'Insights on wellness, new studio openings, and instructor spotlights.',
+          noSpam: 'No spam',
+          noSpamBody: 'We respect your inbox. Only high-quality, relevant updates.'
         };
 
+  const features = [
+    {
+      icon: 'map' as const,
+      title: locale === 'it' ? 'Scoperta guidata dalla mappa' : 'Map-led Discovery',
+      description:
+        locale === 'it'
+          ? 'Trova classi nel tuo quartiere. Priorita a posizione e prossimita, non a scroll infinito.'
+          : 'Find classes in your neighborhood. We prioritize location and proximity over endless scrolling.'
+    },
+    {
+      icon: 'calendar' as const,
+      title: locale === 'it' ? 'Fiducia sugli orari' : 'Schedule Trust',
+      description:
+        locale === 'it'
+          ? 'Un calendario cittadino affidabile. Niente teatro: solo orari, sedi e contatti accurati.'
+          : 'A citywide calendar you can rely on. No booking theatrics, just accurate times and venues.'
+    },
+    {
+      icon: 'mail' as const,
+      title: locale === 'it' ? 'Digest settimanale' : 'Weekly Digest',
+      description:
+        locale === 'it'
+          ? 'Resta vicino alle classi giuste con aggiornamenti curati ogni settimana.'
+          : 'Stay close to the best-fit classes with our curated weekly updates sent straight to your inbox.'
+    },
+    {
+      icon: 'leaf' as const,
+      title: locale === 'it' ? 'Crescita organica' : 'Organic Growth',
+      description:
+        locale === 'it'
+          ? 'Il catalogo cresce solo quando qualita e copertura locale sono davvero solide.'
+          : 'Seed pipeline approach ensures we only list quality, verified venues and instructors.'
+    },
+    {
+      icon: 'heart' as const,
+      title: locale === 'it' ? 'Focus Mind-Body' : 'Mind-Body Focus',
+      description:
+        locale === 'it'
+          ? 'Specializzazione su yoga, pilates, meditazione e pratiche benessere complementari.'
+          : 'Specialized in yoga, pilates, meditation, and holistic wellness practices.'
+    },
+    {
+      icon: 'sun' as const,
+      title: locale === 'it' ? 'Utility pubblico cittadino' : 'Public City Utility',
+      description:
+        locale === 'it'
+          ? 'Uno strumento pensato per la comunita: accessibile, trasparente, utile ogni giorno.'
+          : 'Built as a public good for the community, making wellness accessible and transparent.'
+    }
+  ];
+
   return (
-    <div className="stack-list locale-home">
-      <section className="hero locale-hero">
-        <div className="hero-copy hero-copy-primary">
-          <p className="eyebrow">{locale === 'it' ? 'Discovery locale' : 'Local discovery'}</p>
-          <h1>{dict.cityFinder}</h1>
-          <p>
-            {locale === 'it'
-              ? 'kinelo.fit parte da Palermo con un catalogo verificato: orari chiari, filtri utili e percorsi di prenotazione reali.'
-              : 'kinelo.fit starts in Palermo with verified schedules, practical filters, and real booking/contact paths.'}
-          </p>
-          <div className="site-actions">
-            <Link href={`/${locale}/palermo/classes`} className="button button-primary">
-              {dict.exploreClasses}
-            </Link>
-            <Link href={`/${locale}/palermo`} className="button button-ghost">
-              Palermo hub
-            </Link>
-          </div>
-        </div>
-        <div className="hero-copy hero-copy-secondary">
-          <p className="eyebrow">{locale === 'it' ? 'Perche usarlo' : 'Why it works'}</p>
-          <div className="stack-list">
-            <div className="metric-card">
-              <strong>{locale === 'it' ? 'Copertura locale prima di tutto' : 'Local density first'}</strong>
-              <p className="muted">
-                {locale === 'it'
-                  ? 'Una citta deve essere utile prima di aprire la successiva.'
-                  : 'One city must become useful before opening the next one.'}
-              </p>
+    <div className="home-v2">
+      <section className="home-v2-hero">
+        <div className="home-v2-shell">
+          <div className="home-v2-hero-grid">
+            <div className="home-v2-hero-copy">
+              <div className="home-v2-badge">
+                <InlineIcon name="map" />
+                <span>{copy.heroBadge}</span>
+              </div>
+              <h1>{copy.heroTitle}</h1>
+              <p>{copy.heroBody}</p>
+              <div className="home-v2-hero-actions">
+                <Link href={`/${locale}/palermo/classes`} className="home-v2-btn home-v2-btn-primary">
+                  <span>{copy.ctaPrimary}</span>
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </Link>
+                <Link href={`/${locale}/palermo`} className="home-v2-btn home-v2-btn-secondary">
+                  {copy.ctaSecondary}
+                </Link>
+              </div>
             </div>
-            <div className="metric-card">
-              <strong>{locale === 'it' ? 'Yoga + benessere urbano' : 'Yoga-led, wellness-ready'}</strong>
-              <p className="muted">
-                {locale === 'it'
-                  ? 'Il prodotto resta focalizzato su classi affidabili e facilmente prenotabili.'
-                  : 'The product stays focused on trustworthy classes with clear action paths.'}
-              </p>
-            </div>
-            <div className="metric-card">
-              <strong>{locale === 'it' ? 'Freschezza come fiducia' : 'Freshness as trust'}</strong>
-              <p className="muted">
-                {locale === 'it'
-                  ? 'Mostriamo fonti, verifiche e contatti sempre aggiornabili.'
-                  : 'Source quality and freshness stay visible on every surface.'}
-              </p>
+            <div className="home-v2-hero-visual">
+              <div className="home-v2-photo-wrap">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/home-hero.jpg"
+                  alt="Yoga class in Palermo"
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="home-v2-photo-ring" aria-hidden />
+              </div>
+              <div className="home-v2-photo-glow home-v2-photo-glow-left" aria-hidden />
+              <div className="home-v2-photo-glow home-v2-photo-glow-right" aria-hidden />
             </div>
           </div>
         </div>
       </section>
 
-      <section className="locale-home-grid">
-        <div className="panel">
-          <p className="eyebrow">{locale === 'it' ? 'Citta pubbliche' : 'Public cities'}</p>
-          <div className="card-grid">
-            {publicCities.map((city) => {
-              const metrics = getCityMetrics(city.slug);
-              return (
-                <Link className="city-card" key={city.slug} href={`/${locale}/${city.slug}`}>
-                  <p className="eyebrow">{getLocaleLabel(locale, city.name)}</p>
-                  <h3>{metrics.sessions}</h3>
-                  <p>{getLocaleLabel(locale, city.hero)}</p>
-                  <p className="muted">
-                    {metrics.venues} {labels.venues} · {metrics.neighborhoods} {labels.neighborhoods} · {metrics.styles} {labels.styles}
-                  </p>
-                </Link>
-              );
-            })}
-            {catania ? (
-              <div className="city-card" aria-label="Catania coming soon">
-                <p className="eyebrow">{getLocaleLabel(locale, catania.name)}</p>
-                <h3>{locale === 'it' ? 'In arrivo' : 'Coming soon'}</h3>
-                <p>{getLocaleLabel(locale, catania.hero)}</p>
-                <p className="muted">{locale === 'it' ? 'Attivazione quando la copertura raggiunge la stessa soglia di Palermo.' : 'Launches after reaching the same supply and freshness gate as Palermo.'}</p>
-              </div>
-            ) : null}
+      <section className="home-v2-features">
+        <div className="home-v2-shell">
+          <div className="home-v2-features-head">
+            <p>{copy.featuresEyebrow}</p>
+            <h2>{copy.featuresTitle}</h2>
+            <p>{copy.featuresBody}</p>
+          </div>
+          <div className="home-v2-features-grid">
+            {features.map((feature) => (
+              <article key={feature.title} className="home-v2-feature-item">
+                <div className="home-v2-feature-icon">
+                  <InlineIcon name={feature.icon} />
+                </div>
+                <h3>{feature.title}</h3>
+                <p>{feature.description}</p>
+              </article>
+            ))}
           </div>
         </div>
-        <div className="panel">
-          <p className="eyebrow">{locale === 'it' ? 'Aggiornamenti' : 'Stay updated'}</p>
-          <p className="lead">
-            {locale === 'it'
-              ? 'Ricevi ogni settimana le nuove classi verificate e gli aggiornamenti di calendario.'
-              : 'Get weekly updates with newly verified classes and timetable changes.'}
-          </p>
-          <DigestForm citySlug="palermo" locale={locale} />
+      </section>
+
+      <section className="home-v2-cityhub">
+        <div className="home-v2-shell">
+          <div className="home-v2-cityhub-head">
+            <h2>{copy.cityTitle}</h2>
+            <p>{copy.cityBody}</p>
+            <div className="home-v2-metric-pills">
+              <span>{metrics.sessions} {copy.classes}</span>
+              <span>{metrics.venues} {copy.venues}</span>
+              <span>{metrics.neighborhoods} {copy.neighborhoods}</span>
+              <span>{metrics.styles} {copy.styles}</span>
+            </div>
+          </div>
+          <div className="home-v2-cards-grid">
+            {featured.map((session) => {
+              const venue = getVenue(session.venueSlug);
+              const style = getStyle(session.styleSlug);
+              if (!venue || !style) return null;
+              const start = DateTime.fromISO(session.startAt).setZone('Europe/Rome');
+              const end = DateTime.fromISO(session.endAt).setZone('Europe/Rome');
+
+              return (
+                <article key={session.id} className="home-v2-class-card">
+                  <div className="home-v2-class-top">
+                    <time>{start.toFormat('HH:mm')} - {end.toFormat('HH:mm')}</time>
+                    <span>{levelLabel(session.level)}</span>
+                  </div>
+                  <h3>{session.title[locale]}</h3>
+                  <div className="home-v2-class-meta">
+                    <p>{venue.name}</p>
+                    <p>{style.name[locale]}</p>
+                  </div>
+                  <Link href={`/${locale}/${session.citySlug}/studios/${venue.slug}`} className="home-v2-class-link">
+                    {copy.viewDetails}
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Link>
+                </article>
+              );
+            })}
+          </div>
+          <div className="home-v2-cityhub-cta">
+            <Link href={`/${locale}/palermo/classes`} className="home-v2-btn home-v2-btn-secondary">
+              {copy.fullSchedule}
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section id="newsletter-digest" className="home-v2-newsletter">
+        <div className="home-v2-shell">
+          <div className="home-v2-newsletter-grid">
+            <div className="home-v2-newsletter-copy">
+              <h2>{copy.newsletterTitle}</h2>
+              <p>{copy.newsletterBody}</p>
+              <div className="home-v2-newsletter-pills">
+                <span>{copy.newsletterOne}</span>
+                <span>{copy.newsletterTwo}</span>
+              </div>
+            </div>
+            <div className="home-v2-newsletter-form">
+              <DigestForm citySlug="palermo" locale={locale} showIntro={false} compact className="newsletter-inline-digest" surface="plain" />
+              <div className="home-v2-newsletter-notes">
+                <article>
+                  <h3>{copy.weeklyArticles}</h3>
+                  <p>{copy.weeklyArticlesBody}</p>
+                </article>
+                <article>
+                  <h3>{copy.noSpam}</h3>
+                  <p>{copy.noSpamBody}</p>
+                </article>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </div>

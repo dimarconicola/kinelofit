@@ -4,7 +4,16 @@ import { useState } from 'react';
 
 import type { Locale } from '@/lib/catalog/types';
 
-export function DigestForm({ citySlug, locale }: { citySlug: string; locale: Locale }) {
+interface DigestFormProps {
+  citySlug: string;
+  locale: Locale;
+  className?: string;
+  showIntro?: boolean;
+  surface?: 'panel' | 'plain';
+  compact?: boolean;
+}
+
+export function DigestForm({ citySlug, locale, className, showIntro = true, surface = 'panel', compact = false }: DigestFormProps) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'done'>('idle');
   const labels =
     locale === 'it'
@@ -33,7 +42,7 @@ export function DigestForm({ citySlug, locale }: { citySlug: string; locale: Loc
 
   return (
     <form
-      className="panel digest-form"
+      className={`${surface === 'panel' ? 'panel ' : ''}digest-form${className ? ` ${className}` : ''}`}
       onSubmit={async (event) => {
         event.preventDefault();
         setStatus('loading');
@@ -49,17 +58,23 @@ export function DigestForm({ citySlug, locale }: { citySlug: string; locale: Loc
         event.currentTarget.reset();
       }}
     >
-      <p className="eyebrow">{labels.eyebrow}</p>
-      <h3>{labels.title}</h3>
+      {showIntro ? (
+        <>
+          <p className="eyebrow">{labels.eyebrow}</p>
+          <h3>{labels.title}</h3>
+        </>
+      ) : null}
       <label>
         {labels.email}
         <input name="email" type="email" required />
       </label>
-      <div className="chip-row">
-        <label className="chip-option"><input type="checkbox" name="preferences" value="english" /> {labels.english}</label>
-        <label className="chip-option"><input type="checkbox" name="preferences" value="beginner" /> {labels.beginner}</label>
-        <label className="chip-option"><input type="checkbox" name="preferences" value="weekend" /> {labels.weekend}</label>
-      </div>
+      {compact ? null : (
+        <div className="chip-row">
+          <label className="chip-option"><input type="checkbox" name="preferences" value="english" /> {labels.english}</label>
+          <label className="chip-option"><input type="checkbox" name="preferences" value="beginner" /> {labels.beginner}</label>
+          <label className="chip-option"><input type="checkbox" name="preferences" value="weekend" /> {labels.weekend}</label>
+        </div>
+      )}
       <button className="button button-primary" type="submit" disabled={status === 'loading'}>
         {status === 'loading' ? labels.saving : labels.submit}
       </button>
