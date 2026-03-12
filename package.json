@@ -1,0 +1,49 @@
+{
+  "name": "kinelo-fit",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test tests/**/*.test.ts",
+    "readiness": "node --import tsx scripts/check-readiness.ts",
+    "freshness:run": "node --import tsx scripts/run-freshness.ts",
+    "validate:import": "node --import tsx scripts/validate-import.ts data/imports/palermo_seed.csv",
+    "research:build": "bash scripts/build-palermo-research-db.sh",
+    "research:report": "bash scripts/report-palermo-research-db.sh",
+    "catalog:export": "node --import tsx scripts/export-palermo-catalog.ts",
+    "catalog:sync": "npm run research:build && npm run catalog:export"
+  },
+  "dependencies": {
+    "@mdx-js/react": "^3.1.0",
+    "@mdx-js/loader": "^3.1.0",
+    "@next/mdx": "^15.2.0",
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.49.1",
+    "clsx": "^2.1.1",
+    "drizzle-orm": "^0.43.1",
+    "luxon": "^3.6.1",
+    "mapbox-gl": "^3.13.0",
+    "next": "^15.2.0",
+    "postgres": "^3.4.5",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@types/mapbox-gl": "^3.4.1",
+    "@types/luxon": "^3.4.2",
+    "@types/node": "^22.13.10",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "drizzle-kit": "^0.31.4",
+    "eslint": "^9.22.0",
+    "eslint-config-next": "^15.2.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

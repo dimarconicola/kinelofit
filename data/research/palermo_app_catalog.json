@@ -1,0 +1,3481 @@
+{
+  "neighborhoods": [
+    {
+      "slug": "citywide",
+      "citySlug": "palermo",
+      "name": {
+        "en": "Citywide",
+        "it": "Diffuso in citta"
+      },
+      "description": {
+        "en": "Operators working across Palermo without a single public fixed studio address.",
+        "it": "Operatori che lavorano in piu punti di Palermo senza un unico indirizzo pubblico fisso."
+      },
+      "center": {
+        "lat": 38.1181,
+        "lng": 13.3613
+      }
+    },
+    {
+      "slug": "liberta",
+      "citySlug": "palermo",
+      "name": {
+        "en": "Liberta",
+        "it": "Liberta"
+      },
+      "description": {
+        "en": "Polished residential corridors with disciplined studio rhythms.",
+        "it": "Assi residenziali curati con ritmi di studio disciplinati."
+      },
+      "center": {
+        "lat": 38.1351,
+        "lng": 13.3483
+      }
+    },
+    {
+      "slug": "notarbartolo",
+      "citySlug": "palermo",
+      "name": {
+        "en": "Notarbartolo",
+        "it": "Notarbartolo"
+      },
+      "description": {
+        "en": "Commuter-friendly west-central Palermo with compact wellness spaces.",
+        "it": "Area comoda per i commuter nella Palermo centro-occidentale con spazi wellness compatti."
+      },
+      "center": {
+        "lat": 38.131,
+        "lng": 13.3435
+      }
+    },
+    {
+      "slug": "pallavicino",
+      "citySlug": "palermo",
+      "name": {
+        "en": "Pallavicino",
+        "it": "Pallavicino"
+      },
+      "description": {
+        "en": "Northern Palermo with easier access toward Mondello and the coast.",
+        "it": "Quadrante nord di Palermo con accesso piu semplice verso Mondello e la costa."
+      },
+      "center": {
+        "lat": 38.1735,
+        "lng": 13.3256
+      }
+    },
+    {
+      "slug": "politeama",
+      "citySlug": "palermo",
+      "name": {
+        "en": "Politeama",
+        "it": "Politeama"
+      },
+      "description": {
+        "en": "Central Palermo with dense after-work and commuter-friendly classes.",
+        "it": "Palermo centrale con classi dense nel post-lavoro e facili da raggiungere."
+      },
+      "center": {
+        "lat": 38.1295,
+        "lng": 13.3527
+      }
+    },
+    {
+      "slug": "sampolo",
+      "citySlug": "palermo",
+      "name": {
+        "en": "Sampolo",
+        "it": "Sampolo"
+      },
+      "description": {
+        "en": "Eastern residential Palermo with long-running associations and event bases.",
+        "it": "Palermo orientale residenziale con associazioni storiche e basi per eventi."
+      },
+      "center": {
+        "lat": 38.1438,
+        "lng": 13.3501
+      }
+    }
+  ],
+  "styles": [
+    {
+      "slug": "ashtanga",
+      "categorySlug": "yoga",
+      "name": {
+        "en": "Ashtanga",
+        "it": "Ashtanga"
+      },
+      "description": {
+        "en": "Structured, repeatable practice with a traditional backbone.",
+        "it": "Pratica strutturata e ripetibile con una spina dorsale tradizionale."
+      }
+    },
+    {
+      "slug": "fascia-flow",
+      "categorySlug": "yoga",
+      "name": {
+        "en": "Fascia Flow",
+        "it": "Fascia Flow"
+      },
+      "description": {
+        "en": "Fluid sequences focused on connective tissue and body rhythm.",
+        "it": "Sequenze fluide centrate su fascia e ritmo corporeo."
+      }
+    },
+    {
+      "slug": "hatha",
+      "categorySlug": "yoga",
+      "name": {
+        "en": "Hatha",
+        "it": "Hatha"
+      },
+      "description": {
+        "en": "Balanced fundamentals with a clear pace and stable cueing.",
+        "it": "Fondamentali bilanciati con ritmo chiaro e istruzioni stabili."
+      }
+    },
+    {
+      "slug": "integrated",
+      "categorySlug": "movement",
+      "name": {
+        "en": "Integrated Yoga-Pilates",
+        "it": "Yoga-Pilates Integrato"
+      },
+      "description": {
+        "en": "A blended practice combining yoga, pilates, and stretching.",
+        "it": "Una pratica mista che unisce yoga, pilates e stretching."
+      }
+    },
+    {
+      "slug": "kids-yoga",
+      "categorySlug": "yoga",
+      "name": {
+        "en": "Kids Yoga",
+        "it": "Yoga Bimbi"
+      },
+      "description": {
+        "en": "Playful and structured classes for younger practitioners.",
+        "it": "Classi giocose e strutturate per praticanti piu giovani."
+      }
+    },
+    {
+      "slug": "kriya",
+      "categorySlug": "yoga",
+      "name": {
+        "en": "Kriya Yoga",
+        "it": "Kriya Yoga"
+      },
+      "description": {
+        "en": "A lineage-based internal practice path rather than a casual drop-in.",
+        "it": "Un percorso interiore di linea, piu che un semplice drop-in."
+      }
+    },
+    {
+      "slug": "meditation-practice",
+      "categorySlug": "meditation",
+      "name": {
+        "en": "Meditation Practice",
+        "it": "Pratica Meditativa"
+      },
+      "description": {
+        "en": "Seated or guided internal practice focused on attention and regulation.",
+        "it": "Pratica interiore seduta o guidata centrata su attenzione e regolazione."
+      }
+    },
+    {
+      "slug": "odaka",
+      "categorySlug": "yoga",
+      "name": {
+        "en": "Odaka",
+        "it": "Odaka"
+      },
+      "description": {
+        "en": "Wave-like movement language tied to the Odaka method.",
+        "it": "Linguaggio di movimento ondulatorio legato al metodo Odaka."
+      }
+    },
+    {
+      "slug": "pilates-core",
+      "categorySlug": "pilates",
+      "name": {
+        "en": "Pilates",
+        "it": "Pilates"
+      },
+      "description": {
+        "en": "Core-strength and control-driven movement work.",
+        "it": "Lavoro di movimento centrato su controllo e forza del core."
+      }
+    },
+    {
+      "slug": "postural-movement",
+      "categorySlug": "movement",
+      "name": {
+        "en": "Postural Movement",
+        "it": "Movimento Posturale"
+      },
+      "description": {
+        "en": "Alignment and posture-focused movement sessions.",
+        "it": "Sessioni di movimento orientate ad allineamento e postura."
+      }
+    },
+    {
+      "slug": "power",
+      "categorySlug": "yoga",
+      "name": {
+        "en": "Power Yoga",
+        "it": "Power Yoga"
+      },
+      "description": {
+        "en": "A more charged physical practice with steady output.",
+        "it": "Una pratica fisica piu intensa e continua."
+      }
+    },
+    {
+      "slug": "pranayama",
+      "categorySlug": "breathwork",
+      "name": {
+        "en": "Pranayama",
+        "it": "Pranayama"
+      },
+      "description": {
+        "en": "Breath-led classes centered on regulation and respiratory technique.",
+        "it": "Classi guidate dal respiro centrate su regolazione e tecnica respiratoria."
+      }
+    },
+    {
+      "slug": "prenatal",
+      "categorySlug": "yoga",
+      "name": {
+        "en": "Prenatal",
+        "it": "Prenatale"
+      },
+      "description": {
+        "en": "Supportive yoga adapted for pregnancy.",
+        "it": "Yoga di supporto adattato alla gravidanza."
+      }
+    },
+    {
+      "slug": "qi-gong",
+      "categorySlug": "movement",
+      "name": {
+        "en": "Qi Gong",
+        "it": "Qi Gong"
+      },
+      "description": {
+        "en": "Energy-focused movement and breath practices with a slower tempo.",
+        "it": "Pratiche di movimento e respiro orientate all’energia con ritmo piu lento."
+      }
+    },
+    {
+      "slug": "raja",
+      "categorySlug": "yoga",
+      "name": {
+        "en": "Raja Yoga",
+        "it": "Raja Yoga"
+      },
+      "description": {
+        "en": "Meditative practice emphasizing inner regulation and attention.",
+        "it": "Pratica meditativa centrata su regolazione interiore e attenzione."
+      }
+    },
+    {
+      "slug": "sacred-chant",
+      "categorySlug": "meditation",
+      "name": {
+        "en": "Sacred Chant",
+        "it": "Canto Sacro"
+      },
+      "description": {
+        "en": "Voice-led contemplative sessions rooted in mantra and resonance.",
+        "it": "Sessioni contemplative vocali radicate in mantra e risonanza."
+      }
+    },
+    {
+      "slug": "sahaja",
+      "categorySlug": "yoga",
+      "name": {
+        "en": "Sahaja Yoga",
+        "it": "Sahaja Yoga"
+      },
+      "description": {
+        "en": "Meditation-led yoga practice in a community format.",
+        "it": "Pratica yoga a guida meditativa in formato comunitario."
+      }
+    },
+    {
+      "slug": "soft",
+      "categorySlug": "yoga",
+      "name": {
+        "en": "Soft Yoga",
+        "it": "Soft Yoga"
+      },
+      "description": {
+        "en": "Gentler pacing with accessible intensity and longer reset moments.",
+        "it": "Ritmo piu gentile con intensita accessibile e piu spazio per il reset."
+      }
+    },
+    {
+      "slug": "sufi-dance",
+      "categorySlug": "movement",
+      "name": {
+        "en": "Sufi Dance",
+        "it": "Danza Sufi"
+      },
+      "description": {
+        "en": "Rhythmic contemplative movement inspired by Sufi practice.",
+        "it": "Movimento contemplativo ritmico ispirato alla pratica sufi."
+      }
+    },
+    {
+      "slug": "taijiquan",
+      "categorySlug": "movement",
+      "name": {
+        "en": "Taijiquan",
+        "it": "Taijiquan"
+      },
+      "description": {
+        "en": "Structured internal martial movement with balance and breath control.",
+        "it": "Movimento marziale interno strutturato con lavoro su equilibrio e respiro."
+      }
+    },
+    {
+      "slug": "taoist-meditation",
+      "categorySlug": "meditation",
+      "name": {
+        "en": "Taoist Meditation",
+        "it": "Meditazione Taoista"
+      },
+      "description": {
+        "en": "Early-morning meditative practice in the Taoist tradition.",
+        "it": "Pratica meditativa mattutina nella tradizione taoista."
+      }
+    },
+    {
+      "slug": "traditional",
+      "categorySlug": "yoga",
+      "name": {
+        "en": "Traditional Yoga",
+        "it": "Yoga Tradizionale"
+      },
+      "description": {
+        "en": "Classic foundations and breath-led practice.",
+        "it": "Fondamentali classici e pratica guidata dal respiro."
+      }
+    },
+    {
+      "slug": "vinyasa",
+      "categorySlug": "yoga",
+      "name": {
+        "en": "Vinyasa",
+        "it": "Vinyasa"
+      },
+      "description": {
+        "en": "Flow-based sequencing with more continuity between shapes.",
+        "it": "Sequenze in flow con piu continuita tra una forma e l’altra."
+      }
+    },
+    {
+      "slug": "yin",
+      "categorySlug": "yoga",
+      "name": {
+        "en": "Yin",
+        "it": "Yin"
+      },
+      "description": {
+        "en": "Longer holds and slower tissue-focused work.",
+        "it": "Tenute piu lunghe e lavoro lento sui tessuti."
+      }
+    },
+    {
+      "slug": "yogilates",
+      "categorySlug": "movement",
+      "name": {
+        "en": "Yogilates",
+        "it": "Yogilates"
+      },
+      "description": {
+        "en": "Hybrid class blending yoga flow and pilates conditioning.",
+        "it": "Classe ibrida che unisce flow yoga e condizionamento pilates."
+      }
+    }
+  ],
+  "instructors": [
+    {
+      "slug": "aldo-pace",
+      "citySlug": "palermo",
+      "name": "Aldo Pace",
+      "shortBio": {
+        "en": "Classical Pilates teacher on the Palermo Pilates team page.",
+        "it": "Classical Pilates teacher on the Palermo Pilates team page."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "antonio-rishi",
+      "citySlug": "palermo",
+      "name": "Antonio",
+      "shortBio": {
+        "en": "Named on the Rishi timetable for Tecniche Respiratorie 2 online. Surname not exposed on the timetable snippet used here.",
+        "it": "Named on the Rishi timetable for Tecniche Respiratorie 2 online. Surname not exposed on the timetable snippet used here."
+      },
+      "specialties": [
+        "hatha",
+        "kids-yoga",
+        "pranayama",
+        "sacred-chant",
+        "soft",
+        "sufi-dance",
+        "taoist-meditation",
+        "traditional"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "aruna-nath-giri",
+      "citySlug": "palermo",
+      "name": "Aruna Nath Giri",
+      "shortBio": {
+        "en": "Founder and spiritual reference of Centro di Cultura Rishi.",
+        "it": "Founder and spiritual reference of Centro di Cultura Rishi."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "asia-mattaliano",
+      "citySlug": "palermo",
+      "name": "Asia Mattaliano",
+      "shortBio": {
+        "en": "Instructor named on Ivanor yoga timetable for Hata Yoga and Yogilates.",
+        "it": "Instructor named on Ivanor yoga timetable for Hata Yoga and Yogilates."
+      },
+      "specialties": [
+        "hatha",
+        "yogilates"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "barbara-faludi",
+      "citySlug": "palermo",
+      "name": "Barbara Faludi",
+      "shortBio": {
+        "en": "Founder of Yoga Your Life and lead Hatha teacher.",
+        "it": "Founder of Yoga Your Life and lead Hatha teacher."
+      },
+      "specialties": [
+        "hatha",
+        "kids-yoga",
+        "pranayama",
+        "vinyasa",
+        "yin"
+      ],
+      "languages": [
+        "Italian",
+        "English"
+      ]
+    },
+    {
+      "slug": "ceren-dogou",
+      "citySlug": "palermo",
+      "name": "Ceren Dogou",
+      "shortBio": {
+        "en": "Named as yoga teacher in Taiji Studio open day programming.",
+        "it": "Named as yoga teacher in Taiji Studio open day programming."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "claudia-santamarina",
+      "citySlug": "palermo",
+      "name": "Claudia Santamarina",
+      "shortBio": {
+        "en": "Yoga teacher on the Yoga Your Life timetable.",
+        "it": "Yoga teacher on the Yoga Your Life timetable."
+      },
+      "specialties": [
+        "hatha",
+        "kids-yoga",
+        "pranayama",
+        "vinyasa",
+        "yin"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "cristina-chiummo",
+      "citySlug": "palermo",
+      "name": "Cristina Chiummo",
+      "shortBio": {
+        "en": "Founder of Ashtanga Shala Sicilia; teaches Mysore and Yin.",
+        "it": "Founder of Ashtanga Shala Sicilia; teaches Mysore and Yin."
+      },
+      "specialties": [
+        "ashtanga",
+        "kids-yoga",
+        "meditation-practice",
+        "pranayama",
+        "yin"
+      ],
+      "languages": [
+        "Italian",
+        "English"
+      ]
+    },
+    {
+      "slug": "dario-pastore",
+      "citySlug": "palermo",
+      "name": "Dario Pastore",
+      "shortBio": {
+        "en": "Pilates instructor on the Yoga Your Life timetable.",
+        "it": "Pilates instructor on the Yoga Your Life timetable."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "delia-de-santes",
+      "citySlug": "palermo",
+      "name": "Delia De Santes",
+      "shortBio": {
+        "en": "Instructor listed for Pilates on the Yoga Your Life staff page.",
+        "it": "Instructor listed for Pilates on the Yoga Your Life staff page."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "desiree-burgio",
+      "citySlug": "palermo",
+      "name": "Desiree Burgio",
+      "shortBio": {
+        "en": "Named organiser and contact person for Yoga City Palermo.",
+        "it": "Named organiser and contact person for Yoga City Palermo."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "dino-coglitore",
+      "citySlug": "palermo",
+      "name": "Dino Coglitore",
+      "shortBio": {
+        "en": "Named on the Rishi timetable for Hatha Yoga and meditation-related classes.",
+        "it": "Named on the Rishi timetable for Hatha Yoga and meditation-related classes."
+      },
+      "specialties": [
+        "hatha",
+        "kids-yoga",
+        "pranayama",
+        "sacred-chant",
+        "soft",
+        "sufi-dance",
+        "taoist-meditation",
+        "traditional"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "domenico-di-chiara",
+      "citySlug": "palermo",
+      "name": "Domenico Di Chiara",
+      "shortBio": {
+        "en": "Yoga teacher on the Yoga Your Life timetable.",
+        "it": "Yoga teacher on the Yoga Your Life timetable."
+      },
+      "specialties": [
+        "hatha",
+        "kids-yoga",
+        "pranayama",
+        "vinyasa",
+        "yin"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "ekaterina-kaptur",
+      "citySlug": "palermo",
+      "name": "Ekaterina Katie Kaptur",
+      "shortBio": {
+        "en": "Classical Pilates and Yoga teacher listed on the Palermo Pilates team page.",
+        "it": "Classical Pilates and Yoga teacher listed on the Palermo Pilates team page."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "English",
+        "Italian"
+      ]
+    },
+    {
+      "slug": "giorgia-schillaci",
+      "citySlug": "palermo",
+      "name": "Giorgia Schillaci",
+      "shortBio": {
+        "en": "Listed as Giorgia Schillaci / Geo for Yin Yoga on the Yoga Your Life timetable.",
+        "it": "Listed as Giorgia Schillaci / Geo for Yin Yoga on the Yoga Your Life timetable."
+      },
+      "specialties": [
+        "hatha",
+        "kids-yoga",
+        "pranayama",
+        "vinyasa",
+        "yin"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "giulia-pace",
+      "citySlug": "palermo",
+      "name": "Giulia Pace",
+      "shortBio": {
+        "en": "Named as pilates teacher in Taiji Studio open day programming.",
+        "it": "Named as pilates teacher in Taiji Studio open day programming."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "lesley-bell",
+      "citySlug": "palermo",
+      "name": "Lesley Bell",
+      "shortBio": {
+        "en": "Founder of Palermo Pilates.",
+        "it": "Founder of Palermo Pilates."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "English",
+        "Italian"
+      ]
+    },
+    {
+      "slug": "loredana-rishi",
+      "citySlug": "palermo",
+      "name": "Loredana",
+      "shortBio": {
+        "en": "Named on the Rishi timetable for Canto Sacro.",
+        "it": "Named on the Rishi timetable for Canto Sacro."
+      },
+      "specialties": [
+        "hatha",
+        "kids-yoga",
+        "pranayama",
+        "sacred-chant",
+        "soft",
+        "sufi-dance",
+        "taoist-meditation",
+        "traditional"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "marta-sto",
+      "citySlug": "palermo",
+      "name": "Marta Sto",
+      "shortBio": {
+        "en": "Certified Hatha and Odaka Yoga teacher operating in Palermo and Terrasini.",
+        "it": "Certified Hatha and Odaka Yoga teacher operating in Palermo and Terrasini."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "Italian",
+        "English"
+      ]
+    },
+    {
+      "slug": "massimiliano-provenzano",
+      "citySlug": "palermo",
+      "name": "Massimiliano Provenzano",
+      "shortBio": {
+        "en": "Listed as Massimiliano Provenzano / Max on the Yoga Your Life staff and timetable.",
+        "it": "Listed as Massimiliano Provenzano / Max on the Yoga Your Life staff and timetable."
+      },
+      "specialties": [
+        "hatha",
+        "kids-yoga",
+        "pranayama",
+        "vinyasa",
+        "yin"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "matthew-phippen",
+      "citySlug": "palermo",
+      "name": "Matthew Phippen",
+      "shortBio": {
+        "en": "Listed as Jai Matthew Phippen on the Yoga Ananda teacher page.",
+        "it": "Listed as Jai Matthew Phippen on the Yoga Ananda teacher page."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "paola-cassara",
+      "citySlug": "palermo",
+      "name": "Paola Cassara",
+      "shortBio": {
+        "en": "Named as postura dinamica teacher in Taiji Studio open day programming.",
+        "it": "Named as postura dinamica teacher in Taiji Studio open day programming."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "centro-cultura-rishi-team",
+      "citySlug": "palermo",
+      "name": "Rishi teaching team",
+      "shortBio": {
+        "en": "Public source pages for Centro di Cultura Rishi do not always name the individual teacher for every class, so this session is attributed to the venue team.",
+        "it": "Le fonti pubbliche di Centro di Cultura Rishi non nominano sempre l’insegnante individuale per ogni classe, quindi questa sessione e attribuita al team del venue."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "sahaja-yoga-sicilia-team",
+      "citySlug": "palermo",
+      "name": "Sahaja Yoga Palermo team",
+      "shortBio": {
+        "en": "Public source pages for Sahaja Yoga Sicilia do not always name the individual teacher for every class, so this session is attributed to the venue team.",
+        "it": "Le fonti pubbliche di Sahaja Yoga Sicilia non nominano sempre l’insegnante individuale per ogni classe, quindi questa sessione e attribuita al team del venue."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "sangeeta-laura-biagi",
+      "citySlug": "palermo",
+      "name": "Sangeeta Laura Biagi",
+      "shortBio": {
+        "en": "Nada Yoga seminar teacher featured on the Rishi site in 2026 coverage.",
+        "it": "Nada Yoga seminar teacher featured on the Rishi site in 2026 coverage."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "silvia-riccobono",
+      "citySlug": "palermo",
+      "name": "Silvia Riccobono",
+      "shortBio": {
+        "en": "Classical Pilates and Vinyasa Yoga teacher at Palermo Pilates.",
+        "it": "Classical Pilates and Vinyasa Yoga teacher at Palermo Pilates."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "Italian",
+        "English"
+      ]
+    },
+    {
+      "slug": "sujesh-valerio-costa",
+      "citySlug": "palermo",
+      "name": "Sujesh Valerio Costa",
+      "shortBio": {
+        "en": "Raja Ananda Yoga teacher and president of Yoga Ananda Palermo.",
+        "it": "Raja Ananda Yoga teacher and president of Yoga Ananda Palermo."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "taiji-studio-palermo-team",
+      "citySlug": "palermo",
+      "name": "Taiji Studio Palermo team",
+      "shortBio": {
+        "en": "Public source pages for Taiji Studio Palermo do not always name the individual teacher for every class, so this session is attributed to the venue team.",
+        "it": "Le fonti pubbliche di Taiji Studio Palermo non nominano sempre l’insegnante individuale per ogni classe, quindi questa sessione e attribuita al team del venue."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "tanya-rishi",
+      "citySlug": "palermo",
+      "name": "Tanya",
+      "shortBio": {
+        "en": "Named on the Rishi timetable for Danza Sufi.",
+        "it": "Named on the Rishi timetable for Danza Sufi."
+      },
+      "specialties": [
+        "hatha",
+        "kids-yoga",
+        "pranayama",
+        "sacred-chant",
+        "soft",
+        "sufi-dance",
+        "taoist-meditation",
+        "traditional"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "valentina-lorito",
+      "citySlug": "palermo",
+      "name": "Valentina Lorito",
+      "shortBio": {
+        "en": "Movement educator and founder of Yogastudiolab.",
+        "it": "Movement educator and founder of Yogastudiolab."
+      },
+      "specialties": [
+        "hatha"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    },
+    {
+      "slug": "veronica-zarbo",
+      "citySlug": "palermo",
+      "name": "Veronica Zarbo",
+      "shortBio": {
+        "en": "Yoga teacher on the Yoga Your Life timetable.",
+        "it": "Yoga teacher on the Yoga Your Life timetable."
+      },
+      "specialties": [
+        "hatha",
+        "kids-yoga",
+        "pranayama",
+        "vinyasa",
+        "yin"
+      ],
+      "languages": [
+        "Italian"
+      ]
+    }
+  ],
+  "bookingTargets": [
+    {
+      "slug": "yoga-your-life-whatsapp",
+      "type": "whatsapp",
+      "label": "Book on WhatsApp",
+      "href": "https://wa.me/393272466969"
+    },
+    {
+      "slug": "yoga-your-life-phone",
+      "type": "phone",
+      "label": "Call to reserve",
+      "href": "tel:+393272466969"
+    },
+    {
+      "slug": "yoga-your-life-email",
+      "type": "email",
+      "label": "Book by email",
+      "href": "mailto:barbarafaludi@gmail.com"
+    },
+    {
+      "slug": "yoga-your-life-website",
+      "type": "website",
+      "label": "Visit website",
+      "href": "https://www.barbarafaludiyoga.com/"
+    },
+    {
+      "slug": "ashtanga-shala-sicilia-whatsapp",
+      "type": "whatsapp",
+      "label": "Book on WhatsApp",
+      "href": "https://wa.me/393358716785"
+    },
+    {
+      "slug": "ashtanga-shala-sicilia-phone",
+      "type": "phone",
+      "label": "Call to reserve",
+      "href": "tel:+393358716785"
+    },
+    {
+      "slug": "ashtanga-shala-sicilia-email",
+      "type": "email",
+      "label": "Book by email",
+      "href": "mailto:ashtangashalasicilia@gmail.com"
+    },
+    {
+      "slug": "ashtanga-shala-sicilia-website",
+      "type": "website",
+      "label": "Visit website",
+      "href": "https://www.ashtangashalasicilia.com/"
+    },
+    {
+      "slug": "centro-cultura-rishi-whatsapp",
+      "type": "whatsapp",
+      "label": "Book on WhatsApp",
+      "href": "https://wa.me/393387169008"
+    },
+    {
+      "slug": "centro-cultura-rishi-phone",
+      "type": "phone",
+      "label": "Call to reserve",
+      "href": "tel:+393387169008"
+    },
+    {
+      "slug": "centro-cultura-rishi-website",
+      "type": "website",
+      "label": "Visit website",
+      "href": "https://www.centroculturarishi.it/"
+    },
+    {
+      "slug": "centro-sportivo-ivanor-whatsapp",
+      "type": "whatsapp",
+      "label": "Book on WhatsApp",
+      "href": "https://wa.me/393515199902"
+    },
+    {
+      "slug": "centro-sportivo-ivanor-phone",
+      "type": "phone",
+      "label": "Call to reserve",
+      "href": "tel:+393515199902"
+    },
+    {
+      "slug": "centro-sportivo-ivanor-email",
+      "type": "email",
+      "label": "Book by email",
+      "href": "mailto:ivanorsports.ssd@gmail.com"
+    },
+    {
+      "slug": "centro-sportivo-ivanor-website",
+      "type": "website",
+      "label": "Visit website",
+      "href": "https://www.ivanorsports.it/yoga"
+    },
+    {
+      "slug": "grandmas-pilates-email",
+      "type": "email",
+      "label": "Book by email",
+      "href": "mailto:grandmaspilates@gmail.com"
+    },
+    {
+      "slug": "grandmas-pilates-website",
+      "type": "website",
+      "label": "Visit website",
+      "href": "https://www.grandmaspilates.com/"
+    },
+    {
+      "slug": "palermo-pilates-whatsapp",
+      "type": "whatsapp",
+      "label": "Book on WhatsApp",
+      "href": "https://wa.me/393349646426"
+    },
+    {
+      "slug": "palermo-pilates-phone",
+      "type": "phone",
+      "label": "Call to reserve",
+      "href": "tel:+393349646426"
+    },
+    {
+      "slug": "palermo-pilates-email",
+      "type": "email",
+      "label": "Book by email",
+      "href": "mailto:info@palermopilates.it"
+    },
+    {
+      "slug": "palermo-pilates-website",
+      "type": "website",
+      "label": "Visit website",
+      "href": "https://www.palermopilates.it/"
+    },
+    {
+      "slug": "sahaja-yoga-sicilia-whatsapp",
+      "type": "whatsapp",
+      "label": "Book on WhatsApp",
+      "href": "https://wa.me/393287669452"
+    },
+    {
+      "slug": "sahaja-yoga-sicilia-phone",
+      "type": "phone",
+      "label": "Call to reserve",
+      "href": "tel:+393287669452"
+    },
+    {
+      "slug": "taiji-studio-palermo-whatsapp",
+      "type": "whatsapp",
+      "label": "Book on WhatsApp",
+      "href": "https://wa.me/393338621178"
+    },
+    {
+      "slug": "taiji-studio-palermo-phone",
+      "type": "phone",
+      "label": "Call to reserve",
+      "href": "tel:+393338621178"
+    },
+    {
+      "slug": "taiji-studio-palermo-website",
+      "type": "website",
+      "label": "Visit website",
+      "href": "https://www.taijistudiopalermo.it/"
+    },
+    {
+      "slug": "yoga-ananda-palermo-whatsapp",
+      "type": "whatsapp",
+      "label": "Book on WhatsApp",
+      "href": "https://wa.me/393298038277"
+    },
+    {
+      "slug": "yoga-ananda-palermo-phone",
+      "type": "phone",
+      "label": "Call to reserve",
+      "href": "tel:+393298038277"
+    },
+    {
+      "slug": "yoga-ananda-palermo-email",
+      "type": "email",
+      "label": "Book by email",
+      "href": "mailto:yoganandapalermo@gmail.com"
+    },
+    {
+      "slug": "yoga-ananda-palermo-website",
+      "type": "website",
+      "label": "Visit website",
+      "href": "https://www.yoganandapalermo.it/"
+    },
+    {
+      "slug": "yoga-city-whatsapp",
+      "type": "whatsapp",
+      "label": "Book on WhatsApp",
+      "href": "https://wa.me/393208720004"
+    },
+    {
+      "slug": "yoga-city-phone",
+      "type": "phone",
+      "label": "Call to reserve",
+      "href": "tel:+393208720004"
+    },
+    {
+      "slug": "yoga-city-email",
+      "type": "email",
+      "label": "Book by email",
+      "href": "mailto:info@yogacity.it"
+    },
+    {
+      "slug": "yoga-city-website",
+      "type": "website",
+      "label": "Visit website",
+      "href": "https://www.yogacity.it/"
+    },
+    {
+      "slug": "yogastudiolab-whatsapp",
+      "type": "whatsapp",
+      "label": "Book on WhatsApp",
+      "href": "https://wa.me/393496826920"
+    },
+    {
+      "slug": "yogastudiolab-phone",
+      "type": "phone",
+      "label": "Call to reserve",
+      "href": "tel:+393496826920"
+    },
+    {
+      "slug": "yogastudiolab-website",
+      "type": "website",
+      "label": "Visit website",
+      "href": "https://www.yogastudiolab.it/"
+    },
+    {
+      "slug": "you-are-yoga-whatsapp",
+      "type": "whatsapp",
+      "label": "Book on WhatsApp",
+      "href": "https://wa.me/393408452325"
+    },
+    {
+      "slug": "you-are-yoga-phone",
+      "type": "phone",
+      "label": "Call to reserve",
+      "href": "tel:+393408452325"
+    },
+    {
+      "slug": "you-are-yoga-email",
+      "type": "email",
+      "label": "Book by email",
+      "href": "mailto:martasto.youareyoga@gmail.com"
+    },
+    {
+      "slug": "you-are-yoga-website",
+      "type": "website",
+      "label": "Visit website",
+      "href": "https://youareyoga.it/"
+    }
+  ],
+  "venues": [
+    {
+      "slug": "yoga-your-life",
+      "citySlug": "palermo",
+      "neighborhoodSlug": "politeama",
+      "name": "A.S.D.C. Yoga Your Life",
+      "tagline": {
+        "en": "Dense weekly yoga timetable near Politeama.",
+        "it": "Orario yoga fitto vicino al Politeama."
+      },
+      "description": {
+        "en": "Barbara Faludi’s studio has the clearest current weekly schedule in the city, spanning hatha, vinyasa, yin, meditation, and children’s classes.",
+        "it": "Lo studio di Barbara Faludi ha uno degli orari settimanali piu chiari della citta, con hatha, vinyasa, yin, meditazione e classi per bambini."
+      },
+      "address": "Via Enrico Albanese 7, 90139, Palermo",
+      "geo": {
+        "lat": 38.1295652,
+        "lng": 13.3535793
+      },
+      "amenities": [
+        "Mats available",
+        "Small groups",
+        "Studio timetable"
+      ],
+      "languages": [
+        "Italian",
+        "English"
+      ],
+      "styleSlugs": [
+        "hatha",
+        "kids-yoga",
+        "pranayama",
+        "vinyasa",
+        "yin"
+      ],
+      "categorySlugs": [
+        "meditation",
+        "yoga"
+      ],
+      "bookingTargetOrder": [
+        "yoga-your-life-whatsapp",
+        "yoga-your-life-phone",
+        "yoga-your-life-email",
+        "yoga-your-life-website"
+      ],
+      "freshnessNote": {
+        "en": "Checked against a current public source on 2026-03-10.",
+        "it": "Controllato su una fonte pubblica corrente il 2026-03-10."
+      },
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00"
+    },
+    {
+      "slug": "ashtanga-shala-sicilia",
+      "citySlug": "palermo",
+      "neighborhoodSlug": "liberta",
+      "name": "Ashtanga Shala Sicilia",
+      "tagline": {
+        "en": "Mysore-led Ashtanga base off Via Liberta.",
+        "it": "Base Ashtanga con Mysore in zona Via Liberta."
+      },
+      "description": {
+        "en": "A source-backed Palermo shala with current Mysore, yin, pranayama, meditation, and children’s programming.",
+        "it": "Una shala palermitana verificata con Mysore, yin, pranayama, meditazione e programma bimbi."
+      },
+      "address": "Via della Liberta 56, 90143, Palermo",
+      "geo": {
+        "lat": 38.1351145,
+        "lng": 13.3486124
+      },
+      "amenities": [
+        "Early classes",
+        "Traditional practice room",
+        "Lesson packs"
+      ],
+      "languages": [
+        "Italian",
+        "English"
+      ],
+      "styleSlugs": [
+        "ashtanga",
+        "kids-yoga",
+        "meditation-practice",
+        "pranayama",
+        "yin"
+      ],
+      "categorySlugs": [
+        "breathwork",
+        "meditation",
+        "yoga"
+      ],
+      "bookingTargetOrder": [
+        "ashtanga-shala-sicilia-whatsapp",
+        "ashtanga-shala-sicilia-phone",
+        "ashtanga-shala-sicilia-email",
+        "ashtanga-shala-sicilia-website"
+      ],
+      "freshnessNote": {
+        "en": "Checked against a current public source on 2026-03-10.",
+        "it": "Controllato su una fonte pubblica corrente il 2026-03-10."
+      },
+      "sourceUrl": "https://www.ashtangashalasicilia.com/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00"
+    },
+    {
+      "slug": "centro-cultura-rishi",
+      "citySlug": "palermo",
+      "neighborhoodSlug": "sampolo",
+      "name": "Centro di Cultura Rishi",
+      "tagline": {
+        "en": "Long-running traditional yoga association in Sampolo.",
+        "it": "Associazione storica di yoga tradizionale in zona Sampolo."
+      },
+      "description": {
+        "en": "Centro di Cultura Rishi publishes a dense 2025-2026 timetable with first-level, soft, hatha, breathwork, and children’s sessions.",
+        "it": "Il Centro di Cultura Rishi pubblica un orario 2025-2026 fitto con primo livello, soft, hatha, respiro e classi bimbi."
+      },
+      "address": "Via Salvatore Bono 19, 90143, Palermo",
+      "geo": {
+        "lat": 38.1421944,
+        "lng": 13.3503169
+      },
+      "amenities": [
+        "Academic-year timetable",
+        "Beginner paths",
+        "Breathwork classes"
+      ],
+      "languages": [
+        "Italian"
+      ],
+      "styleSlugs": [
+        "hatha",
+        "kids-yoga",
+        "pranayama",
+        "sacred-chant",
+        "soft",
+        "sufi-dance",
+        "taoist-meditation",
+        "traditional"
+      ],
+      "categorySlugs": [
+        "breathwork",
+        "meditation",
+        "movement",
+        "yoga"
+      ],
+      "bookingTargetOrder": [
+        "centro-cultura-rishi-whatsapp",
+        "centro-cultura-rishi-phone",
+        "centro-cultura-rishi-website"
+      ],
+      "freshnessNote": {
+        "en": "Checked against a current public source on 2026-03-10.",
+        "it": "Controllato su una fonte pubblica corrente il 2026-03-10."
+      },
+      "sourceUrl": "https://www.centroculturarishi.it/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00"
+    },
+    {
+      "slug": "centro-sportivo-ivanor",
+      "citySlug": "palermo",
+      "neighborhoodSlug": "politeama",
+      "name": "Centro sportivo Ivanor",
+      "tagline": {
+        "en": "Sports club with morning yoga and evening yogilates.",
+        "it": "Centro sportivo con yoga al mattino e yogilates la sera."
+      },
+      "description": {
+        "en": "Ivanor is not a yoga-only studio, but it publishes concrete Palermo times for Hatha Yoga and Yogilates with a named instructor.",
+        "it": "Ivanor non e uno studio solo yoga, ma pubblica orari palermitani concreti per Hatha Yoga e Yogilates con insegnante nominata."
+      },
+      "address": "Via Marchese Ugo 6, 90141, Palermo",
+      "geo": {
+        "lat": 38.131737,
+        "lng": 13.3503735
+      },
+      "amenities": [
+        "Locker rooms",
+        "Sports club facilities",
+        "Morning slots"
+      ],
+      "languages": [
+        "Italian"
+      ],
+      "styleSlugs": [
+        "hatha",
+        "yogilates"
+      ],
+      "categorySlugs": [
+        "movement",
+        "yoga"
+      ],
+      "bookingTargetOrder": [
+        "centro-sportivo-ivanor-whatsapp",
+        "centro-sportivo-ivanor-phone",
+        "centro-sportivo-ivanor-email",
+        "centro-sportivo-ivanor-website"
+      ],
+      "freshnessNote": {
+        "en": "Checked against a current public source on 2026-03-10.",
+        "it": "Controllato su una fonte pubblica corrente il 2026-03-10."
+      },
+      "sourceUrl": "https://www.ivanorsports.it/yoga",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00"
+    },
+    {
+      "slug": "grandmas-pilates",
+      "citySlug": "palermo",
+      "neighborhoodSlug": "notarbartolo",
+      "name": "Grandma's Pilates Studio",
+      "tagline": {
+        "en": "Boutique yoga-pilates studio with a secret-garden feel.",
+        "it": "Studio boutique yoga-pilates con atmosfera da secret garden."
+      },
+      "description": {
+        "en": "The official site clearly confirms the studio and its yoga-pilates offer, but this pass did not surface a fully machine-readable Palermo street coordinate.",
+        "it": "Il sito ufficiale conferma chiaramente lo studio e l’offerta yoga-pilates, ma in questo passaggio non e emersa una coordinata palermitana completamente leggibile."
+      },
+      "address": "Via Leonardo Da Vinci 30, 90145, Palermo",
+      "geo": {
+        "lat": 38.1305,
+        "lng": 13.3435
+      },
+      "amenities": [
+        "Boutique studio",
+        "Private options",
+        "Online options"
+      ],
+      "languages": [
+        "Italian",
+        "English"
+      ],
+      "styleSlugs": [
+        "integrated",
+        "power"
+      ],
+      "categorySlugs": [
+        "movement",
+        "yoga"
+      ],
+      "bookingTargetOrder": [
+        "grandmas-pilates-email",
+        "grandmas-pilates-website"
+      ],
+      "freshnessNote": {
+        "en": "Checked against a current public source on 2026-03-10.",
+        "it": "Controllato su una fonte pubblica corrente il 2026-03-10."
+      },
+      "sourceUrl": "https://www.grandmaspilates.com/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00"
+    },
+    {
+      "slug": "palermo-pilates",
+      "citySlug": "palermo",
+      "neighborhoodSlug": "politeama",
+      "name": "Palermo Pilates di Lesley Bell",
+      "tagline": {
+        "en": "Classical Pilates studio with private Vinyasa Yoga.",
+        "it": "Studio di pilates classico con Vinyasa Yoga privato."
+      },
+      "description": {
+        "en": "Palermo Pilates is a strong adjacent venue: the official site confirms the address, team, and a by-appointment Vinyasa Yoga offer.",
+        "it": "Palermo Pilates e un forte venue adiacente: il sito ufficiale conferma indirizzo, team e un’offerta Vinyasa Yoga su appuntamento."
+      },
+      "address": "Via Piersanti Mattarella 9, 90141, Palermo",
+      "geo": {
+        "lat": 38.1320087,
+        "lng": 13.3470906
+      },
+      "amenities": [
+        "Private sessions",
+        "Teacher training",
+        "International team"
+      ],
+      "languages": [
+        "Italian",
+        "English"
+      ],
+      "styleSlugs": [
+        "vinyasa"
+      ],
+      "categorySlugs": [
+        "yoga"
+      ],
+      "bookingTargetOrder": [
+        "palermo-pilates-whatsapp",
+        "palermo-pilates-phone",
+        "palermo-pilates-email",
+        "palermo-pilates-website"
+      ],
+      "freshnessNote": {
+        "en": "Checked against a current public source on 2026-03-10.",
+        "it": "Controllato su una fonte pubblica corrente il 2026-03-10."
+      },
+      "sourceUrl": "https://www.palermopilates.it/en/contatti-eng/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00"
+    },
+    {
+      "slug": "sahaja-yoga-sicilia",
+      "citySlug": "palermo",
+      "neighborhoodSlug": "politeama",
+      "name": "Sahaja Yoga Sicilia",
+      "tagline": {
+        "en": "Community-led weekly Sahaja Yoga near Via Garzilli.",
+        "it": "Incontro settimanale di Sahaja Yoga vicino a Via Garzilli."
+      },
+      "description": {
+        "en": "The official Sahaja Yoga site publishes a current Palermo Tuesday class with exact address, phone, and embedded map coordinates.",
+        "it": "Il sito ufficiale Sahaja Yoga pubblica una classe palermitana corrente del martedi con indirizzo, telefono e coordinate mappa."
+      },
+      "address": "Casa dell'Equita e della Bellezza, Via Nicolo Garzilli 43/a, 90139, Palermo",
+      "geo": {
+        "lat": 38.125805,
+        "lng": 13.35271
+      },
+      "amenities": [
+        "Community class",
+        "Weekly fixed slot",
+        "Direct phone contact"
+      ],
+      "languages": [
+        "Italian"
+      ],
+      "styleSlugs": [
+        "sahaja"
+      ],
+      "categorySlugs": [
+        "meditation"
+      ],
+      "bookingTargetOrder": [
+        "sahaja-yoga-sicilia-whatsapp",
+        "sahaja-yoga-sicilia-phone"
+      ],
+      "freshnessNote": {
+        "en": "Checked against a current public source on 2026-03-11.",
+        "it": "Controllato su una fonte pubblica corrente il 2026-03-11."
+      },
+      "sourceUrl": "https://sahajayoga.it/corsi/palermo-martedi-dalle-1830-alle-2000/",
+      "lastVerifiedAt": "2026-03-11T12:00:00+01:00"
+    },
+    {
+      "slug": "taiji-studio-palermo",
+      "citySlug": "palermo",
+      "neighborhoodSlug": "liberta",
+      "name": "Taiji Studio Palermo",
+      "tagline": {
+        "en": "Movement studio mixing taiji, yoga, and pilates.",
+        "it": "Studio di movimento che unisce taiji, yoga e pilates."
+      },
+      "description": {
+        "en": "Taiji Studio Palermo is verified as an active wellness space; yoga is present in the offer mix even though the captured source is lighter on weekly timetable detail.",
+        "it": "Taiji Studio Palermo e verificato come spazio wellness attivo; lo yoga e presente nell’offerta anche se la fonte catturata e meno dettagliata sul calendario settimanale."
+      },
+      "address": "Via Selinunte 11, Palermo",
+      "geo": {
+        "lat": 38.1239951,
+        "lng": 13.3472704
+      },
+      "amenities": [
+        "Multi-discipline studio",
+        "Open day programming",
+        "Contact booking"
+      ],
+      "languages": [
+        "Italian"
+      ],
+      "styleSlugs": [
+        "hatha",
+        "pilates-core",
+        "postural-movement",
+        "qi-gong",
+        "taijiquan"
+      ],
+      "categorySlugs": [
+        "movement",
+        "pilates",
+        "yoga"
+      ],
+      "bookingTargetOrder": [
+        "taiji-studio-palermo-whatsapp",
+        "taiji-studio-palermo-phone",
+        "taiji-studio-palermo-website"
+      ],
+      "freshnessNote": {
+        "en": "Checked against a current public source on 2026-03-10.",
+        "it": "Controllato su una fonte pubblica corrente il 2026-03-10."
+      },
+      "sourceUrl": "https://www.taijistudiopalermo.it/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00"
+    },
+    {
+      "slug": "yoga-ananda-palermo",
+      "citySlug": "palermo",
+      "neighborhoodSlug": "pallavicino",
+      "name": "Yoga Ananda Palermo",
+      "tagline": {
+        "en": "Raja Yoga association with deep practice blocks.",
+        "it": "Associazione di Raja Yoga con percorsi di pratica approfonditi."
+      },
+      "description": {
+        "en": "Yoga Ananda Palermo is a serious lineage-led association. The captured public schedule is course-block based rather than a standing weekly grid.",
+        "it": "Yoga Ananda Palermo e un’associazione guidata da una linea di pratica seria. Il calendario pubblico catturato e a cicli di corso, non una griglia settimanale continua."
+      },
+      "address": "Via Trapani Pescia 77, Palermo",
+      "geo": {
+        "lat": 38.1734854,
+        "lng": 13.3256317
+      },
+      "amenities": [
+        "Course blocks",
+        "Meditation paths",
+        "Association setting"
+      ],
+      "languages": [
+        "Italian"
+      ],
+      "styleSlugs": [
+        "kriya",
+        "raja"
+      ],
+      "categorySlugs": [
+        "yoga"
+      ],
+      "bookingTargetOrder": [
+        "yoga-ananda-palermo-whatsapp",
+        "yoga-ananda-palermo-phone",
+        "yoga-ananda-palermo-email",
+        "yoga-ananda-palermo-website"
+      ],
+      "freshnessNote": {
+        "en": "Checked against a current public source on 2026-03-10.",
+        "it": "Controllato su una fonte pubblica corrente il 2026-03-10."
+      },
+      "sourceUrl": "https://www.yoganandapalermo.it/contatti/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00"
+    },
+    {
+      "slug": "yoga-city",
+      "citySlug": "palermo",
+      "neighborhoodSlug": "sampolo",
+      "name": "Yoga City",
+      "tagline": {
+        "en": "Citywide outdoor yoga series across Palermo landmarks.",
+        "it": "Rassegna di yoga outdoor in luoghi simbolo di Palermo."
+      },
+      "description": {
+        "en": "Yoga City is better understood as an event series than a single studio, with sunrise and sunset sessions staged across Palermo.",
+        "it": "Yoga City va letto piu come una rassegna che come uno studio singolo, con sessioni all’alba e al tramonto in diversi luoghi della citta."
+      },
+      "address": "Via Imperatore Federico 70, 90143, Palermo",
+      "geo": {
+        "lat": 38.1460403,
+        "lng": 13.3498032
+      },
+      "amenities": [
+        "Outdoor events",
+        "Landmark locations",
+        "Seasonal programming"
+      ],
+      "languages": [
+        "Italian"
+      ],
+      "styleSlugs": [],
+      "categorySlugs": [],
+      "bookingTargetOrder": [
+        "yoga-city-whatsapp",
+        "yoga-city-phone",
+        "yoga-city-email",
+        "yoga-city-website"
+      ],
+      "freshnessNote": {
+        "en": "Checked against a current public source on 2026-03-10.",
+        "it": "Controllato su una fonte pubblica corrente il 2026-03-10."
+      },
+      "sourceUrl": "https://www.yogacity.it/contatti/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00"
+    },
+    {
+      "slug": "yogastudiolab",
+      "citySlug": "palermo",
+      "neighborhoodSlug": "citywide",
+      "name": "Yogastudiolab",
+      "tagline": {
+        "en": "Yoga and mindful movement project working across Palermo.",
+        "it": "Progetto di yoga e mindful movement che lavora in piu punti di Palermo."
+      },
+      "description": {
+        "en": "Yogastudiolab is source-backed and current, but the official site confirms Palermo activity more clearly than it exposes a fixed street studio address.",
+        "it": "Yogastudiolab e verificato e attivo, ma il sito ufficiale conferma meglio la presenza a Palermo di quanto esponga un indirizzo fisso di studio."
+      },
+      "address": "Palermo",
+      "geo": {
+        "lat": 38.1248,
+        "lng": 13.361
+      },
+      "amenities": [
+        "WhatsApp contact",
+        "Hybrid format",
+        "Movement therapy"
+      ],
+      "languages": [
+        "Italian"
+      ],
+      "styleSlugs": [
+        "hatha",
+        "integrated",
+        "meditation-practice",
+        "pilates-core",
+        "pranayama"
+      ],
+      "categorySlugs": [
+        "breathwork",
+        "meditation",
+        "movement",
+        "pilates",
+        "yoga"
+      ],
+      "bookingTargetOrder": [
+        "yogastudiolab-whatsapp",
+        "yogastudiolab-phone",
+        "yogastudiolab-website"
+      ],
+      "freshnessNote": {
+        "en": "Checked against a current public source on 2026-03-10.",
+        "it": "Controllato su una fonte pubblica corrente il 2026-03-10."
+      },
+      "sourceUrl": "https://www.yogastudiolab.it/contatti",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00"
+    },
+    {
+      "slug": "you-are-yoga",
+      "citySlug": "palermo",
+      "neighborhoodSlug": "citywide",
+      "name": "You Are Yoga",
+      "tagline": {
+        "en": "Mobile yoga and pilates service across Palermo.",
+        "it": "Servizio mobile di yoga e pilates in area Palermo."
+      },
+      "description": {
+        "en": "You Are Yoga clearly documents Palermo service and current packages, but the fixed published timetable captured in this pass points to Terrasini rather than Palermo proper.",
+        "it": "You Are Yoga documenta chiaramente il servizio su Palermo e i pacchetti correnti, ma l’orario fisso pubblicato e catturato in questo passaggio punta a Terrasini piu che a Palermo."
+      },
+      "address": "Palermo",
+      "geo": {
+        "lat": 38.1289,
+        "lng": 13.3562
+      },
+      "amenities": [
+        "Small-group packages",
+        "Prenatal paths",
+        "Private lessons"
+      ],
+      "languages": [
+        "Italian",
+        "English"
+      ],
+      "styleSlugs": [
+        "fascia-flow",
+        "hatha",
+        "kids-yoga",
+        "odaka",
+        "pilates-core",
+        "prenatal"
+      ],
+      "categorySlugs": [
+        "breathwork",
+        "pilates",
+        "yoga"
+      ],
+      "bookingTargetOrder": [
+        "you-are-yoga-whatsapp",
+        "you-are-yoga-phone",
+        "you-are-yoga-email",
+        "you-are-yoga-website"
+      ],
+      "freshnessNote": {
+        "en": "Checked against a current public source on 2026-03-10.",
+        "it": "Controllato su una fonte pubblica corrente il 2026-03-10."
+      },
+      "sourceUrl": "https://youareyoga.it/home/contatti/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00"
+    }
+  ],
+  "recurringSessions": [
+    {
+      "templateId": "sch46",
+      "citySlug": "palermo",
+      "venueSlug": "ashtanga-shala-sicilia",
+      "instructorSlug": "cristina-chiummo",
+      "categorySlug": "yoga",
+      "styleSlug": "ashtanga",
+      "title": {
+        "en": "Ashtanga Mysore",
+        "it": "Ashtanga Mysore"
+      },
+      "weekday": "Friday",
+      "startTime": "06:30",
+      "endTime": "09:30",
+      "level": "intermediate",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "ashtanga-shala-sicilia-whatsapp",
+      "sourceUrl": "https://www.ashtangashalasicilia.com/cristina-chiummo",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "8 lessons 65 EUR; 16 lessons 110 EUR",
+        "it": "8 lessons 65 EUR; 16 lessons 110 EUR"
+      }
+    },
+    {
+      "templateId": "sch44",
+      "citySlug": "palermo",
+      "venueSlug": "ashtanga-shala-sicilia",
+      "instructorSlug": "cristina-chiummo",
+      "categorySlug": "yoga",
+      "styleSlug": "ashtanga",
+      "title": {
+        "en": "Ashtanga Mysore",
+        "it": "Ashtanga Mysore"
+      },
+      "weekday": "Monday",
+      "startTime": "06:30",
+      "endTime": "09:30",
+      "level": "intermediate",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "ashtanga-shala-sicilia-whatsapp",
+      "sourceUrl": "https://www.ashtangashalasicilia.com/cristina-chiummo",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "8 lessons 65 EUR; 16 lessons 110 EUR",
+        "it": "8 lessons 65 EUR; 16 lessons 110 EUR"
+      }
+    },
+    {
+      "templateId": "sch50",
+      "citySlug": "palermo",
+      "venueSlug": "ashtanga-shala-sicilia",
+      "instructorSlug": "cristina-chiummo",
+      "categorySlug": "yoga",
+      "styleSlug": "yin",
+      "title": {
+        "en": "Yin Yoga",
+        "it": "Yin Yoga"
+      },
+      "weekday": "Monday",
+      "startTime": "17:00",
+      "endTime": "18:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "ashtanga-shala-sicilia-whatsapp",
+      "sourceUrl": "https://www.ashtangashalasicilia.com/cristina-chiummo",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Included in studio lesson packs",
+        "it": "Included in studio lesson packs"
+      }
+    },
+    {
+      "templateId": "sch47",
+      "citySlug": "palermo",
+      "venueSlug": "ashtanga-shala-sicilia",
+      "instructorSlug": "cristina-chiummo",
+      "categorySlug": "yoga",
+      "styleSlug": "ashtanga",
+      "title": {
+        "en": "Ashtanga Mysore",
+        "it": "Ashtanga Mysore"
+      },
+      "weekday": "Monday",
+      "startTime": "18:00",
+      "endTime": "20:30",
+      "level": "intermediate",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "ashtanga-shala-sicilia-whatsapp",
+      "sourceUrl": "https://www.ashtangashalasicilia.com/cristina-chiummo",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "8 lessons 65 EUR; 16 lessons 110 EUR",
+        "it": "8 lessons 65 EUR; 16 lessons 110 EUR"
+      }
+    },
+    {
+      "templateId": "sch49",
+      "citySlug": "palermo",
+      "venueSlug": "ashtanga-shala-sicilia",
+      "instructorSlug": "cristina-chiummo",
+      "categorySlug": "yoga",
+      "styleSlug": "ashtanga",
+      "title": {
+        "en": "Ashtanga Mysore",
+        "it": "Ashtanga Mysore"
+      },
+      "weekday": "Saturday",
+      "startTime": "09:30",
+      "endTime": "12:30",
+      "level": "intermediate",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "ashtanga-shala-sicilia-whatsapp",
+      "sourceUrl": "https://www.ashtangashalasicilia.com/cristina-chiummo",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "8 lessons 65 EUR; 16 lessons 110 EUR",
+        "it": "8 lessons 65 EUR; 16 lessons 110 EUR"
+      }
+    },
+    {
+      "templateId": "sch45",
+      "citySlug": "palermo",
+      "venueSlug": "ashtanga-shala-sicilia",
+      "instructorSlug": "cristina-chiummo",
+      "categorySlug": "yoga",
+      "styleSlug": "ashtanga",
+      "title": {
+        "en": "Ashtanga Mysore",
+        "it": "Ashtanga Mysore"
+      },
+      "weekday": "Wednesday",
+      "startTime": "06:30",
+      "endTime": "09:30",
+      "level": "intermediate",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "ashtanga-shala-sicilia-whatsapp",
+      "sourceUrl": "https://www.ashtangashalasicilia.com/cristina-chiummo",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "8 lessons 65 EUR; 16 lessons 110 EUR",
+        "it": "8 lessons 65 EUR; 16 lessons 110 EUR"
+      }
+    },
+    {
+      "templateId": "sch51",
+      "citySlug": "palermo",
+      "venueSlug": "ashtanga-shala-sicilia",
+      "instructorSlug": "cristina-chiummo",
+      "categorySlug": "yoga",
+      "styleSlug": "yin",
+      "title": {
+        "en": "Yin Yoga",
+        "it": "Yin Yoga"
+      },
+      "weekday": "Wednesday",
+      "startTime": "17:00",
+      "endTime": "18:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "ashtanga-shala-sicilia-whatsapp",
+      "sourceUrl": "https://www.ashtangashalasicilia.com/cristina-chiummo",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Included in studio lesson packs",
+        "it": "Included in studio lesson packs"
+      }
+    },
+    {
+      "templateId": "sch48",
+      "citySlug": "palermo",
+      "venueSlug": "ashtanga-shala-sicilia",
+      "instructorSlug": "cristina-chiummo",
+      "categorySlug": "yoga",
+      "styleSlug": "ashtanga",
+      "title": {
+        "en": "Ashtanga Mysore",
+        "it": "Ashtanga Mysore"
+      },
+      "weekday": "Wednesday",
+      "startTime": "18:00",
+      "endTime": "20:30",
+      "level": "intermediate",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "ashtanga-shala-sicilia-whatsapp",
+      "sourceUrl": "https://www.ashtangashalasicilia.com/cristina-chiummo",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "8 lessons 65 EUR; 16 lessons 110 EUR",
+        "it": "8 lessons 65 EUR; 16 lessons 110 EUR"
+      }
+    },
+    {
+      "templateId": "sch12",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "dino-coglitore",
+      "categorySlug": "yoga",
+      "styleSlug": "hatha",
+      "title": {
+        "en": "Hatha Yoga",
+        "it": "Hatha Yoga"
+      },
+      "weekday": "Friday",
+      "startTime": "18:00",
+      "endTime": "19:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch77",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "tanya-rishi",
+      "categorySlug": "movement",
+      "styleSlug": "sufi-dance",
+      "title": {
+        "en": "Danza Sufi",
+        "it": "Danza Sufi"
+      },
+      "weekday": "Friday",
+      "startTime": "18:00",
+      "endTime": "19:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch03",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "centro-cultura-rishi-team",
+      "categorySlug": "yoga",
+      "styleSlug": "traditional",
+      "title": {
+        "en": "First Level Yoga",
+        "it": "Primo Livello Yoga"
+      },
+      "weekday": "Monday",
+      "startTime": "17:30",
+      "endTime": "18:30",
+      "level": "beginner",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch07",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "centro-cultura-rishi-team",
+      "categorySlug": "yoga",
+      "styleSlug": "soft",
+      "title": {
+        "en": "Soft Yoga",
+        "it": "Soft Yoga"
+      },
+      "weekday": "Monday",
+      "startTime": "18:15",
+      "endTime": "19:15",
+      "level": "beginner",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch72",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "centro-cultura-rishi-team",
+      "categorySlug": "yoga",
+      "styleSlug": "traditional",
+      "title": {
+        "en": "First Level Yoga",
+        "it": "Primo Livello Yoga"
+      },
+      "weekday": "Monday",
+      "startTime": "18:45",
+      "endTime": "19:45",
+      "level": "beginner",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch13",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "centro-cultura-rishi-team",
+      "categorySlug": "breathwork",
+      "styleSlug": "pranayama",
+      "title": {
+        "en": "Breathwork Techniques 1",
+        "it": "Tecniche Respiratorie 1"
+      },
+      "weekday": "Monday",
+      "startTime": "19:30",
+      "endTime": "20:30",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch74",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "centro-cultura-rishi-team",
+      "categorySlug": "yoga",
+      "styleSlug": "traditional",
+      "title": {
+        "en": "First Level Yoga",
+        "it": "Primo Livello Yoga"
+      },
+      "weekday": "Monday",
+      "startTime": "20:00",
+      "endTime": "21:00",
+      "level": "beginner",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch78",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "centro-cultura-rishi-team",
+      "categorySlug": "meditation",
+      "styleSlug": "taoist-meditation",
+      "title": {
+        "en": "Meditazione Taoista",
+        "it": "Meditazione Taoista"
+      },
+      "weekday": "Saturday",
+      "startTime": "07:30",
+      "endTime": "08:30",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch02",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "centro-cultura-rishi-team",
+      "categorySlug": "yoga",
+      "styleSlug": "traditional",
+      "title": {
+        "en": "First Level Yoga",
+        "it": "Primo Livello Yoga"
+      },
+      "weekday": "Thursday",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "level": "beginner",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch10",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "centro-cultura-rishi-team",
+      "categorySlug": "yoga",
+      "styleSlug": "soft",
+      "title": {
+        "en": "Soft Yoga",
+        "it": "Soft Yoga"
+      },
+      "weekday": "Thursday",
+      "startTime": "17:00",
+      "endTime": "18:00",
+      "level": "beginner",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch06",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "centro-cultura-rishi-team",
+      "categorySlug": "yoga",
+      "styleSlug": "traditional",
+      "title": {
+        "en": "First Level Yoga",
+        "it": "Primo Livello Yoga"
+      },
+      "weekday": "Thursday",
+      "startTime": "19:00",
+      "endTime": "20:00",
+      "level": "beginner",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch01",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "centro-cultura-rishi-team",
+      "categorySlug": "yoga",
+      "styleSlug": "traditional",
+      "title": {
+        "en": "First Level Yoga",
+        "it": "Primo Livello Yoga"
+      },
+      "weekday": "Tuesday",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "level": "beginner",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch09",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "centro-cultura-rishi-team",
+      "categorySlug": "yoga",
+      "styleSlug": "soft",
+      "title": {
+        "en": "Soft Yoga",
+        "it": "Soft Yoga"
+      },
+      "weekday": "Tuesday",
+      "startTime": "17:00",
+      "endTime": "18:00",
+      "level": "beginner",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch11",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "dino-coglitore",
+      "categorySlug": "yoga",
+      "styleSlug": "hatha",
+      "title": {
+        "en": "Hatha Yoga",
+        "it": "Hatha Yoga"
+      },
+      "weekday": "Tuesday",
+      "startTime": "17:00",
+      "endTime": "18:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch05",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "centro-cultura-rishi-team",
+      "categorySlug": "yoga",
+      "styleSlug": "traditional",
+      "title": {
+        "en": "First Level Yoga",
+        "it": "Primo Livello Yoga"
+      },
+      "weekday": "Tuesday",
+      "startTime": "19:00",
+      "endTime": "20:00",
+      "level": "beginner",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch76",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "loredana-rishi",
+      "categorySlug": "meditation",
+      "styleSlug": "sacred-chant",
+      "title": {
+        "en": "Canto Sacro",
+        "it": "Canto Sacro"
+      },
+      "weekday": "Tuesday",
+      "startTime": "20:15",
+      "endTime": "21:15",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch04",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "centro-cultura-rishi-team",
+      "categorySlug": "yoga",
+      "styleSlug": "traditional",
+      "title": {
+        "en": "First Level Yoga",
+        "it": "Primo Livello Yoga"
+      },
+      "weekday": "Wednesday",
+      "startTime": "17:30",
+      "endTime": "18:30",
+      "level": "beginner",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch15",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "centro-cultura-rishi-team",
+      "categorySlug": "yoga",
+      "styleSlug": "kids-yoga",
+      "title": {
+        "en": "Kids Yoga",
+        "it": "Yoga Bimbi"
+      },
+      "weekday": "Wednesday",
+      "startTime": "17:30",
+      "endTime": "18:30",
+      "level": "beginner",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch08",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "centro-cultura-rishi-team",
+      "categorySlug": "yoga",
+      "styleSlug": "soft",
+      "title": {
+        "en": "Soft Yoga",
+        "it": "Soft Yoga"
+      },
+      "weekday": "Wednesday",
+      "startTime": "18:15",
+      "endTime": "19:15",
+      "level": "beginner",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch73",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "centro-cultura-rishi-team",
+      "categorySlug": "yoga",
+      "styleSlug": "traditional",
+      "title": {
+        "en": "First Level Yoga",
+        "it": "Primo Livello Yoga"
+      },
+      "weekday": "Wednesday",
+      "startTime": "18:45",
+      "endTime": "19:45",
+      "level": "beginner",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch14",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "antonio-rishi",
+      "categorySlug": "breathwork",
+      "styleSlug": "pranayama",
+      "title": {
+        "en": "Breathwork Techniques 2",
+        "it": "Tecniche Respiratorie 2"
+      },
+      "weekday": "Wednesday",
+      "startTime": "19:30",
+      "endTime": "20:30",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch75",
+      "citySlug": "palermo",
+      "venueSlug": "centro-cultura-rishi",
+      "instructorSlug": "centro-cultura-rishi-team",
+      "categorySlug": "yoga",
+      "styleSlug": "traditional",
+      "title": {
+        "en": "First Level Yoga",
+        "it": "Primo Livello Yoga"
+      },
+      "weekday": "Wednesday",
+      "startTime": "20:00",
+      "endTime": "21:00",
+      "level": "beginner",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-cultura-rishi-whatsapp",
+      "sourceUrl": "https://www.centroculturarishi.it/corsi/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Not published on captured pages",
+        "it": "Not published on captured pages"
+      }
+    },
+    {
+      "templateId": "sch55",
+      "citySlug": "palermo",
+      "venueSlug": "centro-sportivo-ivanor",
+      "instructorSlug": "asia-mattaliano",
+      "categorySlug": "yoga",
+      "styleSlug": "hatha",
+      "title": {
+        "en": "Hatha Yoga",
+        "it": "Hata Yoga"
+      },
+      "weekday": "Friday",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-sportivo-ivanor-whatsapp",
+      "sourceUrl": "https://www.ivanorsports.it/yoga",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Contact venue for pricing",
+        "it": "Contact venue for pricing"
+      }
+    },
+    {
+      "templateId": "sch53",
+      "citySlug": "palermo",
+      "venueSlug": "centro-sportivo-ivanor",
+      "instructorSlug": "asia-mattaliano",
+      "categorySlug": "yoga",
+      "styleSlug": "hatha",
+      "title": {
+        "en": "Hatha Yoga",
+        "it": "Hata Yoga"
+      },
+      "weekday": "Monday",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-sportivo-ivanor-whatsapp",
+      "sourceUrl": "https://www.ivanorsports.it/yoga",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Contact venue for pricing",
+        "it": "Contact venue for pricing"
+      }
+    },
+    {
+      "templateId": "sch57",
+      "citySlug": "palermo",
+      "venueSlug": "centro-sportivo-ivanor",
+      "instructorSlug": "asia-mattaliano",
+      "categorySlug": "movement",
+      "styleSlug": "yogilates",
+      "title": {
+        "en": "Yogilates",
+        "it": "Yogilates"
+      },
+      "weekday": "Thursday",
+      "startTime": "18:30",
+      "endTime": "19:30",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-sportivo-ivanor-whatsapp",
+      "sourceUrl": "https://www.ivanorsports.it/yoga",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Contact venue for pricing",
+        "it": "Contact venue for pricing"
+      }
+    },
+    {
+      "templateId": "sch56",
+      "citySlug": "palermo",
+      "venueSlug": "centro-sportivo-ivanor",
+      "instructorSlug": "asia-mattaliano",
+      "categorySlug": "movement",
+      "styleSlug": "yogilates",
+      "title": {
+        "en": "Yogilates",
+        "it": "Yogilates"
+      },
+      "weekday": "Tuesday",
+      "startTime": "18:30",
+      "endTime": "19:30",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-sportivo-ivanor-whatsapp",
+      "sourceUrl": "https://www.ivanorsports.it/yoga",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Contact venue for pricing",
+        "it": "Contact venue for pricing"
+      }
+    },
+    {
+      "templateId": "sch54",
+      "citySlug": "palermo",
+      "venueSlug": "centro-sportivo-ivanor",
+      "instructorSlug": "asia-mattaliano",
+      "categorySlug": "yoga",
+      "styleSlug": "hatha",
+      "title": {
+        "en": "Hatha Yoga",
+        "it": "Hata Yoga"
+      },
+      "weekday": "Wednesday",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "centro-sportivo-ivanor-whatsapp",
+      "sourceUrl": "https://www.ivanorsports.it/yoga",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Contact venue for pricing",
+        "it": "Contact venue for pricing"
+      }
+    },
+    {
+      "templateId": "sch71",
+      "citySlug": "palermo",
+      "venueSlug": "sahaja-yoga-sicilia",
+      "instructorSlug": "sahaja-yoga-sicilia-team",
+      "categorySlug": "meditation",
+      "styleSlug": "sahaja",
+      "title": {
+        "en": "Sahaja Yoga Meditation",
+        "it": "Sahaja Yoga Meditation"
+      },
+      "weekday": "Tuesday",
+      "startTime": "18:30",
+      "endTime": "20:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "sahaja-yoga-sicilia-whatsapp",
+      "sourceUrl": "https://sahajayoga.it/corsi/palermo-martedi-dalle-1830-alle-2000/",
+      "lastVerifiedAt": "2026-03-11T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Typically community-led; pricing not exposed on the captured page",
+        "it": "Typically community-led; pricing not exposed on the captured page"
+      }
+    },
+    {
+      "templateId": "sch81",
+      "citySlug": "palermo",
+      "venueSlug": "taiji-studio-palermo",
+      "instructorSlug": "taiji-studio-palermo-team",
+      "categorySlug": "movement",
+      "styleSlug": "taijiquan",
+      "title": {
+        "en": "Taijiquan",
+        "it": "Taijiquan"
+      },
+      "weekday": "Friday",
+      "startTime": "08:30",
+      "endTime": "09:30",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "taiji-studio-palermo-whatsapp",
+      "sourceUrl": "https://www.taijistudiopalermo.it/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Contact studio for pricing",
+        "it": "Contact studio for pricing"
+      }
+    },
+    {
+      "templateId": "sch83",
+      "citySlug": "palermo",
+      "venueSlug": "taiji-studio-palermo",
+      "instructorSlug": "taiji-studio-palermo-team",
+      "categorySlug": "movement",
+      "styleSlug": "taijiquan",
+      "title": {
+        "en": "Taijiquan",
+        "it": "Taijiquan"
+      },
+      "weekday": "Friday",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "taiji-studio-palermo-whatsapp",
+      "sourceUrl": "https://www.taijistudiopalermo.it/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Contact studio for pricing",
+        "it": "Contact studio for pricing"
+      }
+    },
+    {
+      "templateId": "sch89",
+      "citySlug": "palermo",
+      "venueSlug": "taiji-studio-palermo",
+      "instructorSlug": "taiji-studio-palermo-team",
+      "categorySlug": "movement",
+      "styleSlug": "qi-gong",
+      "title": {
+        "en": "Qi Gong",
+        "it": "Qi Gong"
+      },
+      "weekday": "Friday",
+      "startTime": "18:00",
+      "endTime": "19:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "taiji-studio-palermo-whatsapp",
+      "sourceUrl": "https://www.taijistudiopalermo.it/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Contact studio for pricing",
+        "it": "Contact studio for pricing"
+      }
+    },
+    {
+      "templateId": "sch86",
+      "citySlug": "palermo",
+      "venueSlug": "taiji-studio-palermo",
+      "instructorSlug": "taiji-studio-palermo-team",
+      "categorySlug": "movement",
+      "styleSlug": "taijiquan",
+      "title": {
+        "en": "Taijiquan",
+        "it": "Taijiquan"
+      },
+      "weekday": "Friday",
+      "startTime": "19:00",
+      "endTime": "20:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "taiji-studio-palermo-whatsapp",
+      "sourceUrl": "https://www.taijistudiopalermo.it/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Contact studio for pricing",
+        "it": "Contact studio for pricing"
+      }
+    },
+    {
+      "templateId": "sch79",
+      "citySlug": "palermo",
+      "venueSlug": "taiji-studio-palermo",
+      "instructorSlug": "taiji-studio-palermo-team",
+      "categorySlug": "movement",
+      "styleSlug": "taijiquan",
+      "title": {
+        "en": "Taijiquan",
+        "it": "Taijiquan"
+      },
+      "weekday": "Monday",
+      "startTime": "08:30",
+      "endTime": "09:30",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "taiji-studio-palermo-whatsapp",
+      "sourceUrl": "https://www.taijistudiopalermo.it/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Contact studio for pricing",
+        "it": "Contact studio for pricing"
+      }
+    },
+    {
+      "templateId": "sch82",
+      "citySlug": "palermo",
+      "venueSlug": "taiji-studio-palermo",
+      "instructorSlug": "taiji-studio-palermo-team",
+      "categorySlug": "movement",
+      "styleSlug": "taijiquan",
+      "title": {
+        "en": "Taijiquan",
+        "it": "Taijiquan"
+      },
+      "weekday": "Monday",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "taiji-studio-palermo-whatsapp",
+      "sourceUrl": "https://www.taijistudiopalermo.it/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Contact studio for pricing",
+        "it": "Contact studio for pricing"
+      }
+    },
+    {
+      "templateId": "sch88",
+      "citySlug": "palermo",
+      "venueSlug": "taiji-studio-palermo",
+      "instructorSlug": "taiji-studio-palermo-team",
+      "categorySlug": "movement",
+      "styleSlug": "qi-gong",
+      "title": {
+        "en": "Qi Gong",
+        "it": "Qi Gong"
+      },
+      "weekday": "Monday",
+      "startTime": "18:00",
+      "endTime": "19:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "taiji-studio-palermo-whatsapp",
+      "sourceUrl": "https://www.taijistudiopalermo.it/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Contact studio for pricing",
+        "it": "Contact studio for pricing"
+      }
+    },
+    {
+      "templateId": "sch84",
+      "citySlug": "palermo",
+      "venueSlug": "taiji-studio-palermo",
+      "instructorSlug": "taiji-studio-palermo-team",
+      "categorySlug": "movement",
+      "styleSlug": "taijiquan",
+      "title": {
+        "en": "Taijiquan",
+        "it": "Taijiquan"
+      },
+      "weekday": "Monday",
+      "startTime": "19:00",
+      "endTime": "20:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "taiji-studio-palermo-whatsapp",
+      "sourceUrl": "https://www.taijistudiopalermo.it/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Contact studio for pricing",
+        "it": "Contact studio for pricing"
+      }
+    },
+    {
+      "templateId": "sch87",
+      "citySlug": "palermo",
+      "venueSlug": "taiji-studio-palermo",
+      "instructorSlug": "taiji-studio-palermo-team",
+      "categorySlug": "movement",
+      "styleSlug": "qi-gong",
+      "title": {
+        "en": "Qi Gong",
+        "it": "Qi Gong"
+      },
+      "weekday": "Saturday",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "taiji-studio-palermo-whatsapp",
+      "sourceUrl": "https://www.taijistudiopalermo.it/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Contact studio for pricing",
+        "it": "Contact studio for pricing"
+      }
+    },
+    {
+      "templateId": "sch80",
+      "citySlug": "palermo",
+      "venueSlug": "taiji-studio-palermo",
+      "instructorSlug": "taiji-studio-palermo-team",
+      "categorySlug": "movement",
+      "styleSlug": "taijiquan",
+      "title": {
+        "en": "Taijiquan",
+        "it": "Taijiquan"
+      },
+      "weekday": "Wednesday",
+      "startTime": "08:30",
+      "endTime": "09:30",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "taiji-studio-palermo-whatsapp",
+      "sourceUrl": "https://www.taijistudiopalermo.it/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Contact studio for pricing",
+        "it": "Contact studio for pricing"
+      }
+    },
+    {
+      "templateId": "sch85",
+      "citySlug": "palermo",
+      "venueSlug": "taiji-studio-palermo",
+      "instructorSlug": "taiji-studio-palermo-team",
+      "categorySlug": "movement",
+      "styleSlug": "taijiquan",
+      "title": {
+        "en": "Taijiquan",
+        "it": "Taijiquan"
+      },
+      "weekday": "Wednesday",
+      "startTime": "19:00",
+      "endTime": "20:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "taiji-studio-palermo-whatsapp",
+      "sourceUrl": "https://www.taijistudiopalermo.it/",
+      "lastVerifiedAt": "2026-03-12T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Contact studio for pricing",
+        "it": "Contact studio for pricing"
+      }
+    },
+    {
+      "templateId": "sch23",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "barbara-faludi",
+      "categorySlug": "yoga",
+      "styleSlug": "hatha",
+      "title": {
+        "en": "Hatha Yoga with Barbara",
+        "it": "Hatha Yoga con Barbara"
+      },
+      "weekday": "Friday",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Carnet from 12 EUR; monthly open 70 EUR",
+        "it": "Carnet from 12 EUR; monthly open 70 EUR"
+      }
+    },
+    {
+      "templateId": "sch37",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "giorgia-schillaci",
+      "categorySlug": "yoga",
+      "styleSlug": "yin",
+      "title": {
+        "en": "Yin Yoga with Geo",
+        "it": "Yin Yoga con Geo"
+      },
+      "weekday": "Friday",
+      "startTime": "17:00",
+      "endTime": "18:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Carnet from 12 EUR; monthly open 70 EUR",
+        "it": "Carnet from 12 EUR; monthly open 70 EUR"
+      }
+    },
+    {
+      "templateId": "sch21",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "barbara-faludi",
+      "categorySlug": "yoga",
+      "styleSlug": "hatha",
+      "title": {
+        "en": "Hatha Yoga with Barbara",
+        "it": "Hatha Yoga con Barbara"
+      },
+      "weekday": "Monday",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Carnet from 12 EUR; monthly open 70 EUR",
+        "it": "Carnet from 12 EUR; monthly open 70 EUR"
+      }
+    },
+    {
+      "templateId": "sch26",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "massimiliano-provenzano",
+      "categorySlug": "yoga",
+      "styleSlug": "hatha",
+      "title": {
+        "en": "Hatha Yoga with Max",
+        "it": "Hatha Yoga con Max"
+      },
+      "weekday": "Monday",
+      "startTime": "13:30",
+      "endTime": "14:30",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Carnet from 12 EUR; monthly open 70 EUR",
+        "it": "Carnet from 12 EUR; monthly open 70 EUR"
+      }
+    },
+    {
+      "templateId": "sch24",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "barbara-faludi",
+      "categorySlug": "yoga",
+      "styleSlug": "hatha",
+      "title": {
+        "en": "Hatha Yoga with Barbara",
+        "it": "Hatha Yoga con Barbara"
+      },
+      "weekday": "Monday",
+      "startTime": "18:00",
+      "endTime": "19:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Carnet from 12 EUR; monthly open 70 EUR",
+        "it": "Carnet from 12 EUR; monthly open 70 EUR"
+      }
+    },
+    {
+      "templateId": "sch29",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "domenico-di-chiara",
+      "categorySlug": "yoga",
+      "styleSlug": "vinyasa",
+      "title": {
+        "en": "Vinyasa Yoga with Domenico",
+        "it": "Vinyasa Yoga con Domenico"
+      },
+      "weekday": "Monday",
+      "startTime": "19:30",
+      "endTime": "20:30",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Carnet from 12 EUR; monthly open 70 EUR",
+        "it": "Carnet from 12 EUR; monthly open 70 EUR"
+      }
+    },
+    {
+      "templateId": "sch31",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "domenico-di-chiara",
+      "categorySlug": "yoga",
+      "styleSlug": "vinyasa",
+      "title": {
+        "en": "Vinyasa Yoga with Domenico",
+        "it": "Vinyasa Yoga con Domenico"
+      },
+      "weekday": "Saturday",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Carnet from 12 EUR; monthly open 70 EUR",
+        "it": "Carnet from 12 EUR; monthly open 70 EUR"
+      }
+    },
+    {
+      "templateId": "sch38",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "barbara-faludi",
+      "categorySlug": "yoga",
+      "styleSlug": "kids-yoga",
+      "title": {
+        "en": "Kids Yoga",
+        "it": "Yoga per Bimbi"
+      },
+      "weekday": "Saturday",
+      "startTime": "11:30",
+      "endTime": "12:30",
+      "level": "beginner",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Included in studio memberships or passes",
+        "it": "Included in studio memberships or passes"
+      }
+    },
+    {
+      "templateId": "sch36",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "claudia-santamarina",
+      "categorySlug": "yoga",
+      "styleSlug": "vinyasa",
+      "title": {
+        "en": "Vinyasa Yoga with Claudia",
+        "it": "Vinyasa Yoga con Claudia"
+      },
+      "weekday": "Saturday",
+      "startTime": "17:00",
+      "endTime": "18:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Carnet from 12 EUR; monthly open 70 EUR",
+        "it": "Carnet from 12 EUR; monthly open 70 EUR"
+      }
+    },
+    {
+      "templateId": "sch28",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "massimiliano-provenzano",
+      "categorySlug": "yoga",
+      "styleSlug": "hatha",
+      "title": {
+        "en": "Hatha Yoga with Max",
+        "it": "Hatha Yoga con Max"
+      },
+      "weekday": "Sunday",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Carnet from 12 EUR; monthly open 70 EUR",
+        "it": "Carnet from 12 EUR; monthly open 70 EUR"
+      }
+    },
+    {
+      "templateId": "sch39",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "barbara-faludi",
+      "categorySlug": "yoga",
+      "styleSlug": "kids-yoga",
+      "title": {
+        "en": "Kids Yoga",
+        "it": "Yoga per Bimbi"
+      },
+      "weekday": "Sunday",
+      "startTime": "11:30",
+      "endTime": "12:30",
+      "level": "beginner",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Included in studio memberships or passes",
+        "it": "Included in studio memberships or passes"
+      }
+    },
+    {
+      "templateId": "sch33",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "veronica-zarbo",
+      "categorySlug": "yoga",
+      "styleSlug": "vinyasa",
+      "title": {
+        "en": "Vinyasa with Veronica",
+        "it": "Vinyasa con Veronica"
+      },
+      "weekday": "Thursday",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Carnet from 12 EUR; monthly open 70 EUR",
+        "it": "Carnet from 12 EUR; monthly open 70 EUR"
+      }
+    },
+    {
+      "templateId": "sch35",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "claudia-santamarina",
+      "categorySlug": "yoga",
+      "styleSlug": "vinyasa",
+      "title": {
+        "en": "Vinyasa Yoga with Claudia",
+        "it": "Vinyasa Yoga con Claudia"
+      },
+      "weekday": "Thursday",
+      "startTime": "19:30",
+      "endTime": "20:30",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Carnet from 12 EUR; monthly open 70 EUR",
+        "it": "Carnet from 12 EUR; monthly open 70 EUR"
+      }
+    },
+    {
+      "templateId": "sch32",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "veronica-zarbo",
+      "categorySlug": "yoga",
+      "styleSlug": "vinyasa",
+      "title": {
+        "en": "Vinyasa with Veronica",
+        "it": "Vinyasa con Veronica"
+      },
+      "weekday": "Tuesday",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Carnet from 12 EUR; monthly open 70 EUR",
+        "it": "Carnet from 12 EUR; monthly open 70 EUR"
+      }
+    },
+    {
+      "templateId": "sch34",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "claudia-santamarina",
+      "categorySlug": "yoga",
+      "styleSlug": "vinyasa",
+      "title": {
+        "en": "Vinyasa Yoga with Claudia",
+        "it": "Vinyasa Yoga con Claudia"
+      },
+      "weekday": "Tuesday",
+      "startTime": "19:30",
+      "endTime": "20:30",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Carnet from 12 EUR; monthly open 70 EUR",
+        "it": "Carnet from 12 EUR; monthly open 70 EUR"
+      }
+    },
+    {
+      "templateId": "sch22",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "barbara-faludi",
+      "categorySlug": "yoga",
+      "styleSlug": "hatha",
+      "title": {
+        "en": "Hatha Yoga with Barbara",
+        "it": "Hatha Yoga con Barbara"
+      },
+      "weekday": "Wednesday",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Carnet from 12 EUR; monthly open 70 EUR",
+        "it": "Carnet from 12 EUR; monthly open 70 EUR"
+      }
+    },
+    {
+      "templateId": "sch27",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "massimiliano-provenzano",
+      "categorySlug": "yoga",
+      "styleSlug": "hatha",
+      "title": {
+        "en": "Hatha Yoga with Max",
+        "it": "Hatha Yoga con Max"
+      },
+      "weekday": "Wednesday",
+      "startTime": "13:30",
+      "endTime": "14:30",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Carnet from 12 EUR; monthly open 70 EUR",
+        "it": "Carnet from 12 EUR; monthly open 70 EUR"
+      }
+    },
+    {
+      "templateId": "sch25",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "barbara-faludi",
+      "categorySlug": "yoga",
+      "styleSlug": "hatha",
+      "title": {
+        "en": "Hatha Yoga with Barbara",
+        "it": "Hatha Yoga con Barbara"
+      },
+      "weekday": "Wednesday",
+      "startTime": "18:00",
+      "endTime": "19:00",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Carnet from 12 EUR; monthly open 70 EUR",
+        "it": "Carnet from 12 EUR; monthly open 70 EUR"
+      }
+    },
+    {
+      "templateId": "sch30",
+      "citySlug": "palermo",
+      "venueSlug": "yoga-your-life",
+      "instructorSlug": "domenico-di-chiara",
+      "categorySlug": "yoga",
+      "styleSlug": "vinyasa",
+      "title": {
+        "en": "Vinyasa Yoga with Domenico",
+        "it": "Vinyasa Yoga con Domenico"
+      },
+      "weekday": "Wednesday",
+      "startTime": "19:30",
+      "endTime": "20:30",
+      "level": "open",
+      "language": "Italian",
+      "format": "in_person",
+      "bookingTargetSlug": "yoga-your-life-whatsapp",
+      "sourceUrl": "https://www.barbarafaludiyoga.com/corsi-in-studio",
+      "lastVerifiedAt": "2026-03-10T12:00:00+01:00",
+      "verificationStatus": "verified",
+      "priceNote": {
+        "en": "Carnet from 12 EUR; monthly open 70 EUR",
+        "it": "Carnet from 12 EUR; monthly open 70 EUR"
+      }
+    }
+  ]
+}

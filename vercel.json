@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/freshness?city=palermo",
+      "schedule": "5 4 * * *"
+    }
+  ]
+}
