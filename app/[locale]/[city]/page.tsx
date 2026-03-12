@@ -21,11 +21,43 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
   const neighborhoods = getNeighborhoods(citySlug);
   const collections = getCollections(citySlug);
   const user = await getSessionUser();
+  const copy =
+    locale === 'it'
+      ? {
+          weeklyClasses: 'Classi settimanali',
+          weeklyClassesDetail: 'Visibili nei prossimi sette giorni.',
+          studios: 'Studi',
+          studiosDetail: 'Verificati per la copertura Palermo v1.',
+          gatePassed: 'Superata',
+          gateBlocked: 'Bloccata',
+          featured: 'Classi in evidenza',
+          featuredTitle: 'Utili oggi, non in teoria.',
+          fullCalendar: 'Apri calendario completo',
+          categories: 'Categorie',
+          neighborhoods: 'Quartieri',
+          collections: 'Collezioni',
+          ctaCoverage: 'Copertura CTA'
+        }
+      : {
+          weeklyClasses: 'Weekly classes',
+          weeklyClassesDetail: 'Visible across the next seven days.',
+          studios: 'Studios',
+          studiosDetail: 'Verified for Palermo v1 coverage.',
+          gatePassed: 'Passed',
+          gateBlocked: 'Blocked',
+          featured: 'Featured classes',
+          featuredTitle: 'Useful now, not someday.',
+          fullCalendar: 'See full calendar',
+          categories: 'Categories',
+          neighborhoods: 'Neighborhoods',
+          collections: 'Collections',
+          ctaCoverage: 'CTA coverage'
+        };
 
   return (
-    <div className="stack-list">
-      <section className="city-hero">
-        <div className="hero-copy">
+    <div className="stack-list city-page">
+      <section className="city-hero city-hero-refresh">
+        <div className="hero-copy city-hero-main">
           <p className="eyebrow">{getLocaleLabel(locale, city.name)}</p>
           <h1>{getLocaleLabel(locale, city.hero)}</h1>
           <p>{dict.browseWithoutSignup}</p>
@@ -38,24 +70,28 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
             </Link>
           </div>
         </div>
-        <div className="hero-copy">
+        <div className="hero-copy city-hero-metrics">
           <div className="hero-metrics">
-            <StatCard label="Weekly classes" value={String(metrics.sessions)} detail="Visible across the next seven days." />
-            <StatCard label="Studios" value={String(metrics.venues)} detail="Verified for Palermo v1 coverage." />
-            <StatCard label={dict.supplyGate} value={readiness.passesGate ? 'Passed' : 'Blocked'} detail={`${Math.round(readiness.ctaCoverage * 100)}% CTA coverage`} />
+            <StatCard label={copy.weeklyClasses} value={String(metrics.sessions)} detail={copy.weeklyClassesDetail} />
+            <StatCard label={copy.studios} value={String(metrics.venues)} detail={copy.studiosDetail} />
+            <StatCard
+              label={dict.supplyGate}
+              value={readiness.passesGate ? copy.gatePassed : copy.gateBlocked}
+              detail={`${Math.round(readiness.ctaCoverage * 100)}% ${copy.ctaCoverage}`}
+            />
           </div>
         </div>
       </section>
 
-      <section className="detail-hero">
+      <section className="detail-hero city-detail-grid">
         <div className="panel">
           <div className="detail-header">
             <div>
-              <p className="eyebrow">Featured classes</p>
-              <h2>Useful now, not someday.</h2>
+              <p className="eyebrow">{copy.featured}</p>
+              <h2>{copy.featuredTitle}</h2>
             </div>
             <Link href={`/${locale}/${citySlug}/classes`} className="inline-link">
-              See full calendar
+              {copy.fullCalendar}
             </Link>
           </div>
           <div className="stack-list">
@@ -74,7 +110,7 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
         </div>
         <div className="stack-list">
           <div className="panel">
-            <p className="eyebrow">Categories</p>
+            <p className="eyebrow">{copy.categories}</p>
             <div className="card-grid">
               {categories.map((category) => (
                 <Link key={category.slug} href={`/${locale}/${citySlug}/categories/${category.slug}`} className="collection-card">
@@ -85,7 +121,7 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
             </div>
           </div>
           <div className="panel">
-            <p className="eyebrow">Neighborhoods</p>
+            <p className="eyebrow">{copy.neighborhoods}</p>
             <div className="card-grid">
               {neighborhoods.map((item) => (
                 <Link key={item.slug} href={`/${locale}/${citySlug}/neighborhoods/${item.slug}`} className="collection-card">
@@ -96,7 +132,7 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
             </div>
           </div>
           <div className="panel">
-            <p className="eyebrow">Collections</p>
+            <p className="eyebrow">{copy.collections}</p>
             <div className="stack-list">
               {collections.map((collection) => (
                 <Link key={collection.slug} href={`/${locale}/${citySlug}/collections/${collection.slug}`} className="collection-card">

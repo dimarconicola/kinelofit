@@ -20,11 +20,12 @@ export default async function NeighborhoodPage({ params }: { params: Promise<{ l
     .map((venueSlug) => getVenue(venueSlug))
     .filter((venue): venue is NonNullable<typeof venue> => Boolean(venue));
   const user = await getSessionUser();
+  const labels = locale === 'it' ? { neighborhood: 'Quartiere' } : { neighborhood: 'Neighborhood' };
 
   return (
     <div className="stack-list">
       <section className="panel">
-        <p className="eyebrow">Neighborhood</p>
+        <p className="eyebrow">{labels.neighborhood}</p>
         <h1>{neighborhood.name[locale]}</h1>
         <p className="lead">{neighborhood.description[locale]}</p>
       </section>

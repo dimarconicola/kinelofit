@@ -3,9 +3,9 @@ import { join } from 'node:path';
 
 import { and, desc, eq, inArray } from 'drizzle-orm';
 
-import type { ClaimSubmission, DigestSubscription, OutboundEvent } from '@/lib/catalog/types';
+import type { CalendarSubmission, ClaimSubmission, DigestSubscription, OutboundEvent } from '@/lib/catalog/types';
 import { getDb, isDatabaseConfigured } from '@/lib/data/db';
-import { claims, digestSubscriptions, favorites, outboundClicks } from '@/lib/data/schema';
+import { calendarSubmissions, claims, digestSubscriptions, favorites, outboundClicks } from '@/lib/data/schema';
 
 type FavoriteEntityType = 'venue' | 'session' | 'instructor';
 type StoredEntityType = FavoriteEntityType | 'schedule';
@@ -83,6 +83,50 @@ export const listClaims = async (): Promise<ClaimSubmission[]> => {
     email: row.email,
     role: row.role,
     notes: row.notes,
+    createdAt: toIso(row.createdAt)
+  }));
+};
+
+export const appendCalendarSubmission = async (payload: CalendarSubmission) => {
+  const db = getDb();
+  if (!db) {
+    const items = await readCollection<CalendarSubmission>('calendar-submissions');
+    items.unshift(payload);
+    await writeCollection('calendar-submissions', items);
+    return;
+  }
+
+  await db.insert(calendarSubmissions).values({
+    locale: payload.locale,
+    citySlug: payload.citySlug,
+    submitterType: payload.submitterType,
+    organizationName: payload.organizationName,
+    contactName: payload.contactName,
+    email: payload.email,
+    phone: payload.phone ?? null,
+    sourceUrls: payload.sourceUrls,
+    scheduleText: payload.scheduleText,
+    consent: payload.consent,
+    createdAt: new Date(payload.createdAt)
+  });
+};
+
+export const listCalendarSubmissions = async (): Promise<CalendarSubmission[]> => {
+  const db = getDb();
+  if (!db) return readCollection<CalendarSubmission>('calendar-submissions');
+
+  const rows = await db.select().from(calendarSubmissions).orderBy(desc(calendarSubmissions.createdAt)).limit(500);
+  return rows.map((row) => ({
+    locale: row.locale as 'en' | 'it',
+    citySlug: row.citySlug,
+    submitterType: row.submitterType as 'studio' | 'teacher',
+    organizationName: row.organizationName,
+    contactName: row.contactName,
+    email: row.email,
+    phone: row.phone ?? undefined,
+    sourceUrls: row.sourceUrls,
+    scheduleText: row.scheduleText,
+    consent: row.consent,
     createdAt: toIso(row.createdAt)
   }));
 };

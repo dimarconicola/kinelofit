@@ -1,9 +1,10 @@
-import { isPersistentStoreConfigured, listClaims, listDigestSubscriptions, listOutboundEvents } from '@/lib/runtime/store';
+import { isPersistentStoreConfigured, listCalendarSubmissions, listClaims, listDigestSubscriptions, listOutboundEvents } from '@/lib/runtime/store';
 import { resolveLocale } from '@/lib/i18n/routing';
 
 export default async function AdminClaimsPage({ params }: { params: Promise<{ locale: string }> }) {
   resolveLocale((await params).locale);
   const claims = await listClaims();
+  const submissions = await listCalendarSubmissions();
   const digests = await listDigestSubscriptions();
   const outbound = await listOutboundEvents();
 
@@ -24,6 +25,19 @@ export default async function AdminClaimsPage({ params }: { params: Promise<{ lo
                 <span className="muted">{claim.notes}</span>
               </div>
             )) : <p className="muted">No claims yet.</p>}
+          </div>
+        </div>
+        <div className="panel">
+          <p className="eyebrow">Calendar submissions</p>
+          <div className="stack-list">
+            {submissions.length > 0 ? submissions.map((submission) => (
+              <div className="metric-card" key={`${submission.email}-${submission.createdAt}`}>
+                <strong>{submission.organizationName} · {submission.submitterType}</strong>
+                <span className="muted">{submission.contactName} · {submission.email}</span>
+                <span className="muted">{submission.sourceUrls.join(' · ')}</span>
+                <span className="muted">{submission.scheduleText}</span>
+              </div>
+            )) : <p className="muted">No calendar submissions yet.</p>}
           </div>
         </div>
         <div className="panel">

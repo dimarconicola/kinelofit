@@ -7,6 +7,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   ['en', 'it'].forEach((locale) => {
     entries.push({ url: `http://localhost:3000/${locale}` });
+    entries.push({ url: `http://localhost:3000/${locale}/who-we-are` });
+    entries.push({ url: `http://localhost:3000/${locale}/suggest-calendar` });
     getPublicCities().forEach((city) => {
       entries.push({ url: `http://localhost:3000/${locale}/${city.slug}` });
       entries.push({ url: `http://localhost:3000/${locale}/${city.slug}/classes` });

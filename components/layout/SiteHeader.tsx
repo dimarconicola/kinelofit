@@ -17,33 +17,35 @@ export function SiteHeader({ locale, dict, signedInEmail }: SiteHeaderProps) {
   const alternate = locale === 'en' ? 'it' : 'en';
 
   return (
-    <header className="site-shell site-header">
-      <Link href={`/${locale}`} className="brand-mark">
-        <span className="brand-orbit" />
-        <span>{dict.brand}</span>
-      </Link>
-      <nav className="site-nav">
-        <Link href={`/${locale}/palermo/classes`}>{dict.classes}</Link>
-        <Link href={`/${locale}/favorites`}>{dict.favorites}</Link>
-        <Link href={`/${locale}/schedule`}>{dict.schedule}</Link>
-        <Link href={`/${locale}/admin`}>{dict.admin}</Link>
-      </nav>
-      <div className="site-actions">
-        <Link href={switchLocalePath(pathname, alternate)} className="ghost-link">
-          {alternate.toUpperCase()}
+    <header className="site-header-wrap">
+      <div className="site-shell site-header">
+        <Link href={`/${locale}`} className="brand-mark">
+          <span className="brand-orbit" />
+          <span className="brand-word">{dict.brand}</span>
         </Link>
-        {signedInEmail ? (
-          <form action="/api/auth/signout" method="post">
-            <input type="hidden" name="locale" value={locale} />
-            <button className="button button-ghost" type="submit">
-              {signedInEmail}
-            </button>
-          </form>
-        ) : (
-          <Link href={`/${locale}/sign-in`} className="button button-ghost">
-            {dict.signIn}
+        <nav className="site-nav site-nav-primary">
+          <Link href={`/${locale}/palermo/classes`}>{dict.classes}</Link>
+          <Link href={`/${locale}/suggest-calendar`}>{dict.suggestCalendar}</Link>
+          <Link href={`/${locale}/favorites`}>{dict.favorites}</Link>
+          <Link href={`/${locale}/schedule`}>{dict.schedule}</Link>
+        </nav>
+        <div className="site-actions site-actions-primary">
+          <Link href={switchLocalePath(pathname, alternate)} className="locale-toggle">
+            {alternate.toUpperCase()}
           </Link>
-        )}
+          {signedInEmail ? (
+            <form action="/api/auth/signout" method="post">
+              <input type="hidden" name="locale" value={locale} />
+              <button className="button button-ghost button-account" type="submit">
+                {signedInEmail}
+              </button>
+            </form>
+          ) : (
+            <Link href={`/${locale}/sign-in`} className="button button-primary button-signin">
+              {dict.signIn}
+            </Link>
+          )}
+        </div>
       </div>
     </header>
   );

@@ -60,6 +60,7 @@ export const parseFilters = (searchParams: Record<string, string | string[] | un
     language: one(searchParams.language),
     neighborhood: one(searchParams.neighborhood),
     format: one(searchParams.format) as DiscoveryFilters['format'],
-    open_now: one(searchParams.open_now) as DiscoveryFilters['open_now']
+    open_now: one(searchParams.open_now) as DiscoveryFilters['open_now'],
+    view: one(searchParams.view) as DiscoveryFilters['view']
   };
 };

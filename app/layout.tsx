@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import './globals.css';
+import { defaultLocale } from '@/lib/catalog/data';
 import { env } from '@/lib/env';
 
 export const metadata: Metadata = {
@@ -14,12 +15,15 @@ export const metadata: Metadata = {
     title: 'kinelo.fit',
     description: 'Find the right yoga and mind-body class in your city.',
     type: 'website'
+  },
+  icons: {
+    icon: '/icon.svg'
   }
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang={defaultLocale}>
       <body>{children}</body>
     </html>
   );

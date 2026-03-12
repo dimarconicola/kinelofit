@@ -212,7 +212,7 @@ export function FilterBar({
         </label>
         <label className="filter-checkbox">
           <input type="checkbox" name="open_now" value="true" defaultChecked={filters.open_now === 'true'} />
-          {labels.openNow}
+          <span>{labels.openNow}</span>
         </label>
       </div>
 

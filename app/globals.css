@@ -928,3 +928,339 @@ main.site-main {
     align-items: flex-start;
   }
 }
+
+/* UI refresh inspired by local "UI inspiration" repo */
+:root {
+  --bg: #f9f8f6;
+  --bg-strong: #f1efe9;
+  --panel: rgba(255, 255, 255, 0.9);
+  --panel-strong: #ffffff;
+  --text: #2c302e;
+  --muted: #5f6662;
+  --line: rgba(44, 48, 46, 0.12);
+  --brand: #4a5d4e;
+  --brand-deep: #37463b;
+  --sea: #3b6f74;
+  --olive: #4a5d4e;
+  --shadow: 0 24px 52px rgba(35, 39, 36, 0.12);
+  --radius: 30px;
+  --radius-sm: 20px;
+  --display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --body: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(212, 223, 208, 0.5), transparent 34%),
+    radial-gradient(circle at top right, rgba(232, 220, 196, 0.35), transparent 30%),
+    linear-gradient(180deg, #fdfcf9 0%, var(--bg) 45%, #f1f0eb 100%);
+  color: var(--text);
+}
+
+.site-header-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(44, 48, 46, 0.08);
+  background: rgba(249, 248, 246, 0.78);
+}
+
+.site-header {
+  min-height: 4.4rem;
+  padding: 0.75rem 0;
+}
+
+.brand-mark {
+  gap: 0.65rem;
+}
+
+.brand-word {
+  font-size: 1.45rem;
+  color: var(--brand);
+  letter-spacing: 0.01em;
+}
+
+.brand-orbit {
+  width: 0.9rem;
+  height: 0.9rem;
+  background: linear-gradient(145deg, #d4dfd0, #4a5d4e);
+  box-shadow: 0 0 0 8px rgba(74, 93, 78, 0.12);
+}
+
+.site-nav-primary a {
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.93rem;
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
+}
+
+.site-nav-primary a:hover {
+  color: var(--brand-deep);
+  border-color: rgba(74, 93, 78, 0.24);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.site-actions-primary {
+  align-items: center;
+}
+
+.locale-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.45rem;
+  min-height: 2.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--muted);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.button {
+  min-height: 2.6rem;
+}
+
+.button-primary {
+  background: linear-gradient(140deg, #4a5d4e, #5e7462);
+  color: #fff;
+}
+
+.button-primary:hover {
+  background: linear-gradient(140deg, #3f4f43, #556759);
+}
+
+.button-signin {
+  padding-inline: 1.1rem;
+}
+
+.button-account {
+  max-width: 13rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.button-ghost {
+  border-color: rgba(44, 48, 46, 0.16);
+  background: rgba(255, 255, 255, 0.68);
+}
+
+.hero,
+.city-hero,
+.classes-hero,
+.detail-hero,
+.locale-home-grid,
+.discovery-layout,
+.collection-layout {
+  gap: 1.25rem;
+}
+
+.hero-copy,
+.panel {
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(172deg, rgba(255, 255, 255, 0.94), rgba(249, 248, 246, 0.8)),
+    radial-gradient(circle at top right, rgba(212, 223, 208, 0.16), transparent 42%);
+  box-shadow: var(--shadow);
+}
+
+.hero-copy-primary,
+.city-hero-main {
+  padding: clamp(1.6rem, 3.4vw, 2.6rem);
+}
+
+.hero-copy-secondary,
+.city-hero-metrics {
+  padding: clamp(1.25rem, 2.7vw, 1.9rem);
+}
+
+.hero-copy h1,
+.city-hero h1,
+.page-header h1 {
+  line-height: 0.96;
+}
+
+.metric-card,
+.city-card,
+.collection-card,
+.admin-link,
+.list-link {
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(44, 48, 46, 0.1);
+}
+
+.metric-card {
+  padding: 1rem 1.05rem;
+}
+
+.metric-card strong {
+  margin-bottom: 0.35rem;
+  line-height: 1.35;
+}
+
+.metric-card .muted {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.site-actions {
+  row-gap: 0.65rem;
+}
+
+.classes-hero-badges {
+  margin: 0.25rem 0 0.85rem;
+  row-gap: 0.55rem;
+}
+
+.classes-hero-actions {
+  margin-top: 0.35rem;
+}
+
+.meta-pill {
+  border: 1px solid rgba(74, 93, 78, 0.16);
+  background: rgba(74, 93, 78, 0.08);
+  color: var(--brand-deep);
+}
+
+.view-switcher-panel {
+  padding: 0.95rem 1rem;
+}
+
+.chip-option {
+  border-color: rgba(44, 48, 46, 0.16);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.chip-option-active {
+  border-color: rgba(74, 93, 78, 0.3);
+  background: rgba(74, 93, 78, 0.14);
+  color: var(--brand-deep);
+}
+
+.filter-grid {
+  row-gap: 0.95rem;
+}
+
+.filter-grid label {
+  font-size: 0.95rem;
+}
+
+.filter-grid select,
+.form-stack input,
+.form-stack textarea,
+.digest-form input {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.filter-checkbox {
+  align-items: flex-start;
+  white-space: normal;
+  line-height: 1.35;
+}
+
+.filter-checkbox span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.filter-panel-actions-bottom {
+  margin-top: 0.4rem;
+  justify-content: flex-start;
+}
+
+.filter-chip,
+.quick-filter-link {
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.collection-order-panel h2 {
+  margin: 0.1rem 0 0.35rem;
+}
+
+.collection-order-panel .lead {
+  margin: 0 0 0.7rem;
+}
+
+.map-shell,
+.session-day-group,
+.classes-stat-card,
+.map-venue-item {
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.session-card {
+  border-color: rgba(44, 48, 46, 0.12);
+  background:
+    linear-gradient(170deg, rgba(255, 255, 255, 0.94), rgba(248, 246, 241, 0.82)),
+    radial-gradient(circle at top right, rgba(212, 223, 208, 0.26), transparent 44%);
+  box-shadow: 0 14px 34px rgba(35, 39, 36, 0.1);
+}
+
+.session-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(74, 93, 78, 0.24);
+  box-shadow: 0 18px 42px rgba(35, 39, 36, 0.14);
+}
+
+.session-time-block {
+  background:
+    linear-gradient(160deg, rgba(74, 93, 78, 0.96), rgba(84, 111, 88, 0.9)),
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.24), transparent 45%);
+}
+
+.site-footer-wrap {
+  margin-top: 2.2rem;
+  border-top: 1px solid rgba(44, 48, 46, 0.1);
+  background: rgba(249, 248, 246, 0.78);
+}
+
+.site-footer {
+  padding: 1.45rem 0 1.8rem;
+}
+
+.footer-title {
+  color: var(--brand);
+}
+
+.footer-copy {
+  margin: 0.35rem 0 0;
+}
+
+.footer-links a {
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.footer-links a:hover {
+  border-color: rgba(74, 93, 78, 0.24);
+  background: rgba(255, 255, 255, 0.68);
+  color: var(--brand-deep);
+}
+
+@media (max-width: 960px) {
+  .site-header {
+    gap: 0.7rem;
+    align-items: flex-start;
+  }
+
+  .site-nav-primary {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+  }
+
+  .site-nav-primary a {
+    white-space: nowrap;
+  }
+
+  .site-actions-primary {
+    margin-left: auto;
+  }
+}

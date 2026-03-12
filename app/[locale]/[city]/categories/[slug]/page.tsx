@@ -16,11 +16,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ local
   if (!category || category.visibility === 'hidden') notFound();
   const sessions = getCategorySessions(citySlug, slug);
   const user = await getSessionUser();
+  const labels = locale === 'it' ? { category: 'Categoria' } : { category: 'Category' };
 
   return (
     <div className="stack-list">
       <section className="panel">
-        <p className="eyebrow">Category</p>
+        <p className="eyebrow">{labels.category}</p>
         <h1>{category.name[locale]}</h1>
         <p className="lead">{category.description[locale]}</p>
         <p className="muted">{category.heroMetric[locale]}</p>
