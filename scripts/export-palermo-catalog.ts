@@ -134,6 +134,12 @@ type AppRecurringSession = {
   sourceUrl: string;
   lastVerifiedAt: string;
   verificationStatus: 'verified';
+  audience: 'adults' | 'kids' | 'families' | 'mixed';
+  attendanceModel: 'drop_in' | 'trial' | 'cycle' | 'term';
+  ageMin?: number;
+  ageMax?: number;
+  ageBand?: '0-2' | '3-5' | '6-10' | '11-14' | 'mixed-kids';
+  guardianRequired?: boolean;
   priceNote?: Localized;
 };
 
@@ -163,6 +169,12 @@ type AppSessionInstance = {
   sourceUrl: string;
   lastVerifiedAt: string;
   verificationStatus: 'verified';
+  audience: 'adults' | 'kids' | 'families' | 'mixed';
+  attendanceModel: 'drop_in' | 'trial' | 'cycle' | 'term';
+  ageMin?: number;
+  ageMax?: number;
+  ageBand?: '0-2' | '3-5' | '6-10' | '11-14' | 'mixed-kids';
+  guardianRequired?: boolean;
   priceNote?: Localized;
 };
 
@@ -769,6 +781,32 @@ const deriveFormat = (raw: string): AppRecurringSession['format'] => {
   return 'in_person';
 };
 
+const deriveAudience = (row: ResearchSchedule): AppRecurringSession['audience'] => {
+  const key = `${row.offering_title} ${row.offering_style ?? ''} ${row.offering_audience ?? ''}`.toLowerCase();
+  if (key.includes('bimbi') || key.includes('bambin') || key.includes('kids') || key.includes('children')) return 'kids';
+  if (key.includes('family') || key.includes('famigl')) return 'families';
+  return 'adults';
+};
+
+const deriveAttendanceModel = (row: ResearchSchedule, audience: AppRecurringSession['audience']): AppRecurringSession['attendanceModel'] => {
+  const text = `${row.pricing_text ?? ''} ${row.offering_description ?? ''} ${row.offering_title}`.toLowerCase();
+  if (text.includes('trimestr') || text.includes('annuale') || text.includes('stagione')) return 'term';
+  if (text.includes('pacchetto') || text.includes('ciclo')) return 'cycle';
+  if (text.includes('prova')) return 'trial';
+  return audience === 'kids' ? 'cycle' : 'drop_in';
+};
+
+const deriveKidsRange = (styleSlug: string, audience: AppRecurringSession['audience']) => {
+  if (audience !== 'kids') return {};
+  if (styleSlug === 'kids-capoeira') return { ageMin: 6, ageMax: 14, ageBand: 'mixed-kids' as const, guardianRequired: false };
+  if (styleSlug === 'kids-dance-pedagogy') return { ageMin: 3, ageMax: 4, ageBand: '3-5' as const, guardianRequired: true };
+  if (styleSlug === 'kids-contemporary-dance' || styleSlug === 'kids-dance-foundations') {
+    return { ageMin: 6, ageMax: 10, ageBand: '6-10' as const, guardianRequired: true };
+  }
+  if (styleSlug === 'kids-yoga') return { ageMin: 6, ageMax: 14, ageBand: 'mixed-kids' as const, guardianRequired: false };
+  return { ageMin: 6, ageMax: 14, ageBand: 'mixed-kids' as const, guardianRequired: false };
+};
+
 const venueDefaultInstructor = new Map<string, string>();
 for (const instructor of appInstructors) {
   const venue = venueRows.find((row) => scheduleRows.some((schedule) => schedule.venue_id === row.id && schedule.instructor_id === instructorRows.find((item) => item.slug === instructor.slug)?.id));
@@ -795,6 +833,9 @@ const appRecurringSessions: AppRecurringSession[] = scheduleRows.map((row) => {
 
   const styleSlug = normalizeStyle(row.offering_style, row.offering_title, row.offering_category);
   usedStyleSlugs.add(styleSlug);
+  const audience = deriveAudience(row);
+  const attendanceModel = deriveAttendanceModel(row, audience);
+  const kidsRange = deriveKidsRange(styleSlug, audience);
 
   const session: AppRecurringSession = {
     templateId: row.schedule_id,
@@ -813,7 +854,13 @@ const appRecurringSessions: AppRecurringSession[] = scheduleRows.map((row) => {
     bookingTargetSlug: venue.bookingTargetOrder[0],
     sourceUrl: row.source_url,
     lastVerifiedAt: isoAtMidday(row.last_verified_at),
-    verificationStatus: 'verified'
+    verificationStatus: 'verified',
+    audience,
+    attendanceModel,
+    ageMin: kidsRange.ageMin,
+    ageMax: kidsRange.ageMax,
+    ageBand: kidsRange.ageBand,
+    guardianRequired: kidsRange.guardianRequired
   };
 
   if (row.pricing_text) {
@@ -968,6 +1015,12 @@ const generateSessionInstances = (templates: AppRecurringSession[]): AppSessionI
         sourceUrl: template.sourceUrl,
         lastVerifiedAt: template.lastVerifiedAt,
         verificationStatus: template.verificationStatus,
+        audience: template.audience,
+        attendanceModel: template.attendanceModel,
+        ageMin: template.ageMin,
+        ageMax: template.ageMax,
+        ageBand: template.ageBand,
+        guardianRequired: template.guardianRequired,
         priceNote: template.priceNote
       });
     }
@@ -1017,7 +1070,7 @@ for (const session of catalog.recurringSessions) {
 }
 
 for (const session of postgresSessions) {
-  postgresLines.push(`INSERT INTO sessions (id, city_slug, venue_slug, instructor_slug, category_slug, style_slug, title, start_at, end_at, level, language, format, booking_target_slug, source_url, last_verified_at, verification_status, price_note) VALUES (${sqlValue(session.id)}, ${sqlValue(session.citySlug)}, ${sqlValue(session.venueSlug)}, ${sqlValue(session.instructorSlug)}, ${sqlValue(session.categorySlug)}, ${sqlValue(session.styleSlug)}, ${jsonSql(session.title)}, ${sqlValue(session.startAt)}, ${sqlValue(session.endAt)}, ${sqlValue(session.level)}, ${sqlValue(session.language)}, ${sqlValue(session.format)}, ${sqlValue(session.bookingTargetSlug)}, ${sqlValue(session.sourceUrl)}, ${sqlValue(session.lastVerifiedAt)}, ${sqlValue(session.verificationStatus)}, ${session.priceNote ? jsonSql(session.priceNote) : 'NULL'}) ON CONFLICT (id) DO NOTHING;`);
+  postgresLines.push(`INSERT INTO sessions (id, city_slug, venue_slug, instructor_slug, category_slug, style_slug, title, start_at, end_at, level, language, format, booking_target_slug, source_url, last_verified_at, verification_status, audience, attendance_model, age_min, age_max, age_band, guardian_required, price_note) VALUES (${sqlValue(session.id)}, ${sqlValue(session.citySlug)}, ${sqlValue(session.venueSlug)}, ${sqlValue(session.instructorSlug)}, ${sqlValue(session.categorySlug)}, ${sqlValue(session.styleSlug)}, ${jsonSql(session.title)}, ${sqlValue(session.startAt)}, ${sqlValue(session.endAt)}, ${sqlValue(session.level)}, ${sqlValue(session.language)}, ${sqlValue(session.format)}, ${sqlValue(session.bookingTargetSlug)}, ${sqlValue(session.sourceUrl)}, ${sqlValue(session.lastVerifiedAt)}, ${sqlValue(session.verificationStatus)}, ${sqlValue(session.audience)}, ${sqlValue(session.attendanceModel)}, ${typeof session.ageMin === 'number' ? sqlValue(session.ageMin) : 'NULL'}, ${typeof session.ageMax === 'number' ? sqlValue(session.ageMax) : 'NULL'}, ${session.ageBand ? sqlValue(session.ageBand) : 'NULL'}, ${session.guardianRequired ? 'TRUE' : 'FALSE'}, ${session.priceNote ? jsonSql(session.priceNote) : 'NULL'}) ON CONFLICT (id) DO NOTHING;`);
 }
 
 for (const collection of collections) {

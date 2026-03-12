@@ -5,10 +5,11 @@ import { join } from 'node:path';
 import { and, desc, eq, inArray, isNull, lt, ne, or } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 
-import { sessions as seedSessions, venues as seedVenues } from '@/lib/catalog/seed';
+import type { SourceCadence, SourceRegistryEntry } from '@/lib/catalog/types';
 import { getDb, isDatabaseConfigured } from '@/lib/data/db';
-import { freshnessRuns, sessions, sourceRecords } from '@/lib/data/schema';
+import { discoveryLeads, freshnessRuns, sessions, sourceRecords, sourceRegistry } from '@/lib/data/schema';
 import { buildSessionTimeSignature, evaluateAdapterAutoReverify, getAdapterForSource, parseSourceWithAdapter } from '@/lib/freshness/adapters';
+import { cadenceIncludes, getSeedSourceRegistry, getSourceUrlsForCadence } from '@/lib/freshness/source-registry';
 
 const SOURCE_HEALTH_ENTITY = 'source_health';
 const SOURCE_PARSE_ENTITY = 'source_parse';
@@ -16,6 +17,7 @@ const TMP_DIR = '/tmp/kinelo-fit-freshness';
 const TMP_FILE = join(TMP_DIR, 'source-health.json');
 const DEFAULT_TIMEOUT_MS = 8000;
 const DEFAULT_CONCURRENCY = 4;
+const DEFAULT_CADENCE: SourceCadence = 'daily';
 
 type PriorSourceSignal = {
   hash: string;
@@ -37,6 +39,7 @@ export type SourceSignal = {
 
 export type FreshnessRunReport = {
   citySlug: string;
+  cadence: SourceCadence;
   checkedAt: string;
   totalSources: number;
   changedSources: number;
@@ -50,12 +53,15 @@ export type FreshnessRunReport = {
   staleByAge: number;
   brokenLinks: number;
   runStored: boolean;
+  registrySourcesSeeded: number;
+  discoveryLeadsDiscovered: number;
   mode: 'database' | 'ephemeral';
   impactedSourceUrls: string[];
 };
 
 export type FreshnessRunOptions = {
   citySlug: string;
+  cadence?: SourceCadence;
   dryRun?: boolean;
   timeoutMs?: number;
   maxSources?: number;
@@ -94,23 +100,7 @@ export const buildSourceSignalHash = (signal: Omit<SourceSignal, 'hash' | 'check
   return stableHash(basis);
 };
 
-export const getCitySourceUrls = (citySlug: string) => {
-  const sourceSet = new Set<string>();
-
-  for (const venue of seedVenues) {
-    if (venue.citySlug !== citySlug) continue;
-    const normalized = normalizeSourceUrl(venue.sourceUrl);
-    if (normalized) sourceSet.add(normalized);
-  }
-
-  for (const session of seedSessions) {
-    if (session.citySlug !== citySlug) continue;
-    const normalized = normalizeSourceUrl(session.sourceUrl);
-    if (normalized) sourceSet.add(normalized);
-  }
-
-  return Array.from(sourceSet).sort();
-};
+export const getCitySourceUrls = (citySlug: string) => getSourceUrlsForCadence(getSeedSourceRegistry(citySlug), 'daily');
 
 const timeoutFetch = async (input: string, init: RequestInit, timeoutMs: number) => {
   const controller = new AbortController();
@@ -268,14 +258,295 @@ const parseNumber = (value: string | null | undefined) => {
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
+const isSourceCadence = (value: string | null | undefined): value is SourceCadence =>
+  value === 'daily' || value === 'weekly' || value === 'quarterly';
+
+const resolveRunCadence = (value: SourceCadence | undefined) => (isSourceCadence(value) ? value : DEFAULT_CADENCE);
+
+const isSupportedSourceType = (value: string): SourceRegistryEntry['sourceType'] =>
+  value === 'official_site' || value === 'events_calendar' || value === 'directory' || value === 'social' || value === 'community_board'
+    ? value
+    : 'official_site';
+
+const isSupportedSourcePurpose = (value: string): SourceRegistryEntry['purpose'] => (value === 'discovery' ? 'discovery' : 'catalog');
+
+const isSupportedTrustTier = (value: string): SourceRegistryEntry['trustTier'] =>
+  value === 'tier_a' || value === 'tier_b' || value === 'tier_c' ? value : 'tier_b';
+
+const toSourceRegistryEntry = (
+  row: typeof sourceRegistry.$inferSelect
+): SourceRegistryEntry => ({
+  citySlug: row.citySlug,
+  sourceUrl: row.sourceUrl,
+  sourceType: isSupportedSourceType(row.sourceType),
+  cadence: row.cadence as SourceCadence,
+  trustTier: isSupportedTrustTier(row.trustTier),
+  purpose: isSupportedSourcePurpose(row.purpose),
+  parserAdapter: row.parserAdapter ?? undefined,
+  tags: row.tags,
+  active: row.active,
+  notes: row.notes ?? undefined,
+  lastCheckedAt: row.lastCheckedAt?.toISOString(),
+  nextCheckAt: row.nextCheckAt?.toISOString()
+});
+
+const ensureSourceRegistrySeed = async (citySlug: string) => {
+  const db = getDb();
+  if (!db) return 0;
+
+  const existing = await db
+    .select({ id: sourceRegistry.id })
+    .from(sourceRegistry)
+    .where(eq(sourceRegistry.citySlug, citySlug))
+    .limit(1);
+  if (existing.length > 0) return 0;
+
+  const seed = getSeedSourceRegistry(citySlug);
+  if (seed.length === 0) return 0;
+  const now = new Date();
+  const inserted = await db
+    .insert(sourceRegistry)
+    .values(
+      seed.map((entry) => ({
+        citySlug: entry.citySlug,
+        sourceUrl: entry.sourceUrl,
+        sourceType: entry.sourceType,
+        cadence: entry.cadence,
+        trustTier: entry.trustTier,
+        purpose: entry.purpose,
+        parserAdapter: entry.parserAdapter ?? null,
+        tags: entry.tags,
+        active: entry.active,
+        notes: entry.notes ?? null,
+        lastCheckedAt: null,
+        nextCheckAt: null,
+        createdAt: now,
+        updatedAt: now
+      }))
+    )
+    .onConflictDoNothing()
+    .returning({ id: sourceRegistry.id });
+
+  return inserted.length;
+};
+
+const loadSourcesForRun = async (citySlug: string, runCadence: SourceCadence, useDb: boolean) => {
+  if (!useDb) {
+    const fallback = getSeedSourceRegistry(citySlug);
+    return {
+      sourceEntries: fallback,
+      sourceUrls: getSourceUrlsForCadence(fallback, runCadence),
+      registrySourcesSeeded: 0
+    };
+  }
+
+  const registrySourcesSeeded = await ensureSourceRegistrySeed(citySlug);
+  const db = getDb();
+  if (!db) {
+    const fallback = getSeedSourceRegistry(citySlug);
+    return {
+      sourceEntries: fallback,
+      sourceUrls: getSourceUrlsForCadence(fallback, runCadence),
+      registrySourcesSeeded
+    };
+  }
+
+  const rows = await db
+    .select()
+    .from(sourceRegistry)
+    .where(and(eq(sourceRegistry.citySlug, citySlug), eq(sourceRegistry.active, true)))
+    .orderBy(sourceRegistry.sourceUrl);
+
+  const sourceEntries = rows.map(toSourceRegistryEntry);
+  if (sourceEntries.length === 0) {
+    const fallback = getSeedSourceRegistry(citySlug);
+    return {
+      sourceEntries: fallback,
+      sourceUrls: getSourceUrlsForCadence(fallback, runCadence),
+      registrySourcesSeeded
+    };
+  }
+
+  return {
+    sourceEntries,
+    sourceUrls: getSourceUrlsForCadence(sourceEntries, runCadence),
+    registrySourcesSeeded
+  };
+};
+
+type DiscoveryCandidate = {
+  sourceUrl: string;
+  title: string;
+  snippet: string;
+  discoveredFromUrl: string;
+  confidence: number;
+  tags: string[];
+  lastSeenAt: string;
+};
+
+const discoveryKeywords: Record<string, string> = {
+  kids: 'kids',
+  bimbi: 'kids',
+  bambini: 'kids',
+  yoga: 'yoga',
+  circo: 'circo',
+  circomotricita: 'circo',
+  danza: 'dance',
+  capoeira: 'capoeira',
+  teatro: 'theater',
+  palermo: 'palermo',
+  martial: 'martial',
+  marzial: 'martial'
+};
+
+const stripHtml = (value: string) =>
+  value
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const parseTitleFromHtml = (html: string) => {
+  const match = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  return match ? stripHtml(match[1]) : 'Untitled source';
+};
+
+const extractDiscoveryCandidates = (html: string, discoveredFromUrl: string): DiscoveryCandidate[] => {
+  const candidates = new Map<string, DiscoveryCandidate>();
+  const linkRegex = /<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  let match: RegExpExecArray | null;
+
+  while ((match = linkRegex.exec(html)) !== null) {
+    const href = match[1]?.trim();
+    if (!href || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) continue;
+
+    const resolved = normalizeSourceUrl(new URL(href, discoveredFromUrl).toString());
+    if (!resolved || resolved === normalizeSourceUrl(discoveredFromUrl)) continue;
+    if (resolved.includes('/wp-content/') || resolved.includes('/wp-json/')) continue;
+
+    const anchor = stripHtml(match[2] ?? '');
+    const key = `${resolved} ${anchor}`.toLowerCase();
+    const matchedTags = new Set<string>();
+
+    for (const [needle, tag] of Object.entries(discoveryKeywords)) {
+      if (key.includes(needle)) matchedTags.add(tag);
+    }
+
+    // Keep quarterly sweep scoped to Palermo and activity-like signals.
+    if (!matchedTags.has('palermo')) continue;
+    if (![...matchedTags].some((tag) => tag !== 'palermo')) continue;
+
+    const confidence = Math.min(0.99, 0.25 + matchedTags.size * 0.12);
+    const title = anchor.length > 0 ? anchor.slice(0, 200) : resolved;
+    const snippet = `Quarterly sweep candidate from ${new URL(discoveredFromUrl).hostname}`;
+    const previous = candidates.get(resolved);
+
+    if (!previous || previous.confidence < confidence) {
+      candidates.set(resolved, {
+        sourceUrl: resolved,
+        title,
+        snippet,
+        discoveredFromUrl,
+        confidence,
+        tags: [...matchedTags],
+        lastSeenAt: new Date().toISOString()
+      });
+    }
+  }
+
+  return Array.from(candidates.values());
+};
+
+const runQuarterlyDiscoverySweep = async (
+  citySlug: string,
+  sourceEntries: SourceRegistryEntry[],
+  timeoutMs: number,
+  useDb: boolean,
+  dryRun: boolean
+) => {
+  const quarterlyDiscoverySources = sourceEntries
+    .filter((entry) => entry.active && entry.purpose === 'discovery' && cadenceIncludes('quarterly', entry.cadence))
+    .map((entry) => entry.sourceUrl);
+
+  if (quarterlyDiscoverySources.length === 0) return 0;
+
+  const candidateBatches = await runWithConcurrency(
+    quarterlyDiscoverySources,
+    async (sourceUrl) => {
+      try {
+        const response = await timeoutFetch(
+          sourceUrl,
+          {
+            method: 'GET',
+            redirect: 'follow',
+            cache: 'no-store',
+            headers: {
+              'user-agent': 'kinelo.fit-discovery/1.0'
+            }
+          },
+          timeoutMs
+        );
+        if (!response.ok) return [] as DiscoveryCandidate[];
+        const html = await response.text();
+        const baseCandidate: DiscoveryCandidate = {
+          sourceUrl: normalizeSourceUrl(response.url || sourceUrl) ?? sourceUrl,
+          title: parseTitleFromHtml(html),
+          snippet: `Quarterly source scanned for ${citySlug}.`,
+          discoveredFromUrl: sourceUrl,
+          confidence: 0.55,
+          tags: ['palermo', 'quarterly-source'],
+          lastSeenAt: new Date().toISOString()
+        };
+        return [baseCandidate, ...extractDiscoveryCandidates(html, sourceUrl)];
+      } catch {
+        return [] as DiscoveryCandidate[];
+      }
+    },
+    2
+  );
+
+  const flattened = candidateBatches.flat();
+  if (flattened.length === 0 || dryRun) return flattened.length;
+  if (!useDb) return flattened.length;
+
+  const db = getDb();
+  if (!db) return flattened.length;
+
+  const inserted = await db
+    .insert(discoveryLeads)
+    .values(
+      flattened.map((candidate) => ({
+        citySlug,
+        sourceUrl: candidate.sourceUrl,
+        title: candidate.title,
+        snippet: candidate.snippet,
+        discoveredFromUrl: candidate.discoveredFromUrl,
+        status: 'new' as const,
+        confidence: candidate.confidence.toFixed(3),
+        tags: candidate.tags,
+        lastSeenAt: new Date(candidate.lastSeenAt),
+        createdAt: new Date()
+      }))
+    )
+    .onConflictDoNothing()
+    .returning({ id: discoveryLeads.id });
+
+  return inserted.length;
+};
+
+export const getCitySourceUrlsForCadence = (citySlug: string, cadence: SourceCadence) =>
+  getSourceUrlsForCadence(getSeedSourceRegistry(citySlug), cadence);
+
 export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Promise<FreshnessRunReport> => {
   const citySlug = toLowerSafe(options.citySlug);
+  const cadence = resolveRunCadence(options.cadence);
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
-  const sourceUrls = getCitySourceUrls(citySlug);
-  const slicedSources = typeof options.maxSources === 'number' ? sourceUrls.slice(0, options.maxSources) : sourceUrls;
-  const sourceSlugs = slicedSources.map((url) => buildSourceSlug(url));
   const db = getDb();
   const useDb = isDatabaseConfigured && Boolean(db);
+  const { sourceEntries, sourceUrls, registrySourcesSeeded } = await loadSourcesForRun(citySlug, cadence, useDb);
+  const slicedSources = typeof options.maxSources === 'number' ? sourceUrls.slice(0, options.maxSources) : sourceUrls;
+  const sourceSlugs = slicedSources.map((url) => buildSourceSlug(url));
 
   const priorSignals = useDb ? await loadPriorSignalsFromDatabase(sourceSlugs) : await mapFromLocalFile();
 
@@ -306,6 +577,7 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
   let staleByAge = 0;
   let brokenLinks = 0;
   let totalSessionsTracked = 0;
+  let discoveryLeadsDiscovered = 0;
   let runStored = false;
 
   if (!options.dryRun && useDb && db) {
@@ -328,6 +600,17 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
           lastVerifiedAt: new Date(signal.checkedAt)
         }))
       );
+    }
+
+    if (slicedSources.length > 0) {
+      const checkedAt = new Date();
+      await db
+        .update(sourceRegistry)
+        .set({
+          lastCheckedAt: checkedAt,
+          updatedAt: checkedAt
+        })
+        .where(and(eq(sourceRegistry.citySlug, citySlug), inArray(sourceRegistry.sourceUrl, slicedSources)));
     }
 
     if (impactedSourceUrls.length > 0) {
@@ -513,13 +796,19 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
       .where(eq(sessions.citySlug, citySlug));
     totalSessionsTracked = citySessionRows.length;
 
+    if (cadence === 'quarterly') {
+      discoveryLeadsDiscovered = await runQuarterlyDiscoverySweep(citySlug, sourceEntries, timeoutMs, useDb, Boolean(options.dryRun));
+    }
+
     const reportTimestamp = new Date();
     await db.insert(freshnessRuns).values({
       citySlug,
+      cadence,
       totalSessions: String(totalSessionsTracked),
       staleSessions: String(stalePromoted),
       brokenLinks: String(brokenLinks),
       notes: JSON.stringify({
+        cadence,
         totalSources: slicedSources.length,
         changedSources: changedSourceUrls.length,
         unreachableSources: unreachableSourceUrls.length,
@@ -528,6 +817,8 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
         adapterSignals,
         autoReverified,
         staleByAge,
+        registrySourcesSeeded,
+        discoveryLeadsDiscovered,
         checkedAt: reportTimestamp.toISOString()
       }),
       createdAt: reportTimestamp
@@ -536,11 +827,15 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
     runStored = true;
   } else if (!options.dryRun) {
     await writeLocalSignals(checkedSignals);
+    if (cadence === 'quarterly') {
+      discoveryLeadsDiscovered = await runQuarterlyDiscoverySweep(citySlug, sourceEntries, timeoutMs, useDb, Boolean(options.dryRun));
+    }
     runStored = true;
   }
 
   return {
     citySlug,
+    cadence,
     checkedAt: new Date().toISOString(),
     totalSources: slicedSources.length,
     changedSources: changedSourceUrls.length,
@@ -553,6 +848,8 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
     hiddenPromoted,
     staleByAge,
     brokenLinks,
+    registrySourcesSeeded,
+    discoveryLeadsDiscovered,
     runStored,
     mode: useDb ? 'database' : 'ephemeral',
     impactedSourceUrls
@@ -561,6 +858,7 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
 
 export type FreshnessRunSnapshot = {
   citySlug: string;
+  cadence: SourceCadence;
   totalSources: number;
   totalSessions: number;
   staleSessions: number;
@@ -571,6 +869,31 @@ export type FreshnessRunSnapshot = {
   adapterSourcesChecked: number;
   adapterSignals: number;
   autoReverified: number;
+  registrySourcesSeeded: number;
+  discoveryLeadsDiscovered: number;
+  createdAt: string;
+};
+
+export type SourceRegistrySnapshot = {
+  citySlug: string;
+  totalSources: number;
+  byCadence: Record<SourceCadence, number>;
+  byPurpose: { catalog: number; discovery: number };
+  entries: SourceRegistryEntry[];
+  mode: 'database' | 'seed';
+};
+
+export type DiscoveryLeadSummary = {
+  id: string;
+  citySlug: string;
+  sourceUrl: string;
+  title: string;
+  snippet?: string;
+  discoveredFromUrl: string;
+  status: 'new' | 'reviewed' | 'imported' | 'rejected';
+  confidence: number;
+  tags: string[];
+  lastSeenAt: string;
   createdAt: string;
 };
 
@@ -595,6 +918,8 @@ export const getLatestFreshnessSnapshot = async (citySlug: string): Promise<Fres
   let adapterSignals = 0;
   let autoReverified = 0;
   let totalSources = 0;
+  let registrySourcesSeeded = 0;
+  let discoveryLeadsDiscovered = 0;
 
   try {
     const notes = row.notes ? (JSON.parse(row.notes) as Record<string, unknown>) : {};
@@ -609,6 +934,16 @@ export const getLatestFreshnessSnapshot = async (citySlug: string): Promise<Fres
     );
     adapterSignals = parseNumber(typeof notes.adapterSignals === 'number' ? String(notes.adapterSignals) : (notes.adapterSignals as string | undefined));
     autoReverified = parseNumber(typeof notes.autoReverified === 'number' ? String(notes.autoReverified) : (notes.autoReverified as string | undefined));
+    registrySourcesSeeded = parseNumber(
+      typeof notes.registrySourcesSeeded === 'number'
+        ? String(notes.registrySourcesSeeded)
+        : (notes.registrySourcesSeeded as string | undefined)
+    );
+    discoveryLeadsDiscovered = parseNumber(
+      typeof notes.discoveryLeadsDiscovered === 'number'
+        ? String(notes.discoveryLeadsDiscovered)
+        : (notes.discoveryLeadsDiscovered as string | undefined)
+    );
   } catch {
     totalSources = 0;
     changedSources = 0;
@@ -617,10 +952,13 @@ export const getLatestFreshnessSnapshot = async (citySlug: string): Promise<Fres
     adapterSourcesChecked = 0;
     adapterSignals = 0;
     autoReverified = 0;
+    registrySourcesSeeded = 0;
+    discoveryLeadsDiscovered = 0;
   }
 
   return {
     citySlug: row.citySlug,
+    cadence: row.cadence as SourceCadence,
     totalSources,
     totalSessions: parseNumber(row.totalSessions),
     staleSessions: parseNumber(row.staleSessions),
@@ -631,6 +969,84 @@ export const getLatestFreshnessSnapshot = async (citySlug: string): Promise<Fres
     adapterSourcesChecked,
     adapterSignals,
     autoReverified,
+    registrySourcesSeeded,
+    discoveryLeadsDiscovered,
     createdAt: row.createdAt.toISOString()
   };
+};
+
+const summarizeRegistry = (entries: SourceRegistryEntry[]) => {
+  const byCadence: Record<SourceCadence, number> = { daily: 0, weekly: 0, quarterly: 0 };
+  const byPurpose = { catalog: 0, discovery: 0 };
+
+  for (const entry of entries) {
+    byCadence[entry.cadence] += 1;
+    byPurpose[entry.purpose] += 1;
+  }
+
+  return { byCadence, byPurpose };
+};
+
+export const getSourceRegistrySnapshot = async (citySlug: string): Promise<SourceRegistrySnapshot> => {
+  const normalizedCity = toLowerSafe(citySlug);
+  const db = getDb();
+
+  if (db) {
+    await ensureSourceRegistrySeed(normalizedCity);
+    const rows = await db
+      .select()
+      .from(sourceRegistry)
+      .where(and(eq(sourceRegistry.citySlug, normalizedCity), eq(sourceRegistry.active, true)))
+      .orderBy(sourceRegistry.cadence, sourceRegistry.sourceUrl);
+
+    const entries = rows.map(toSourceRegistryEntry);
+    const summary = summarizeRegistry(entries);
+
+    return {
+      citySlug: normalizedCity,
+      totalSources: entries.length,
+      byCadence: summary.byCadence,
+      byPurpose: summary.byPurpose,
+      entries,
+      mode: 'database'
+    };
+  }
+
+  const entries = getSeedSourceRegistry(normalizedCity).filter((entry) => entry.active);
+  const summary = summarizeRegistry(entries);
+  return {
+    citySlug: normalizedCity,
+    totalSources: entries.length,
+    byCadence: summary.byCadence,
+    byPurpose: summary.byPurpose,
+    entries,
+    mode: 'seed'
+  };
+};
+
+export const listDiscoveryLeadSummaries = async (citySlug: string, limit = 300): Promise<DiscoveryLeadSummary[]> => {
+  const normalizedCity = toLowerSafe(citySlug);
+  const db = getDb();
+  if (!db) return [];
+
+  const rows = await db
+    .select()
+    .from(discoveryLeads)
+    .where(eq(discoveryLeads.citySlug, normalizedCity))
+    .orderBy(desc(discoveryLeads.lastSeenAt))
+    .limit(limit);
+
+  return rows.map((row) => ({
+    id: row.id,
+    citySlug: row.citySlug,
+    sourceUrl: row.sourceUrl,
+    title: row.title,
+    snippet: row.snippet ?? undefined,
+    discoveredFromUrl: row.discoveredFromUrl,
+    status: row.status,
+    confidence: parseNumber(row.confidence),
+    tags: row.tags,
+    lastSeenAt: row.lastSeenAt.toISOString(),
+    createdAt: row.createdAt.toISOString()
+  }));
 };

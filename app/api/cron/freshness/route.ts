@@ -21,6 +21,11 @@ const parsePositiveNumber = (value: string | null) => {
   return intValue > 0 ? intValue : undefined;
 };
 
+const parseCadence = (value: string | null) => {
+  if (value === 'daily' || value === 'weekly' || value === 'quarterly') return value;
+  return undefined;
+};
+
 export async function GET(request: NextRequest) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 });
@@ -30,11 +35,13 @@ export async function GET(request: NextRequest) {
     const citySlug = request.nextUrl.searchParams.get('city') ?? 'palermo';
     const dryRun = request.nextUrl.searchParams.get('dryRun') === '1';
     const maxSources = parsePositiveNumber(request.nextUrl.searchParams.get('maxSources'));
+    const cadence = parseCadence(request.nextUrl.searchParams.get('cadence'));
 
     const report = await runDailyFreshnessCheck({
       citySlug,
       dryRun,
-      maxSources
+      maxSources,
+      cadence
     });
 
     return NextResponse.json({ ok: true, report }, { status: 200 });

@@ -34,7 +34,8 @@ export default async function AdminPage({ params }: { params: Promise<{ locale: 
       <section className="card-grid">
         <Link href={`/${locale}/admin/imports`} className="admin-link">Import spec and CSV validation</Link>
         <Link href={`/${locale}/admin/freshness`} className="admin-link">Freshness queue and broken-link review</Link>
-        <Link href={`/${locale}/admin/claims`} className="admin-link">Claim approvals and operator inbox</Link>
+        <Link href={`/${locale}/admin/sources`} className="admin-link">Source registry and discovery leads</Link>
+        <Link href={`/${locale}/admin/claims`} className="admin-link">Claims and calendar submissions inbox</Link>
         <Link href={`/${locale}/admin/collections`} className="admin-link">Editorial collections</Link>
         <Link href={`/${locale}/admin/taxonomy`} className="admin-link">Category visibility and city rules</Link>
       </section>

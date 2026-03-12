@@ -57,13 +57,16 @@ export default async function AdminFreshnessPage({ params }: { params: Promise<{
         {latestSnapshot ? (
           <p className="muted">
             Latest run {DateTime.fromISO(latestSnapshot.createdAt).toFormat('dd LLL yyyy HH:mm')} ·
+            Cadence {latestSnapshot.cadence} ·
             Sources checked {latestSnapshot.totalSources} ·
             Sessions tracked {latestSnapshot.totalSessions} ·
             Changed {latestSnapshot.changedSources} ·
             Unreachable {latestSnapshot.unreachableSources} ·
             Impacted {latestSnapshot.impactedSources} ·
             Adapter runs {latestSnapshot.adapterSourcesChecked} ·
-            Auto reverified {latestSnapshot.autoReverified}
+            Auto reverified {latestSnapshot.autoReverified} ·
+            Registry seeds {latestSnapshot.registrySourcesSeeded} ·
+            Discovery leads {latestSnapshot.discoveryLeadsDiscovered}
           </p>
         ) : (
           <p className="muted">No automated freshness run has been recorded yet.</p>

@@ -1,8 +1,16 @@
 {
   "crons": [
     {
-      "path": "/api/cron/freshness?city=palermo",
+      "path": "/api/cron/freshness?city=palermo&cadence=daily",
       "schedule": "5 4 * * *"
+    },
+    {
+      "path": "/api/cron/freshness?city=palermo&cadence=weekly",
+      "schedule": "25 4 * * 1"
+    },
+    {
+      "path": "/api/cron/freshness?city=palermo&cadence=quarterly",
+      "schedule": "40 5 1 1,4,7,10 *"
     }
   ]
 }

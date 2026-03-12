@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { buildSourceSignalHash, buildSourceSlug, getCitySourceUrls } from '@/lib/freshness/service';
+import { buildSourceSignalHash, buildSourceSlug, getCitySourceUrls, getCitySourceUrlsForCadence } from '@/lib/freshness/service';
 
 test('source slug is stable for semantically equivalent URLs', () => {
   const a = buildSourceSlug('https://example.com/path/');
@@ -38,4 +38,12 @@ test('city source list is deduplicated and non-empty for Palermo', () => {
   assert.ok(sources.length > 0);
   assert.equal(new Set(sources).size, sources.length);
   assert.equal(sources.every((url) => url.startsWith('http://') || url.startsWith('https://')), true);
+});
+
+test('cadence source lists expand from daily to quarterly', () => {
+  const daily = getCitySourceUrlsForCadence('palermo', 'daily');
+  const quarterly = getCitySourceUrlsForCadence('palermo', 'quarterly');
+  assert.ok(daily.length > 0);
+  assert.ok(quarterly.length >= daily.length);
+  assert.equal(quarterly.some((url) => url.includes('orangogo.it/sport/palermo')), true);
 });

@@ -3,15 +3,19 @@ import { DateTime } from 'luxon';
 import palermoCatalog from '@/data/research/palermo_app_catalog.json';
 import type {
   ActivityCategory,
+  AttendanceModel,
   BookingTarget,
   City,
   EditorialCollection,
   Instructor,
+  KidsAgeBand,
   Neighborhood,
   Session,
+  SessionAudience,
   Style,
   Venue
 } from '@/lib/catalog/types';
+import { deriveKidsAgeBand, inferKidsAgeRangeFromStyle, inferSessionAudience, normalizeAttendanceModel } from '@/lib/catalog/policy';
 
 const buildLocalized = (en: string, it: string) => ({ en, it });
 
@@ -33,6 +37,12 @@ type RecurringSessionTemplate = {
   sourceUrl: string;
   lastVerifiedAt: string;
   verificationStatus: 'verified';
+  audience?: SessionAudience;
+  attendanceModel?: AttendanceModel;
+  ageMin?: number;
+  ageMax?: number;
+  ageBand?: KidsAgeBand;
+  guardianRequired?: boolean;
   priceNote?: { en: string; it: string };
 };
 
@@ -1213,6 +1223,34 @@ const parseClock = (value: string) => {
   return { hour, minute };
 };
 
+const inferSessionMetadata = (template: RecurringSessionTemplate) => {
+  const categorySlug = template.styleSlug === 'kids-yoga' ? 'kids-activities' : template.categorySlug;
+  const audience =
+    template.audience ??
+    inferSessionAudience({
+      categorySlug,
+      styleSlug: template.styleSlug,
+      title: template.title
+    });
+  const attendanceModel = normalizeAttendanceModel(template.attendanceModel ?? (audience === 'kids' ? 'cycle' : 'drop_in'));
+  const styleAgeRange = inferKidsAgeRangeFromStyle(template.styleSlug);
+  const ageMin = template.ageMin ?? (audience === 'kids' ? styleAgeRange.min : undefined);
+  const ageMax = template.ageMax ?? (audience === 'kids' ? styleAgeRange.max : undefined);
+  const ageBand = template.ageBand ?? styleAgeRange.ageBand ?? deriveKidsAgeBand(ageMin, ageMax);
+  const guardianRequired =
+    template.guardianRequired ?? (audience === 'kids' ? (typeof ageMax === 'number' ? ageMax <= 10 : true) : false);
+
+  return {
+    categorySlug,
+    audience,
+    attendanceModel,
+    ageMin,
+    ageMax,
+    ageBand,
+    guardianRequired
+  };
+};
+
 const generateSessions = () => {
   const zone = 'Europe/Rome';
   const start = DateTime.now().setZone(zone).startOf('day');
@@ -1231,13 +1269,14 @@ const generateSessions = () => {
 
       const startAt = day.set({ hour: startClock.hour, minute: startClock.minute, second: 0, millisecond: 0 });
       const endAt = day.set({ hour: endClock.hour, minute: endClock.minute, second: 0, millisecond: 0 });
+      const metadata = inferSessionMetadata(template);
 
       sessions.push({
         id: `${template.templateId}-${day.toFormat('yyyyLLdd')}`,
         citySlug: template.citySlug,
         venueSlug: template.venueSlug,
         instructorSlug: template.instructorSlug,
-        categorySlug: template.styleSlug === 'kids-yoga' ? 'kids-activities' : template.categorySlug,
+        categorySlug: metadata.categorySlug,
         styleSlug: template.styleSlug,
         title: template.title,
         startAt: startAt.toISO() ?? '',
@@ -1249,6 +1288,12 @@ const generateSessions = () => {
         sourceUrl: template.sourceUrl,
         lastVerifiedAt: template.lastVerifiedAt,
         verificationStatus: template.verificationStatus,
+        audience: metadata.audience,
+        attendanceModel: metadata.attendanceModel,
+        ageMin: metadata.ageMin,
+        ageMax: metadata.ageMax,
+        ageBand: metadata.ageBand,
+        guardianRequired: metadata.guardianRequired,
         priceNote: template.priceNote
       });
     }

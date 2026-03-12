@@ -4,8 +4,17 @@ export type CategoryVisibility = 'hidden' | 'beta' | 'live';
 export type VerificationStatus = 'verified' | 'stale' | 'hidden';
 export type SessionFormat = 'in_person' | 'online' | 'hybrid';
 export type Level = 'beginner' | 'open' | 'intermediate' | 'advanced';
+export type SessionAudience = 'adults' | 'kids' | 'families' | 'mixed';
+export type AttendanceModel = 'drop_in' | 'trial' | 'cycle' | 'term';
+export type KidsAgeBand = '0-2' | '3-5' | '6-10' | '11-14' | 'mixed-kids';
 export type TimeBucket = 'early' | 'morning' | 'midday' | 'evening';
 export type DatePreset = 'today' | 'tomorrow' | 'weekend' | 'week';
+export type ClassView = 'list' | 'map' | 'calendar';
+export type SourceCadence = 'daily' | 'weekly' | 'quarterly';
+export type SourceTrustTier = 'tier_a' | 'tier_b' | 'tier_c';
+export type SourcePurpose = 'catalog' | 'discovery';
+export type DiscoveryLeadStatus = 'new' | 'reviewed' | 'imported' | 'rejected';
+export type VenueProfile = 'studio' | 'association' | 'independent_teacher' | 'gym_with_classes' | 'event_series';
 
 export type LocalizedText = Record<Locale, string>;
 
@@ -95,6 +104,12 @@ export interface Session {
   sourceUrl: string;
   lastVerifiedAt: string;
   verificationStatus: VerificationStatus;
+  audience: SessionAudience;
+  attendanceModel: AttendanceModel;
+  ageMin?: number;
+  ageMax?: number;
+  ageBand?: KidsAgeBand;
+  guardianRequired?: boolean;
   priceNote?: LocalizedText;
 }
 
@@ -145,6 +160,49 @@ export interface DiscoveryFilters {
   neighborhood?: string;
   format?: SessionFormat;
   open_now?: 'true';
+  view?: ClassView;
+}
+
+export interface CalendarSubmission {
+  locale: Locale;
+  citySlug: string;
+  submitterType: 'studio' | 'teacher';
+  organizationName: string;
+  contactName: string;
+  email: string;
+  phone?: string;
+  sourceUrls: string[];
+  scheduleText: string;
+  consent: boolean;
+  createdAt: string;
+}
+
+export interface SourceRegistryEntry {
+  citySlug: string;
+  sourceUrl: string;
+  sourceType: 'official_site' | 'events_calendar' | 'directory' | 'social' | 'community_board';
+  cadence: SourceCadence;
+  trustTier: SourceTrustTier;
+  purpose: SourcePurpose;
+  parserAdapter?: string;
+  tags: string[];
+  active: boolean;
+  notes?: string;
+  lastCheckedAt?: string;
+  nextCheckAt?: string;
+}
+
+export interface DiscoveryLead {
+  citySlug: string;
+  sourceUrl: string;
+  title: string;
+  snippet?: string;
+  discoveredFromUrl: string;
+  status: DiscoveryLeadStatus;
+  confidence: number;
+  tags: string[];
+  lastSeenAt: string;
+  createdAt: string;
 }
 
 export interface CityReadiness {

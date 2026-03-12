@@ -1,4 +1,4 @@
-import { index, jsonb, numeric, pgEnum, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import { boolean, index, integer, jsonb, numeric, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from 'drizzle-orm/pg-core';
 
 export const cityStatusEnum = pgEnum('city_status', ['seed', 'private_preview', 'public']);
 export const categoryVisibilityEnum = pgEnum('category_visibility', ['hidden', 'beta', 'live']);
@@ -6,6 +6,12 @@ export const sessionFormatEnum = pgEnum('session_format', ['in_person', 'online'
 export const levelEnum = pgEnum('session_level', ['beginner', 'open', 'intermediate', 'advanced']);
 export const verificationStatusEnum = pgEnum('verification_status', ['verified', 'stale', 'hidden']);
 export const contactTypeEnum = pgEnum('contact_type', ['direct', 'platform', 'whatsapp', 'phone', 'email', 'website']);
+export const sessionAudienceEnum = pgEnum('session_audience', ['adults', 'kids', 'families', 'mixed']);
+export const attendanceModelEnum = pgEnum('attendance_model', ['drop_in', 'trial', 'cycle', 'term']);
+export const sourceCadenceEnum = pgEnum('source_cadence', ['daily', 'weekly', 'quarterly']);
+export const sourceTrustTierEnum = pgEnum('source_trust_tier', ['tier_a', 'tier_b', 'tier_c']);
+export const sourcePurposeEnum = pgEnum('source_purpose', ['catalog', 'discovery']);
+export const discoveryLeadStatusEnum = pgEnum('discovery_lead_status', ['new', 'reviewed', 'imported', 'rejected']);
 
 export const cities = pgTable('cities', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -113,6 +119,12 @@ export const sessions = pgTable('sessions', {
   sourceUrl: text('source_url').notNull(),
   lastVerifiedAt: timestamp('last_verified_at', { withTimezone: true }).notNull(),
   verificationStatus: verificationStatusEnum('verification_status').notNull().default('verified'),
+  audience: sessionAudienceEnum('audience').notNull().default('adults'),
+  attendanceModel: attendanceModelEnum('attendance_model').notNull().default('drop_in'),
+  ageMin: integer('age_min'),
+  ageMax: integer('age_max'),
+  ageBand: varchar('age_band', { length: 16 }),
+  guardianRequired: boolean('guardian_required').notNull().default(false),
   priceNote: jsonb('price_note').$type<Record<'en' | 'it', string> | null>()
 }, (table) => ({
   cityIndex: index('sessions_city_idx').on(table.citySlug),
@@ -158,6 +170,62 @@ export const claims = pgTable('claims', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 });
 
+export const calendarSubmissions = pgTable('calendar_submissions', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  locale: varchar('locale', { length: 2 }).notNull(),
+  citySlug: varchar('city_slug', { length: 80 }).notNull(),
+  submitterType: varchar('submitter_type', { length: 24 }).notNull(),
+  organizationName: varchar('organization_name', { length: 200 }).notNull(),
+  contactName: varchar('contact_name', { length: 160 }).notNull(),
+  email: varchar('email', { length: 160 }).notNull(),
+  phone: varchar('phone', { length: 60 }),
+  sourceUrls: jsonb('source_urls').$type<string[]>().notNull(),
+  scheduleText: text('schedule_text').notNull(),
+  consent: boolean('consent').notNull().default(true),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+});
+
+export const sourceRegistry = pgTable('source_registry', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  citySlug: varchar('city_slug', { length: 80 }).notNull(),
+  sourceUrl: text('source_url').notNull(),
+  sourceType: varchar('source_type', { length: 32 }).notNull(),
+  cadence: sourceCadenceEnum('cadence').notNull().default('daily'),
+  trustTier: sourceTrustTierEnum('trust_tier').notNull().default('tier_b'),
+  purpose: sourcePurposeEnum('purpose').notNull().default('catalog'),
+  parserAdapter: varchar('parser_adapter', { length: 80 }),
+  tags: jsonb('tags').$type<string[]>().notNull(),
+  active: boolean('active').notNull().default(true),
+  notes: text('notes'),
+  lastCheckedAt: timestamp('last_checked_at', { withTimezone: true }),
+  nextCheckAt: timestamp('next_check_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}, (table) => ({
+  cityIndex: index('source_registry_city_idx').on(table.citySlug),
+  cadenceIndex: index('source_registry_cadence_idx').on(table.cadence),
+  activeIndex: index('source_registry_active_idx').on(table.active),
+  citySourceUnique: uniqueIndex('source_registry_city_source_uidx').on(table.citySlug, table.sourceUrl)
+}));
+
+export const discoveryLeads = pgTable('discovery_leads', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  citySlug: varchar('city_slug', { length: 80 }).notNull(),
+  sourceUrl: text('source_url').notNull(),
+  title: varchar('title', { length: 220 }).notNull(),
+  snippet: text('snippet'),
+  discoveredFromUrl: text('discovered_from_url').notNull(),
+  status: discoveryLeadStatusEnum('status').notNull().default('new'),
+  confidence: numeric('confidence', { precision: 4, scale: 3 }).notNull(),
+  tags: jsonb('tags').$type<string[]>().notNull(),
+  lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+}, (table) => ({
+  cityIndex: index('discovery_leads_city_idx').on(table.citySlug),
+  statusIndex: index('discovery_leads_status_idx').on(table.status),
+  citySourceUnique: uniqueIndex('discovery_leads_city_source_uidx').on(table.citySlug, table.sourceUrl)
+}));
+
 export const outboundClicks = pgTable('outbound_clicks', {
   id: uuid('id').defaultRandom().primaryKey(),
   sessionId: varchar('session_id', { length: 160 }),
@@ -181,6 +249,7 @@ export const sourceRecords = pgTable('source_records', {
 export const freshnessRuns = pgTable('freshness_runs', {
   id: uuid('id').defaultRandom().primaryKey(),
   citySlug: varchar('city_slug', { length: 80 }).notNull(),
+  cadence: sourceCadenceEnum('cadence').notNull().default('daily'),
   totalSessions: numeric('total_sessions', { precision: 10, scale: 0 }).notNull(),
   staleSessions: numeric('stale_sessions', { precision: 10, scale: 0 }).notNull(),
   brokenLinks: numeric('broken_links', { precision: 10, scale: 0 }).notNull(),
