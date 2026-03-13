@@ -28,6 +28,7 @@ const copy = {
     weekend: 'Weekend',
     english: 'English-friendly',
     nextWeek: 'Next 7 days',
+    yogaStyles: 'Yoga styles',
     date: 'Date',
     time: 'Time',
     category: 'Category',
@@ -54,6 +55,7 @@ const copy = {
     weekend: 'Weekend',
     english: 'In inglese',
     nextWeek: 'Prossimi 7 giorni',
+    yogaStyles: 'Stili yoga',
     date: 'Data',
     time: 'Orario',
     category: 'Categoria',
@@ -82,6 +84,21 @@ export function FilterBar({
 }: FilterBarProps) {
   const labels = copy[locale];
   const basePath = `/${locale}/${citySlug}/classes`;
+  const yogaStyleQuickPicks = styles
+    .filter((style) => {
+      const slug = style.slug.toLowerCase();
+      const name = style.name.toLowerCase();
+      return (
+        slug.includes('hatha') ||
+        slug.includes('vinyasa') ||
+        slug.includes('ashtanga') ||
+        slug.includes('yin') ||
+        slug.includes('kundalini') ||
+        slug.includes('iyengar') ||
+        name.includes('yoga')
+      );
+    })
+    .slice(0, 6);
 
   return (
     <form className="panel filter-panel" action={basePath}>
@@ -129,6 +146,19 @@ export function FilterBar({
             </Link>
           </div>
         </div>
+
+        {yogaStyleQuickPicks.length > 0 ? (
+          <div className="stack-list">
+            <p className="eyebrow">{labels.yogaStyles}</p>
+            <div className="quick-filter-row">
+              {yogaStyleQuickPicks.map((style) => (
+                <Link key={style.slug} href={`${basePath}?view=${view}&category=yoga&style=${style.slug}`} className="quick-filter-link">
+                  {style.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </div>
 
       <div className="filter-grid filter-grid-expanded">

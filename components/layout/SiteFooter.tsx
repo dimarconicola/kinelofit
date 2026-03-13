@@ -5,12 +5,9 @@ import type { Locale } from '@/lib/catalog/types';
 export function SiteFooter({ locale }: { locale: Locale }) {
   const copy =
     locale === 'it'
-      ? 'Discovery locale per yoga, mind-body e attivita bambini a Palermo.'
+      ? 'Discovery locale per yoga, mind-body e attività bambini a Palermo.'
       : 'Local discovery for yoga, mind-body, and kids activities in Palermo.';
-  const meta =
-    locale === 'it'
-      ? `© ${new Date().getFullYear()} kinelo.fit · Palermo-first city utility`
-      : `© ${new Date().getFullYear()} kinelo.fit · Palermo-first city utility`;
+  const meta = `© ${new Date().getFullYear()} kinelo.fit · Palermo-first city utility`;
 
   return (
     <footer className="site-footer-wrap">

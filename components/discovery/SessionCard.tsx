@@ -102,6 +102,7 @@ export function SessionCard({ session, locale, signedInEmail, saveLabel, savedLa
           </p>
           <p className="muted">{venue.address}</p>
           <div className="session-tags">
+            <span>{style.name[locale]}</span>
             <span>{labels.level[session.level]}</span>
             <span>{session.language}</span>
             <span>{labels.format[session.format]}</span>

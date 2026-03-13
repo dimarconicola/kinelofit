@@ -10,13 +10,41 @@ import { formatSessionTime } from '@/lib/ui/format';
 export default async function FavoritesPage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = resolveLocale((await params).locale);
   const user = await getSessionUser();
+  const copy =
+    locale === 'it'
+      ? {
+          signInNeeded: 'Accedi per salvare preferiti e agenda settimanale.',
+          signIn: 'Accedi',
+          eyebrow: 'Salvati',
+          title: 'Preferiti e agenda',
+          lead: 'Preferiti = luoghi e persone da seguire. Agenda salvata = lezioni con orario da tenere d’occhio.',
+          favoritesStudios: 'Studi preferiti',
+          favoritesTeachers: 'Insegnanti preferiti',
+          favoritesClasses: 'Classi preferite',
+          savedSchedule: 'Agenda salvata',
+          noFavorites: 'Nessun elemento salvato per ora.',
+          noSchedule: 'Aggiungi classi dal calendario per costruire la tua settimana.'
+        }
+      : {
+          signInNeeded: 'Sign in to save favorites and your weekly schedule.',
+          signIn: 'Sign in',
+          eyebrow: 'Saved',
+          title: 'Favorites and schedule',
+          lead: 'Favorites = places and teachers you follow. Saved schedule = time slots you plan to attend.',
+          favoritesStudios: 'Favorite studios',
+          favoritesTeachers: 'Favorite teachers',
+          favoritesClasses: 'Favorite classes',
+          savedSchedule: 'Saved schedule',
+          noFavorites: 'No saved items yet.',
+          noSchedule: 'Add classes from the calendar to build your week.'
+        };
 
   if (!user) {
     return (
       <div className="empty-state">
-        <p>Sign in to save favorites and keep a weekly routine.</p>
+        <p>{copy.signInNeeded}</p>
         <Link href={`/${locale}/sign-in`} className="button button-primary">
-          Sign in
+          {copy.signIn}
         </Link>
       </div>
     );
@@ -31,6 +59,7 @@ export default async function FavoritesPage({ params }: { params: Promise<{ loca
         const venue = getVenue(row.entitySlug);
         if (!venue) return null;
         return {
+          kind: 'venue' as const,
           key: `venue:${venue.slug}`,
           href: `/${locale}/${venue.citySlug}/studios/${venue.slug}`,
           title: venue.name,
@@ -42,6 +71,7 @@ export default async function FavoritesPage({ params }: { params: Promise<{ loca
         const instructor = getInstructor(row.entitySlug);
         if (!instructor) return null;
         return {
+          kind: 'instructor' as const,
           key: `instructor:${instructor.slug}`,
           href: `/${locale}/${instructor.citySlug}/teachers/${instructor.slug}`,
           title: instructor.name,
@@ -52,6 +82,7 @@ export default async function FavoritesPage({ params }: { params: Promise<{ loca
       const session = sessions.find((item) => item.id === row.entitySlug);
       if (!session) return null;
       return {
+        kind: 'session' as const,
         key: `session:${session.id}`,
         href: `/${locale}/${session.citySlug}/studios/${session.venueSlug}`,
         title: session.title[locale],
@@ -59,6 +90,9 @@ export default async function FavoritesPage({ params }: { params: Promise<{ loca
       };
     })
     .filter((item): item is NonNullable<typeof item> => Boolean(item));
+  const venueFavorites = favoriteItems.filter((item) => item.kind === 'venue');
+  const instructorFavorites = favoriteItems.filter((item) => item.kind === 'instructor');
+  const sessionFavorites = favoriteItems.filter((item) => item.kind === 'session');
 
   const scheduleItems = scheduleRows
     .map((sessionId) => sessions.find((session) => session.id === sessionId))
@@ -73,16 +107,16 @@ export default async function FavoritesPage({ params }: { params: Promise<{ loca
   return (
     <div className="stack-list">
       <section className="panel">
-        <p className="eyebrow">Saved</p>
-        <h1>Favorites and routine</h1>
-        <p className="lead">Persistence is gated. Discovery is not.</p>
+        <p className="eyebrow">{copy.eyebrow}</p>
+        <h1>{copy.title}</h1>
+        <p className="lead">{copy.lead}</p>
       </section>
       <section className="saved-grid">
         <section className="panel">
-          <p className="eyebrow">Favorites</p>
-          {favoriteItems.length > 0 ? (
+          <p className="eyebrow">{copy.favoritesStudios}</p>
+          {venueFavorites.length > 0 ? (
             <div className="stack-list">
-              {favoriteItems.map((item) => (
+              {venueFavorites.map((item) => (
                 <Link href={item.href} key={item.key} className="list-link">
                   <strong>{item.title}</strong>
                   <span>{item.meta}</span>
@@ -90,12 +124,44 @@ export default async function FavoritesPage({ params }: { params: Promise<{ loca
               ))}
             </div>
           ) : (
-            <p className="muted">No saved items yet.</p>
+            <p className="muted">{copy.noFavorites}</p>
           )}
         </section>
 
         <section className="panel">
-          <p className="eyebrow">Saved schedule</p>
+          <p className="eyebrow">{copy.favoritesTeachers}</p>
+          {instructorFavorites.length > 0 ? (
+            <div className="stack-list">
+              {instructorFavorites.map((item) => (
+                <Link href={item.href} key={item.key} className="list-link">
+                  <strong>{item.title}</strong>
+                  <span>{item.meta}</span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <p className="muted">{copy.noFavorites}</p>
+          )}
+        </section>
+
+        <section className="panel">
+          <p className="eyebrow">{copy.favoritesClasses}</p>
+          {sessionFavorites.length > 0 ? (
+            <div className="stack-list">
+              {sessionFavorites.map((item) => (
+                <Link href={item.href} key={item.key} className="list-link">
+                  <strong>{item.title}</strong>
+                  <span>{item.meta}</span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <p className="muted">{copy.noFavorites}</p>
+          )}
+        </section>
+
+        <section className="panel">
+          <p className="eyebrow">{copy.savedSchedule}</p>
           {scheduleItems.length > 0 ? (
             <div className="stack-list">
               {scheduleItems.map((item) => (
@@ -106,7 +172,7 @@ export default async function FavoritesPage({ params }: { params: Promise<{ loca
               ))}
             </div>
           ) : (
-            <p className="muted">Add classes from the calendar to build a routine.</p>
+            <p className="muted">{copy.noSchedule}</p>
           )}
         </section>
       </section>
