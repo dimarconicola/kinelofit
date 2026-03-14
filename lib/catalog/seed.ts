@@ -13,11 +13,18 @@ import type {
   Session,
   SessionAudience,
   Style,
-  Venue
+  Venue,
+  VenueImage
 } from '@/lib/catalog/types';
 import { deriveKidsAgeBand, inferKidsAgeRangeFromStyle, inferSessionAudience, normalizeAttendanceModel } from '@/lib/catalog/policy';
 
 const buildLocalized = (en: string, it: string) => ({ en, it });
+const buildVenueImage = (name: string, url: string, sourceUrl: string, lastVerifiedAt: string): VenueImage => ({
+  url,
+  sourceUrl,
+  lastVerifiedAt,
+  alt: buildLocalized(`${name} practice photo`, `Foto dello spazio di pratica di ${name}`)
+});
 
 type RecurringSessionTemplate = {
   templateId: string;
@@ -56,6 +63,105 @@ const generated = palermoCatalog as {
 };
 
 const diariaCalendarSource = 'https://www.diariapalermo.org/corsi/calendario/';
+const venueImagesVerifiedAt = '2026-03-14T12:00:00+01:00';
+
+const venueCoverImages: Partial<Record<string, VenueImage>> = {
+  'yoga-your-life': buildVenueImage(
+    'Yoga Your Life',
+    'https://static.wixstatic.com/media/9b23dd_1904a5b300d84aa2bdbb45c4bee5cb40~mv2.jpg/v1/fill/w_964,h_642,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/BAR_0591.jpg',
+    'https://www.barbarafaludiyoga.com/corsi-in-studio',
+    venueImagesVerifiedAt
+  ),
+  'ashtanga-shala-sicilia': buildVenueImage(
+    'Ashtanga Shala Sicilia',
+    'https://static.wixstatic.com/media/eae72f_8c339e15227443b19f732041163b5bfc%7Emv2.png/v1/fit/w_2500,h_1330,al_c/eae72f_8c339e15227443b19f732041163b5bfc%7Emv2.png',
+    'https://www.ashtangashalasicilia.com/',
+    venueImagesVerifiedAt
+  ),
+  'centro-cultura-rishi': buildVenueImage(
+    'Centro Cultura Rishi',
+    'https://www.centroculturarishi.it/wp-content/uploads/2025/06/DSCF1126_w-1536x1024.jpg',
+    'https://www.centroculturarishi.it/',
+    venueImagesVerifiedAt
+  ),
+  'centro-sportivo-ivanor': buildVenueImage(
+    'Centro Sportivo Ivanor',
+    'https://lirp.cdn-website.com/c9704d5b/dms3rep/multi/opt/yoga2-1920w.jpg',
+    'https://www.ivanorsports.it/yoga',
+    venueImagesVerifiedAt
+  ),
+  'grandmas-pilates': buildVenueImage(
+    "Grandma's Pilates",
+    'https://www.grandmaspilates.com/wp-content/uploads/2024/10/IMG_5853a-scaled-e1729511451413.jpg',
+    'https://www.grandmaspilates.com/',
+    venueImagesVerifiedAt
+  ),
+  'palermo-pilates': buildVenueImage(
+    'Palermo Pilates',
+    'https://www.palermopilates.it/wp-content/uploads/2023/09/palermopilates_cover-social_HOME.jpg',
+    'https://www.palermopilates.it/en/contatti-eng/',
+    venueImagesVerifiedAt
+  ),
+  'sahaja-yoga-sicilia': buildVenueImage(
+    'Sahaja Yoga Sicilia',
+    'https://sahajayoga.it/wp-content/uploads/2023/03/foto-sy.jpg',
+    'https://sahajayoga.it/',
+    venueImagesVerifiedAt
+  ),
+  'taiji-studio-palermo': buildVenueImage(
+    'Taiji Studio Palermo',
+    'https://www.taijistudiopalermo.it/wp-content/uploads/2025/11/a34ae1b5-5d87-4c5b-ae04-cb1de38a1afd-1.jpg',
+    'https://www.taijistudiopalermo.it/',
+    venueImagesVerifiedAt
+  ),
+  'yoga-ananda-palermo': buildVenueImage(
+    'Yoga Ananda Palermo',
+    'https://www.yoganandapalermo.it/wp-content/uploads/2019/09/slide2.jpg',
+    'https://www.yoganandapalermo.it/contatti/',
+    venueImagesVerifiedAt
+  ),
+  'yoga-city': buildVenueImage(
+    'Yoga City',
+    'https://www.yogacity.it/wp-content/uploads/2025/06/contatti2-1.jpg',
+    'https://www.yogacity.it/contatti/',
+    venueImagesVerifiedAt
+  ),
+  yogastudiolab: buildVenueImage(
+    'Yogastudiolab',
+    'https://primary.jwwb.nl/public/u/z/f/temp-pobtovotejufytvsfita/whatsapp-image-2020-05-26-at-11-20-37-1-high-xc84em.jpg?enable-io=true&enable=upscale&fit=bounds&width=1200',
+    'https://www.yogastudiolab.it/contatti',
+    venueImagesVerifiedAt
+  ),
+  'you-are-yoga': buildVenueImage(
+    'You Are Yoga',
+    'https://youareyoga.it/wp-content/uploads/2021/06/Marta_Yoga_Sole.jpg',
+    'https://youareyoga.it/',
+    venueImagesVerifiedAt
+  ),
+  'circo-pificio-palermo': buildVenueImage(
+    'Circo Pificio',
+    'https://www.circopificio.it/wp-content/uploads/2023/08/bimbi-cover.png',
+    'https://www.circopificio.it/circomotricita/',
+    venueImagesVerifiedAt
+  ),
+  'diaria-sala-venezia': buildVenueImage(
+    'Diaria - Sala Venezia',
+    'https://www.diariapalermo.org/new-site/wp-content/uploads/2024/09/Progetto-senza-titolo-2-819x1024.png',
+    'https://www.diariapalermo.org/',
+    venueImagesVerifiedAt
+  ),
+  'diaria-studio-gagini': buildVenueImage(
+    'Diaria - Studio Gagini',
+    'https://www.diariapalermo.org/new-site/wp-content/uploads/2024/09/Progetto-senza-titolo-2-819x1024.png',
+    'https://www.diariapalermo.org/',
+    venueImagesVerifiedAt
+  )
+};
+
+const withVenueCoverImage = (venue: Venue): Venue => {
+  const coverImage = venueCoverImages[venue.slug];
+  return coverImage ? { ...venue, coverImage } : venue;
+};
 
 export const cities: City[] = [
   {
@@ -282,8 +388,8 @@ const extraInstructors: Instructor[] = [
     citySlug: 'palermo',
     name: 'Ceren (Diaria)',
     shortBio: buildLocalized(
-      'Instructor listed in Diaria vinyasa yoga slots.',
-      'Insegnante indicata negli slot vinyasa yoga di Diaria.'
+      'For updated classes and details, visit diaria.it.',
+      'Per classi aggiornate e maggiori informazioni, visita diaria.it.'
     ),
     specialties: ['vinyasa'],
     languages: ['Italian']
@@ -1170,16 +1276,19 @@ const extraRecurringSessions: RecurringSessionTemplate[] = [
   }
 ];
 
-const generatedVenuesWithKidsCategory = generated.venues.map((venue) =>
-  venue.styleSlugs.includes('kids-yoga') && !venue.categorySlugs.includes('kids-activities')
-    ? { ...venue, categorySlugs: [...venue.categorySlugs, 'kids-activities'] }
-    : venue
-);
+const generatedVenuesWithKidsCategory = generated.venues.map((venue) => {
+  const normalizedVenue =
+    venue.styleSlugs.includes('kids-yoga') && !venue.categorySlugs.includes('kids-activities')
+      ? { ...venue, categorySlugs: [...venue.categorySlugs, 'kids-activities'] }
+      : venue;
+
+  return withVenueCoverImage(normalizedVenue);
+});
 
 export const styles: Style[] = [...generated.styles, ...extraStyles];
 export const instructors: Instructor[] = [...generated.instructors, ...extraInstructors];
 export const bookingTargets: BookingTarget[] = [...generated.bookingTargets, ...extraBookingTargets];
-export const venues: Venue[] = [...generatedVenuesWithKidsCategory, ...extraVenues];
+export const venues: Venue[] = [...generatedVenuesWithKidsCategory, ...extraVenues.map(withVenueCoverImage)];
 
 export const collections: EditorialCollection[] = [
   {

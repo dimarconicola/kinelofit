@@ -1,9 +1,9 @@
 import NextLink from 'next/link';
-import { Button, Link } from '@heroui/react';
+import { Button } from '@heroui/react';
 
+import { FavoritesCollectionsClient } from '@/components/state/FavoritesCollectionsClient';
 import { getSessionUser } from '@/lib/auth/session';
-import { getInstructor, getVenue } from '@/lib/catalog/data';
-import { sessions } from '@/lib/catalog/seed';
+import { sessions, instructors, venues } from '@/lib/catalog/seed';
 import { resolveLocale } from '@/lib/i18n/routing';
 import { listUserFavorites, listUserSchedule } from '@/lib/runtime/store';
 import { formatSessionTime } from '@/lib/ui/format';
@@ -54,56 +54,26 @@ export default async function FavoritesPage({ params }: { params: Promise<{ loca
   const favoriteRows = await listUserFavorites(user.id);
   const scheduleRows = await listUserSchedule(user.id);
 
-  const favoriteItems = favoriteRows
-    .map((row) => {
-      if (row.entityType === 'venue') {
-        const venue = getVenue(row.entitySlug);
-        if (!venue) return null;
-        return {
-          kind: 'venue' as const,
-          key: `venue:${venue.slug}`,
-          href: `/${locale}/${venue.citySlug}/studios/${venue.slug}`,
-          title: venue.name,
-          meta: venue.tagline[locale]
-        };
-      }
-
-      if (row.entityType === 'instructor') {
-        const instructor = getInstructor(row.entitySlug);
-        if (!instructor) return null;
-        return {
-          kind: 'instructor' as const,
-          key: `instructor:${instructor.slug}`,
-          href: `/${locale}/${instructor.citySlug}/teachers/${instructor.slug}`,
-          title: instructor.name,
-          meta: instructor.shortBio[locale]
-        };
-      }
-
-      const session = sessions.find((item) => item.id === row.entitySlug);
-      if (!session) return null;
-      return {
-        kind: 'session' as const,
-        key: `session:${session.id}`,
-        href: `/${locale}/${session.citySlug}/studios/${session.venueSlug}`,
-        title: session.title[locale],
-        meta: formatSessionTime(session.startAt, locale)
-      };
-    })
-    .filter((item): item is NonNullable<typeof item> => Boolean(item));
-  const venueFavorites = favoriteItems.filter((item) => item.kind === 'venue');
-  const instructorFavorites = favoriteItems.filter((item) => item.kind === 'instructor');
-  const sessionFavorites = favoriteItems.filter((item) => item.kind === 'session');
-
-  const scheduleItems = scheduleRows
-    .map((sessionId) => sessions.find((session) => session.id === sessionId))
-    .filter((session): session is NonNullable<typeof session> => Boolean(session))
-    .map((session) => ({
-      key: session.id,
-      href: `/${locale}/${session.citySlug}/studios/${session.venueSlug}`,
-      title: session.title[locale],
-      meta: formatSessionTime(session.startAt, locale)
+  const venueItems = venues
+    .map((venue) => ({
+      slug: venue.slug,
+      href: `/${locale}/${venue.citySlug}/studios/${venue.slug}`,
+      title: venue.name,
+      meta: venue.tagline[locale]
     }));
+  const instructorItems = instructors
+    .map((instructor) => ({
+      slug: instructor.slug,
+      href: `/${locale}/${instructor.citySlug}/teachers/${instructor.slug}`,
+      title: instructor.name,
+      meta: instructor.shortBio[locale]
+    }));
+  const sessionItems = sessions.map((session) => ({
+    id: session.id,
+    href: `/${locale}/${session.citySlug}/studios/${session.venueSlug}`,
+    title: session.title[locale],
+    meta: formatSessionTime(session.startAt, locale)
+  }));
 
   return (
     <div className="stack-list">
@@ -112,71 +82,15 @@ export default async function FavoritesPage({ params }: { params: Promise<{ loca
         <h1>{copy.title}</h1>
         <p className="lead">{copy.lead}</p>
       </section>
-      <section className="saved-grid">
-        <section className="panel">
-          <p className="eyebrow">{copy.favoritesStudios}</p>
-          {venueFavorites.length > 0 ? (
-            <div className="stack-list">
-              {venueFavorites.map((item) => (
-                <Link as={NextLink} href={item.href} key={item.key} className="list-link">
-                  <strong>{item.title}</strong>
-                  <span>{item.meta}</span>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <p className="muted">{copy.noFavorites}</p>
-          )}
-        </section>
-
-        <section className="panel">
-          <p className="eyebrow">{copy.favoritesTeachers}</p>
-          {instructorFavorites.length > 0 ? (
-            <div className="stack-list">
-              {instructorFavorites.map((item) => (
-                <Link as={NextLink} href={item.href} key={item.key} className="list-link">
-                  <strong>{item.title}</strong>
-                  <span>{item.meta}</span>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <p className="muted">{copy.noFavorites}</p>
-          )}
-        </section>
-
-        <section className="panel">
-          <p className="eyebrow">{copy.favoritesClasses}</p>
-          {sessionFavorites.length > 0 ? (
-            <div className="stack-list">
-              {sessionFavorites.map((item) => (
-                <Link as={NextLink} href={item.href} key={item.key} className="list-link">
-                  <strong>{item.title}</strong>
-                  <span>{item.meta}</span>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <p className="muted">{copy.noFavorites}</p>
-          )}
-        </section>
-
-        <section className="panel">
-          <p className="eyebrow">{copy.savedSchedule}</p>
-          {scheduleItems.length > 0 ? (
-            <div className="stack-list">
-              {scheduleItems.map((item) => (
-                <Link as={NextLink} href={item.href} key={item.key} className="list-link">
-                  <strong>{item.title}</strong>
-                  <span>{item.meta}</span>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <p className="muted">{copy.noSchedule}</p>
-          )}
-        </section>
-      </section>
+      <FavoritesCollectionsClient
+        signedInEmail={user.email}
+        initialFavoriteKeys={favoriteRows.map((row) => `${row.entityType}:${row.entitySlug}`)}
+        initialScheduleIds={scheduleRows}
+        venues={venueItems}
+        instructors={instructorItems}
+        sessions={sessionItems}
+        copy={copy}
+      />
     </div>
   );
 }

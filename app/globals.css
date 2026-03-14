@@ -519,21 +519,158 @@ main.site-main {
 }
 
 .profile-hero {
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: minmax(0, 1.28fr) minmax(18rem, 0.72fr);
+  align-items: start;
+}
+
+.profile-side-stack {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
 }
 
 .profile-main,
 .profile-side {
   display: grid;
   gap: 1rem;
+  align-content: start;
+}
+
+.profile-main {
+  padding: 1rem;
+}
+
+.profile-main-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.94fr) minmax(260px, 0.9fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.profile-main-copy {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+}
+
+.profile-main-copy h1,
+.profile-main-copy p,
+.profile-side h2,
+.profile-side p {
+  margin: 0;
+}
+
+.profile-main-copy .lead {
+  max-width: 54ch;
 }
 
 .profile-links {
   flex-wrap: wrap;
 }
 
+.profile-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.profile-meta {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.profile-side-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
 .profile-metrics {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.profile-venue-cover {
+  min-height: 20rem;
+}
+
+.venue-cover {
+  position: relative;
+  overflow: hidden;
+  min-height: 20rem;
+  border-radius: 24px;
+  background: #d9d4cb;
+}
+
+.venue-cover img {
+  display: block;
+  width: 100%;
+  min-height: 20rem;
+  height: 100%;
+  object-fit: cover;
+}
+
+.venue-cover-caption {
+  position: absolute;
+  left: 0.85rem;
+  right: 0.85rem;
+  bottom: 0.85rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  padding: 0.68rem 0.85rem;
+  border-radius: 18px;
+  background: rgba(255, 250, 244, 0.82);
+  color: var(--muted);
+  font-size: 0.82rem;
+  backdrop-filter: blur(12px);
+}
+
+.venue-cover-fallback {
+  display: grid;
+  align-content: end;
+  padding: 1rem;
+  background:
+    radial-gradient(circle at top right, rgba(31, 111, 122, 0.26), transparent 34%),
+    radial-gradient(circle at top left, rgba(255, 112, 74, 0.34), transparent 36%),
+    linear-gradient(160deg, rgba(255, 249, 242, 0.98), rgba(232, 222, 207, 0.92));
+}
+
+.venue-cover-fallback-copy {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem;
+  border-radius: 22px;
+  background: rgba(255, 250, 244, 0.84);
+  backdrop-filter: blur(10px);
+}
+
+.venue-cover-fallback-copy strong {
+  font-family: var(--display);
+  font-size: 2rem;
+  line-height: 0.96;
+}
+
+.venue-cover-fallback-copy span {
+  color: var(--muted);
+}
+
+.modal-stack {
+  padding-bottom: 0.25rem;
+}
+
+.modal-title {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.6rem, 2vw, 2rem);
+  line-height: 0.98;
+}
+
+.modal-copy {
+  margin: 0.45rem 0 0;
+  color: var(--muted);
+  font-size: 0.96rem;
+  line-height: 1.6;
 }
 
 .session-card-shell {
@@ -913,8 +1050,18 @@ main.site-main {
     min-width: 740px;
   }
 
+  .profile-main-layout {
+    grid-template-columns: 1fr;
+  }
+
   .profile-metrics {
     grid-template-columns: 1fr;
+  }
+
+  .profile-venue-cover,
+  .venue-cover,
+  .venue-cover img {
+    min-height: 17rem;
   }
 
   .session-card-shell {
@@ -1472,7 +1619,7 @@ select,
 textarea,
 button {
   line-height: 1.58;
-  font-weight: 360;
+  font-weight: 330;
 }
 
 h1,
@@ -2166,5 +2313,190 @@ h4 {
     padding: 0.55rem 0.8rem;
     border-radius: 0.8rem;
     background: rgba(255, 255, 255, 0.85);
+  }
+}
+
+/* Classes + header refinements */
+.site-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+}
+
+.site-nav-primary {
+  justify-content: center;
+}
+
+.site-nav-primary a {
+  padding: 0.38rem 0.68rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.site-nav-primary a:hover {
+  border-color: rgba(44, 48, 46, 0.16);
+  background: rgba(255, 255, 255, 0.74);
+}
+
+.button-secondary {
+  background: rgba(42, 90, 148, 0.12);
+  color: #2b4f78;
+}
+
+.meta-pill {
+  border: 1px solid #d6dbe2;
+  background: #f2f4f7;
+  color: #55606d;
+}
+
+.session-time-main,
+.session-time-sub {
+  font-family: var(--display);
+  font-size: 2.05rem;
+  line-height: 0.92;
+  letter-spacing: 0;
+  text-transform: none;
+  opacity: 1;
+}
+
+.filter-panel-compact {
+  display: grid;
+  gap: 0.95rem;
+}
+
+.filter-grid-ui {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-items: stretch;
+}
+
+.filter-select [data-slot='trigger'] {
+  border-radius: 14px;
+  border: 1px solid #d9dee6;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.filter-select [data-slot='value'] {
+  font-weight: 420;
+}
+
+.filter-preview-muted {
+  margin: 0;
+}
+
+.classes-visible-summary {
+  display: flex;
+  align-items: center;
+}
+
+.map-fullwidth-shell {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding: 0 1.1rem;
+}
+
+.map-fullwidth-shell .map-shell {
+  position: static;
+  top: auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.map-fullwidth-shell .map-panel {
+  min-height: 36rem;
+}
+
+.map-view-stack {
+  gap: 1.1rem;
+}
+
+.map-overview-panel,
+.calendar-board-head {
+  display: grid;
+  gap: 1rem;
+}
+
+.map-venues-grid {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.map-venue-card {
+  min-height: 100%;
+}
+
+.calendar-board-head h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.8rem, 2.6vw, 2.5rem);
+  line-height: 0.98;
+}
+
+.calendar-board {
+  overflow-x: auto;
+}
+
+.calendar-day-list {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.6rem;
+  min-height: 19rem;
+}
+
+.calendar-session-card {
+  display: grid;
+  gap: 0.18rem;
+  padding: 0.55rem 0.6rem;
+  border-radius: 12px;
+  border: 1px solid rgba(74, 93, 78, 0.18);
+  background: rgba(230, 239, 233, 0.38);
+}
+
+.calendar-session-card span {
+  font-size: 0.8rem;
+  color: #516170;
+}
+
+.calendar-session-card strong {
+  font-size: 0.88rem;
+  line-height: 1.2;
+}
+
+.calendar-session-card small {
+  font-size: 0.76rem;
+  color: #5f6662;
+}
+
+.calendar-empty {
+  margin: 0;
+  font-size: 0.86rem;
+}
+
+.profile-main .badge-row .meta-pill {
+  background: rgba(231, 235, 241, 0.82);
+}
+
+@media (max-width: 960px) {
+  .site-header {
+    grid-template-columns: auto auto;
+    row-gap: 0.55rem;
+  }
+
+  .map-fullwidth-shell {
+    padding: 0 0.7rem;
+  }
+
+  .map-fullwidth-shell .map-panel {
+    min-height: 28rem;
+  }
+
+  .filter-grid-ui {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-board-head {
+    grid-template-columns: 1fr;
   }
 }

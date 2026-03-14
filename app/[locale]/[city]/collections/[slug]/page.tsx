@@ -122,8 +122,6 @@ export default async function CollectionPage({
               session={session}
               locale={locale}
               signedInEmail={user?.email}
-              saveLabel={dict.save}
-              savedLabel={dict.unsave}
               scheduleLabel={dict.saveSchedule}
             />
           ))}

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import './globals.css';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import { AppProviders } from '@/components/providers/AppProviders';
 import { defaultLocale } from '@/lib/catalog/data';
 import { env } from '@/lib/env';

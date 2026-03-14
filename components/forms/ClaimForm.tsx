@@ -5,7 +5,15 @@ import { Button, Input, Textarea } from '@heroui/react';
 
 import type { Locale } from '@/lib/catalog/types';
 
-export function ClaimForm({ studioSlug, locale }: { studioSlug: string; locale: Locale }) {
+export function ClaimForm({
+  studioSlug,
+  locale,
+  panel = true
+}: {
+  studioSlug: string;
+  locale: Locale;
+  panel?: boolean;
+}) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'done'>('idle');
   const labels =
     locale === 'it'
@@ -34,7 +42,7 @@ export function ClaimForm({ studioSlug, locale }: { studioSlug: string; locale: 
 
   return (
     <form
-      className="panel form-stack"
+      className={panel ? 'panel form-stack' : 'form-stack'}
       onSubmit={async (event) => {
         event.preventDefault();
         setStatus('loading');

@@ -9,6 +9,7 @@ export type AttendanceModel = 'drop_in' | 'trial' | 'cycle' | 'term';
 export type KidsAgeBand = '0-2' | '3-5' | '6-10' | '11-14' | 'mixed-kids';
 export type TimeBucket = 'early' | 'morning' | 'midday' | 'evening';
 export type DatePreset = 'today' | 'tomorrow' | 'weekend' | 'week';
+export type WeekdayFilter = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
 export type ClassView = 'list' | 'map' | 'calendar';
 export type SourceCadence = 'daily' | 'weekly' | 'quarterly';
 export type SourceTrustTier = 'tier_a' | 'tier_b' | 'tier_c';
@@ -68,6 +69,13 @@ export interface BookingTarget {
   href: string;
 }
 
+export interface VenueImage {
+  url: string;
+  alt: LocalizedText;
+  sourceUrl: string;
+  lastVerifiedAt: string;
+}
+
 export interface Venue {
   slug: string;
   citySlug: string;
@@ -85,6 +93,7 @@ export interface Venue {
   freshnessNote: LocalizedText;
   sourceUrl: string;
   lastVerifiedAt: string;
+  coverImage?: VenueImage;
 }
 
 export interface Session {
@@ -152,7 +161,9 @@ export interface OutboundEvent {
 
 export interface DiscoveryFilters {
   date?: DatePreset;
+  weekday?: WeekdayFilter;
   time_bucket?: TimeBucket;
+  time_buckets?: TimeBucket[];
   category?: string;
   style?: string;
   level?: Level;

@@ -41,8 +41,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ local
               session={session}
               locale={locale}
               signedInEmail={user?.email}
-              saveLabel={dict.save}
-              savedLabel={dict.unsave}
               scheduleLabel={dict.saveSchedule}
             />
           ))}

@@ -1,11 +1,10 @@
-import NextLink from 'next/link';
 import { notFound } from 'next/navigation';
 import { DateTime } from 'luxon';
 import { Button, Chip, Link } from '@heroui/react';
 
-import { ClaimForm } from '@/components/forms/ClaimForm';
+import { VenueCover } from '@/components/catalog/VenueCover';
+import { ClaimFormDialog } from '@/components/forms/ClaimFormDialog';
 import { SessionCard } from '@/components/discovery/SessionCard';
-import { FavoriteButton } from '@/components/state/FavoriteButton';
 import { getSessionUser } from '@/lib/auth/session';
 import { getNeighborhoods, getVenue, getVenueSessions } from '@/lib/catalog/data';
 import { requirePublicCity } from '@/lib/catalog/guards';
@@ -48,7 +47,6 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
           styles: 'stili',
           source: 'Fonte primaria',
           upcoming: 'Prossime sessioni',
-          claim: dict.claimStudio,
           website: 'Sito ufficiale'
         }
       : {
@@ -60,7 +58,6 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
           styles: 'styles',
           source: 'Primary source',
           upcoming: 'Upcoming sessions',
-          claim: dict.claimStudio,
           website: 'Official website'
         };
 
@@ -68,54 +65,61 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
     <div className="stack-list">
       <section className="detail-hero profile-hero">
         <div className="panel profile-main">
-          <p className="eyebrow">{profileCopy.eyebrow}</p>
-          <h1>{venue.name}</h1>
-          <p className="lead">{venue.description[locale]}</p>
-          <div className="badge-row">
-            {venue.amenities.map((amenity) => (
-              <Chip key={amenity} className="meta-pill" radius="full" variant="flat">
-                {amenity}
-              </Chip>
-            ))}
-          </div>
-          <p className="muted">{venue.address} · {neighborhood?.name[locale]}</p>
-          <p className="muted">{venue.freshnessNote[locale]} · {formatVerifiedAt(venue.lastVerifiedAt, locale)}</p>
-          <div className="site-actions profile-links">
-            <FavoriteButton entitySlug={venue.slug} entityType="venue" locale={locale} signedInEmail={user?.email} label={dict.save} savedLabel={dict.unsave} />
-            <Button as={NextLink} href={`/${locale}/claim/${venue.slug}`} variant="ghost" radius="full" className="button button-ghost">
-              {profileCopy.claim}
-            </Button>
-            {hasWebsite ? (
-              <Button as="a" href={venue.sourceUrl} className="button button-secondary" variant="flat" radius="full" target="_blank" rel="noreferrer">
-                {profileCopy.website}
-              </Button>
-            ) : null}
+          <div className="profile-main-layout">
+            <div className="profile-main-copy">
+              <p className="eyebrow">{profileCopy.eyebrow}</p>
+              <h1>{venue.name}</h1>
+              <p className="lead">{venue.description[locale]}</p>
+              <div className="profile-chip-row">
+                {venue.amenities.map((amenity) => (
+                  <Chip key={amenity} radius="sm" size="sm" variant="flat" color="default">
+                    {amenity}
+                  </Chip>
+                ))}
+              </div>
+              <div className="profile-meta">
+                <p className="muted">{venue.address} · {neighborhood?.name[locale]}</p>
+                <p className="muted">{venue.freshnessNote[locale]} · {formatVerifiedAt(venue.lastVerifiedAt, locale)}</p>
+              </div>
+              <div className="site-actions profile-links">
+                {hasWebsite ? (
+                  <Button as="a" href={venue.sourceUrl} className="button button-secondary" variant="flat" radius="full" target="_blank" rel="noreferrer">
+                    {profileCopy.website}
+                  </Button>
+                ) : null}
+              </div>
+            </div>
+            <VenueCover venue={venue} locale={locale} className="profile-venue-cover" />
           </div>
         </div>
-        <div className="panel profile-side">
-          <p className="eyebrow">{profileCopy.trust}</p>
-          <h2>{profileCopy.schedule}</h2>
-          <p className="muted">
-            {profileCopy.source}:{' '}
-            <Link as="a" href={venue.sourceUrl} target="_blank" rel="noreferrer" className="inline-link">
-              {venue.sourceUrl}
-            </Link>
-          </p>
-          <div className="classes-stat-grid profile-metrics">
-            <div className="classes-stat-card">
-              <strong>{sessions.length}</strong>
-              <span>{profileCopy.weekdaySessions}</span>
+        <div className="profile-side-stack">
+          <div className="panel profile-side">
+            <p className="eyebrow">{profileCopy.trust}</p>
+            <h2>{profileCopy.schedule}</h2>
+            <p className="muted">
+              {profileCopy.source}:{' '}
+              <Link as="a" href={venue.sourceUrl} target="_blank" rel="noreferrer" className="inline-link">
+                {venue.sourceUrl}
+              </Link>
+            </p>
+            <div className="classes-stat-grid profile-metrics">
+              <div className="classes-stat-card">
+                <strong>{sessions.length}</strong>
+                <span>{profileCopy.weekdaySessions}</span>
+              </div>
+              <div className="classes-stat-card">
+                <strong>{venue.languages.length}</strong>
+                <span>{profileCopy.languages}</span>
+              </div>
+              <div className="classes-stat-card">
+                <strong>{venue.styleSlugs.length}</strong>
+                <span>{profileCopy.styles}</span>
+              </div>
             </div>
-            <div className="classes-stat-card">
-              <strong>{venue.languages.length}</strong>
-              <span>{profileCopy.languages}</span>
-            </div>
-            <div className="classes-stat-card">
-              <strong>{venue.styleSlugs.length}</strong>
-              <span>{profileCopy.styles}</span>
+            <div className="profile-side-actions">
+              <ClaimFormDialog studioSlug={venue.slug} locale={locale} />
             </div>
           </div>
-          <ClaimForm studioSlug={venue.slug} locale={locale} />
         </div>
       </section>
 
@@ -149,8 +153,6 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
                       session={session}
                       locale={locale}
                       signedInEmail={user?.email}
-                      saveLabel={dict.save}
-                      savedLabel={dict.unsave}
                       scheduleLabel={dict.saveSchedule}
                     />
                   ))}

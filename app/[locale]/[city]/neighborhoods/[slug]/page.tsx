@@ -50,13 +50,11 @@ export default async function NeighborhoodPage({ params }: { params: Promise<{ l
               session={session}
               locale={locale}
               signedInEmail={user?.email}
-              saveLabel={dict.save}
-              savedLabel={dict.unsave}
               scheduleLabel={dict.saveSchedule}
             />
           ))}
         </div>
-        <MapPanel locale={locale} citySlug={citySlug} cityName={city.name[locale]} venues={venues} bounds={city.bounds} />
+        <MapPanel locale={locale} cityName={city.name[locale]} venues={venues} bounds={city.bounds} />
       </section>
     </div>
   );

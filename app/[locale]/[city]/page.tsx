@@ -108,8 +108,6 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
                 session={session}
                 locale={locale}
                 signedInEmail={user?.email}
-                saveLabel={dict.save}
-                savedLabel={dict.unsave}
                 scheduleLabel={dict.saveSchedule}
               />
             ))}

@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@heroui/react';
 
+import { readStoredSchedule, syncStoredSchedule, toggleStoredSchedule } from '@/components/state/storage';
+
 interface ScheduleButtonProps {
   sessionId: string;
   locale: string;
@@ -18,6 +20,7 @@ export function ScheduleButton({ sessionId, locale, signedInEmail, label }: Sche
 
   useEffect(() => {
     if (!signedInEmail) return;
+    setSaved(readStoredSchedule(signedInEmail).includes(sessionId));
 
     const controller = new AbortController();
     void fetch(`/api/state/schedule?sessionId=${encodeURIComponent(sessionId)}`, {
@@ -28,6 +31,7 @@ export function ScheduleButton({ sessionId, locale, signedInEmail, label }: Sche
         if (!response.ok) return;
         const payload = (await response.json()) as { saved: boolean };
         setSaved(Boolean(payload.saved));
+        syncStoredSchedule(signedInEmail, sessionId, Boolean(payload.saved));
       })
       .catch(() => {});
 
@@ -43,6 +47,8 @@ export function ScheduleButton({ sessionId, locale, signedInEmail, label }: Sche
     }
 
     setPending(true);
+    const optimisticSaved = toggleStoredSchedule(signedInEmail, sessionId);
+    setSaved(optimisticSaved);
     try {
       const response = await fetch('/api/state/schedule', {
         method: 'POST',
@@ -56,6 +62,7 @@ export function ScheduleButton({ sessionId, locale, signedInEmail, label }: Sche
 
       const payload = (await response.json()) as { saved: boolean };
       setSaved(Boolean(payload.saved));
+      syncStoredSchedule(signedInEmail, sessionId, Boolean(payload.saved));
     } finally {
       setPending(false);
     }

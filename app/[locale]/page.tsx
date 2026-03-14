@@ -86,7 +86,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
           featuresEyebrow: 'Perché è diverso',
           featuresTitle: 'Guida cittadini selezionata e curata con amore.',
           featuresBody:
-            'Trovare la pratica perfetta deve essere semplice e piacevole quanto praticarla. Su mappa.',
+            'Calendario selezionato delle lezioni di yoga e altre attività di benessere, nella tua città.',
           cityTitle: 'Palermo Hub',
           cityBody: 'Il calendario cittadino per yoga, mind-body e attività benessere affidabili.',
           classes: 'Classi',

@@ -9,6 +9,22 @@ export function SiteFooter({ locale }: { locale: Locale }) {
       ? 'Discovery locale per yoga, mind-body e attività bambini a Palermo.'
       : 'Local discovery for yoga, mind-body, and kids activities in Palermo.';
   const meta = `© ${new Date().getFullYear()} kinelo.fit · Palermo-first city utility`;
+  const labels =
+    locale === 'it'
+      ? {
+          classes: 'Classi',
+          whoWeAre: 'Chi siamo',
+          suggestCalendar: 'Segnala calendario',
+          privacy: 'Privacy Policy',
+          cookies: 'Cookies'
+        }
+      : {
+          classes: 'Classes',
+          whoWeAre: 'Who we are',
+          suggestCalendar: 'Suggest calendar',
+          privacy: 'Privacy Policy',
+          cookies: 'Cookies'
+        };
 
   return (
     <footer className="site-footer-wrap">
@@ -23,13 +39,19 @@ export function SiteFooter({ locale }: { locale: Locale }) {
             Palermo
           </Link>
           <Link as={NextLink} href={`/${locale}/palermo/classes`}>
-            {locale === 'it' ? 'Classi' : 'Classes'}
+            {labels.classes}
           </Link>
           <Link as={NextLink} href={`/${locale}/who-we-are`}>
-            {locale === 'it' ? 'Chi siamo' : 'Who we are'}
+            {labels.whoWeAre}
           </Link>
           <Link as={NextLink} href={`/${locale}/suggest-calendar`}>
-            {locale === 'it' ? 'Segnala calendario' : 'Suggest calendar'}
+            {labels.suggestCalendar}
+          </Link>
+          <Link as={NextLink} href={`/${locale}/privacy-policy`}>
+            {labels.privacy}
+          </Link>
+          <Link as={NextLink} href={`/${locale}/cookies`}>
+            {labels.cookies}
           </Link>
         </div>
       </div>
