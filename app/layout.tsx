@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 
 import './globals.css';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import { AppProviders } from '@/components/providers/AppProviders';
 import { defaultLocale } from '@/lib/catalog/data';
 import { env } from '@/lib/env';
 
@@ -24,7 +26,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang={defaultLocale}>
-      <body>{children}</body>
+      <body>
+        <AppProviders>{children}</AppProviders>
+      </body>
     </html>
   );
 }

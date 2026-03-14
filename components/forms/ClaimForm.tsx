@@ -1,10 +1,19 @@
 'use client';
 
 import { useState } from 'react';
+import { Button, Input, Textarea } from '@heroui/react';
 
 import type { Locale } from '@/lib/catalog/types';
 
-export function ClaimForm({ studioSlug, locale }: { studioSlug: string; locale: Locale }) {
+export function ClaimForm({
+  studioSlug,
+  locale,
+  panel = true
+}: {
+  studioSlug: string;
+  locale: Locale;
+  panel?: boolean;
+}) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'done'>('idle');
   const labels =
     locale === 'it'
@@ -17,7 +26,7 @@ export function ClaimForm({ studioSlug, locale }: { studioSlug: string; locale: 
           notesPlaceholder: 'Indica cosa vuoi aggiornare o verificare.',
           submitting: 'Invio in corso...',
           submit: 'Invia richiesta',
-          done: 'Richiesta inviata. Il team la verifichera prima della pubblicazione.'
+          done: 'Richiesta inviata. Il team la verificherà prima della pubblicazione.'
         }
       : {
           name: 'Name',
@@ -33,7 +42,7 @@ export function ClaimForm({ studioSlug, locale }: { studioSlug: string; locale: 
 
   return (
     <form
-      className="panel form-stack"
+      className={panel ? 'panel form-stack' : 'form-stack'}
       onSubmit={async (event) => {
         event.preventDefault();
         setStatus('loading');
@@ -48,25 +57,13 @@ export function ClaimForm({ studioSlug, locale }: { studioSlug: string; locale: 
         event.currentTarget.reset();
       }}
     >
-      <label>
-        {labels.name}
-        <input name="name" required />
-      </label>
-      <label>
-        {labels.email}
-        <input name="email" type="email" required />
-      </label>
-      <label>
-        {labels.role}
-        <input name="role" placeholder={labels.rolePlaceholder} required />
-      </label>
-      <label>
-        {labels.notes}
-        <textarea name="notes" rows={4} placeholder={labels.notesPlaceholder} required />
-      </label>
-      <button className="button button-primary" type="submit" disabled={status === 'loading'}>
+      <Input name="name" label={labels.name} required />
+      <Input name="email" type="email" label={labels.email} required />
+      <Input name="role" label={labels.role} placeholder={labels.rolePlaceholder} required />
+      <Textarea name="notes" label={labels.notes} minRows={4} placeholder={labels.notesPlaceholder} required />
+      <Button className="button button-primary" color="primary" radius="full" type="submit" isDisabled={status === 'loading'}>
         {status === 'loading' ? labels.submitting : labels.submit}
-      </button>
+      </Button>
       {status === 'done' ? <p className="muted">{labels.done}</p> : null}
     </form>
   );

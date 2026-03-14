@@ -1,5 +1,6 @@
-import Link from 'next/link';
+import NextLink from 'next/link';
 import { DateTime } from 'luxon';
+import { Button, Card, CardBody, Chip, Link } from '@heroui/react';
 
 import { DigestForm } from '@/components/forms/DigestForm';
 import { getCityMetrics, getFeaturedSessions, getStyle, getVenue } from '@/lib/catalog/data';
@@ -77,17 +78,17 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
     locale === 'it'
       ? {
           heroBadge: 'Discovery locale Palermo-first',
-          heroTitle: 'Scopri la lezione ideale nella tua citta.',
+          heroTitle: 'Scopri la lezione ideale nella tua città.',
           heroBody:
-            'kinelo.fit e un utility cittadino: mappa, calendario verificato e percorsi diretti verso prenotazione o contatto.',
+            'kinelo.fit è un utility cittadino: mappa, calendario verificato e percorsi diretti verso prenotazione o contatto.',
           ctaPrimary: 'Esplora le classi',
           ctaSecondary: 'Palermo hub',
-          featuresEyebrow: 'Perche e diverso',
+          featuresEyebrow: 'Perché è diverso',
           featuresTitle: 'Guida cittadini selezionata e curata con amore.',
           featuresBody:
-            'Trovare la pratica perfetta deve essere semplice e piacevole quanto praticarla. Su mappa.',
+            'Calendario selezionato delle lezioni di yoga e altre attività di benessere, nella tua città.',
           cityTitle: 'Palermo Hub',
-          cityBody: 'Il calendario cittadino per yoga, mind-body e attivita benessere affidabili.',
+          cityBody: 'Il calendario cittadino per yoga, mind-body e attività benessere affidabili.',
           classes: 'Classi',
           venues: 'Studi',
           neighborhoods: 'Quartieri',
@@ -100,9 +101,9 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
           newsletterOne: 'Aggiornamenti utili, zero rumore',
           newsletterTwo: 'Niente spam',
           weeklyArticles: 'Aggiornamenti settimanali',
-          weeklyArticlesBody: 'Novita, nuove attivita e variazioni di calendario in un unico digest.',
+          weeklyArticlesBody: 'Novità, nuove attività e variazioni di calendario in un unico digest.',
           noSpam: 'Solo contenuti rilevanti',
-          noSpamBody: 'Ti scriviamo solo quando c e qualcosa di davvero utile da sapere.'
+          noSpamBody: 'Ti scriviamo solo quando c’è qualcosa di davvero utile da sapere.'
         }
       : {
           heroBadge: 'Palermo-seeded discovery',
@@ -140,7 +141,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
       title: locale === 'it' ? 'Per quartiere, non per scroll' : 'Map-led Discovery',
       description:
         locale === 'it'
-          ? 'Trova classi vicino a te. Mappa e prossimita al centro.'
+          ? 'Trova classi vicino a te. Mappa e prossimità al centro.'
           : 'Find classes in your neighborhood. We prioritize location and proximity over endless scrolling.'
     },
     {
@@ -172,7 +173,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
       title: locale === 'it' ? 'Catalogo selezionato' : 'Mind-Body Focus',
       description:
         locale === 'it'
-          ? 'Cresce solo quando qualita e copertura locale sono solide.'
+          ? 'Cresce solo quando qualità e copertura locale sono solide.'
           : 'Specialized in yoga, pilates, meditation, and holistic wellness practices.'
     },
     {
@@ -180,7 +181,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
       title: locale === 'it' ? 'Strumento pubblico' : 'Public City Utility',
       description:
         locale === 'it'
-          ? 'Gratuito, accessibile, pensato per la comunita di Palermo.'
+          ? 'Gratuito, accessibile, pensato per la comunità di Palermo.'
           : 'Built as a public good for the community, making wellness accessible and transparent.'
     }
   ];
@@ -198,15 +199,26 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
               <h1>{copy.heroTitle}</h1>
               <p>{copy.heroBody}</p>
               <div className="home-v2-hero-actions">
-                <Link href={`/${locale}/palermo/classes`} className="home-v2-btn home-v2-btn-primary">
+                <Button
+                  as={NextLink}
+                  href={`/${locale}/palermo/classes`}
+                  radius="full"
+                  className="home-v2-btn home-v2-btn-primary"
+                >
                   <span>{copy.ctaPrimary}</span>
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                </Link>
-                <Link href={`/${locale}/palermo`} className="home-v2-btn home-v2-btn-secondary">
+                </Button>
+                <Button
+                  as={NextLink}
+                  href={`/${locale}/palermo`}
+                  radius="full"
+                  variant="bordered"
+                  className="home-v2-btn home-v2-btn-secondary"
+                >
                   {copy.ctaSecondary}
-                </Link>
+                </Button>
               </div>
             </div>
             <div className="home-v2-hero-visual">
@@ -236,13 +248,15 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
           </div>
           <div className="home-v2-features-grid">
             {features.map((feature) => (
-              <article key={feature.title} className="home-v2-feature-item">
+              <Card key={feature.title} shadow="none" className="home-v2-feature-item">
                 <div className="home-v2-feature-icon">
                   <InlineIcon name={feature.icon} />
                 </div>
-                <h3>{feature.title}</h3>
-                <p>{feature.description}</p>
-              </article>
+                <CardBody className="p-0">
+                  <h3>{feature.title}</h3>
+                  <p>{feature.description}</p>
+                </CardBody>
+              </Card>
             ))}
           </div>
         </div>
@@ -254,10 +268,18 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
             <h2>{copy.cityTitle}</h2>
             <p>{copy.cityBody}</p>
             <div className="home-v2-metric-pills">
-              <span>{metrics.sessions} {copy.classes}</span>
-              <span>{metrics.venues} {copy.venues}</span>
-              <span>{metrics.neighborhoods} {copy.neighborhoods}</span>
-              <span>{metrics.styles} {copy.styles}</span>
+              <Chip radius="full" variant="flat">
+                {metrics.sessions} {copy.classes}
+              </Chip>
+              <Chip radius="full" variant="flat">
+                {metrics.venues} {copy.venues}
+              </Chip>
+              <Chip radius="full" variant="flat">
+                {metrics.neighborhoods} {copy.neighborhoods}
+              </Chip>
+              <Chip radius="full" variant="flat">
+                {metrics.styles} {copy.styles}
+              </Chip>
             </div>
           </div>
           <div className="home-v2-cards-grid">
@@ -269,7 +291,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
               const end = DateTime.fromISO(session.endAt).setZone('Europe/Rome');
 
               return (
-                <article key={session.id} className="home-v2-class-card">
+                <Card key={session.id} radius="lg" shadow="sm" className="home-v2-class-card">
                   <div className="home-v2-class-top">
                     <time>{start.toFormat('HH:mm')} - {end.toFormat('HH:mm')}</time>
                     <span>{levelLabel(session.level)}</span>
@@ -279,20 +301,26 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
                     <p>{venue.name}</p>
                     <p>{style.name[locale]}</p>
                   </div>
-                  <Link href={`/${locale}/${session.citySlug}/studios/${venue.slug}`} className="home-v2-class-link">
+                  <Link as={NextLink} href={`/${locale}/${session.citySlug}/studios/${venue.slug}`} className="home-v2-class-link">
                     {copy.viewDetails}
                     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                       <path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </Link>
-                </article>
+                </Card>
               );
             })}
           </div>
           <div className="home-v2-cityhub-cta">
-            <Link href={`/${locale}/palermo/classes`} className="home-v2-btn home-v2-btn-secondary">
+            <Button
+              as={NextLink}
+              href={`/${locale}/palermo/classes`}
+              radius="full"
+              variant="bordered"
+              className="home-v2-btn home-v2-btn-secondary"
+            >
               {copy.fullSchedule}
-            </Link>
+            </Button>
           </div>
         </div>
       </section>

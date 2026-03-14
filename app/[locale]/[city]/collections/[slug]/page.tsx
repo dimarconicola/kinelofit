@@ -1,4 +1,6 @@
 import { notFound } from 'next/navigation';
+import NextLink from 'next/link';
+import { Button } from '@heroui/react';
 
 import { TodayNearbyLocationHint } from '@/components/discovery/TodayNearbyLocationHint';
 import { SessionCard } from '@/components/discovery/SessionCard';
@@ -70,7 +72,7 @@ export default async function CollectionPage({
           title: slug === 'today-nearby' ? 'Vicino a te oggi' : 'Collezione aggiornata',
           body:
             slug === 'today-nearby'
-              ? 'Se la geolocalizzazione non e disponibile, ordiniamo dal centro citta.'
+              ? 'Se la geolocalizzazione non è disponibile, ordiniamo dal centro città.'
               : 'Questa selezione resta aggiornata con fonti locali verificate.'
         }
       : {
@@ -90,6 +92,17 @@ export default async function CollectionPage({
           <p className="eyebrow">{statusCopy.collection}</p>
           <h1>{collection.title[locale]}</h1>
           <p className="lead">{collection.description[locale]}</p>
+          <div className="site-actions">
+            <Button
+              as={NextLink}
+              href={`/${locale}/${citySlug}/classes`}
+              radius="full"
+              color="primary"
+              className="button button-primary"
+            >
+              {dict.exploreClasses}
+            </Button>
+          </div>
           {Component ? <Component /> : null}
         </div>
         <div className="panel collection-order-panel">
@@ -109,8 +122,6 @@ export default async function CollectionPage({
               session={session}
               locale={locale}
               signedInEmail={user?.email}
-              saveLabel={dict.save}
-              savedLabel={dict.unsave}
               scheduleLabel={dict.saveSchedule}
             />
           ))}

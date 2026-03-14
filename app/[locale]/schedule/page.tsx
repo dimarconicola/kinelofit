@@ -1,5 +1,7 @@
-import Link from 'next/link';
+import NextLink from 'next/link';
+import { Button } from '@heroui/react';
 
+import { SavedScheduleClient } from '@/components/state/SavedScheduleClient';
 import { getSessionUser } from '@/lib/auth/session';
 import { sessions } from '@/lib/catalog/seed';
 import { resolveLocale } from '@/lib/i18n/routing';
@@ -32,23 +34,20 @@ export default async function SchedulePage({ params }: { params: Promise<{ local
     return (
       <div className="empty-state">
         <p>{copy.signInNeeded}</p>
-        <Link href={`/${locale}/sign-in`} className="button button-primary">
+        <Button as={NextLink} href={`/${locale}/sign-in`} color="primary" radius="full" className="button button-primary">
           {copy.signIn}
-        </Link>
+        </Button>
       </div>
     );
   }
 
   const scheduleRows = await listUserSchedule(user.id);
-  const scheduleItems = scheduleRows
-    .map((sessionId) => sessions.find((session) => session.id === sessionId))
-    .filter((session): session is NonNullable<typeof session> => Boolean(session))
-    .map((session) => ({
-      key: session.id,
-      href: `/${locale}/${session.citySlug}/studios/${session.venueSlug}`,
-      title: session.title[locale],
-      meta: formatSessionTime(session.startAt, locale)
-    }));
+  const sessionItems = sessions.map((session) => ({
+    id: session.id,
+    href: `/${locale}/${session.citySlug}/studios/${session.venueSlug}`,
+    title: session.title[locale],
+    meta: formatSessionTime(session.startAt, locale)
+  }));
 
   return (
     <div className="stack-list">
@@ -59,18 +58,7 @@ export default async function SchedulePage({ params }: { params: Promise<{ local
       </section>
 
       <section className="panel">
-        {scheduleItems.length > 0 ? (
-          <div className="stack-list">
-            {scheduleItems.map((item) => (
-              <Link href={item.href} key={item.key} className="list-link">
-                <strong>{item.title}</strong>
-                <span>{item.meta}</span>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <p className="muted">{copy.empty}</p>
-        )}
+        <SavedScheduleClient signedInEmail={user.email} initialScheduleIds={scheduleRows} sessions={sessionItems} emptyLabel={copy.empty} />
       </section>
     </div>
   );

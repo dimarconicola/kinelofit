@@ -1,23 +1,21 @@
-import Link from 'next/link';
+import NextLink from 'next/link';
 import { DateTime } from 'luxon';
+import { Chip, Link } from '@heroui/react';
 
-import { FavoriteButton } from '@/components/state/FavoriteButton';
 import { ScheduleButton } from '@/components/state/ScheduleButton';
 import { getBookingTarget, getInstructor, getStyle, getVenue } from '@/lib/catalog/data';
 import type { Locale, Session } from '@/lib/catalog/types';
-import { formatSessionTime, formatVerifiedAt } from '@/lib/ui/format';
+import { formatSessionTime } from '@/lib/ui/format';
 import { BookingLink } from './BookingLink';
 
 interface SessionCardProps {
   session: Session;
   locale: Locale;
   signedInEmail?: string;
-  saveLabel: string;
-  savedLabel: string;
   scheduleLabel: string;
 }
 
-export function SessionCard({ session, locale, signedInEmail, saveLabel, savedLabel, scheduleLabel }: SessionCardProps) {
+export function SessionCard({ session, locale, signedInEmail, scheduleLabel }: SessionCardProps) {
   const venue = getVenue(session.venueSlug);
   const instructor = getInstructor(session.instructorSlug);
   const style = getStyle(session.styleSlug);
@@ -30,7 +28,6 @@ export function SessionCard({ session, locale, signedInEmail, saveLabel, savedLa
           bookNow: 'Prenota ora',
           studio: 'Apri studio',
           teacher: 'Apri insegnante',
-          refreshed: 'Aggiornato',
           level: {
             beginner: 'Principianti',
             open: 'Aperti a tutti',
@@ -50,7 +47,6 @@ export function SessionCard({ session, locale, signedInEmail, saveLabel, savedLa
           bookNow: 'Book now',
           studio: 'View studio',
           teacher: 'View teacher',
-          refreshed: 'Updated',
           level: {
             beginner: 'Beginner',
             open: 'Open',
@@ -92,20 +88,20 @@ export function SessionCard({ session, locale, signedInEmail, saveLabel, savedLa
           </div>
           <p className="session-meta">{formatSessionTime(session.startAt, locale)}</p>
           <p className="muted">
-            <Link href={`/${locale}/${session.citySlug}/studios/${venue.slug}`} className="inline-link">
+            <Link as={NextLink} href={`/${locale}/${session.citySlug}/studios/${venue.slug}`} className="inline-link">
               {venue.name}
             </Link>{' '}
             ·{' '}
-            <Link href={`/${locale}/${session.citySlug}/teachers/${instructor.slug}`} className="inline-link">
+            <Link as={NextLink} href={`/${locale}/${session.citySlug}/teachers/${instructor.slug}`} className="inline-link">
               {instructor.name}
             </Link>
           </p>
           <p className="muted">{venue.address}</p>
           <div className="session-tags">
-            <span>{style.name[locale]}</span>
-            <span>{labels.level[session.level]}</span>
-            <span>{session.language}</span>
-            <span>{labels.format[session.format]}</span>
+            <Chip radius="full" size="sm">{style.name[locale]}</Chip>
+            <Chip radius="full" size="sm">{labels.level[session.level]}</Chip>
+            <Chip radius="full" size="sm">{session.language}</Chip>
+            <Chip radius="full" size="sm">{labels.format[session.format]}</Chip>
           </div>
           {session.priceNote ? (
             <p className="muted">
@@ -114,14 +110,11 @@ export function SessionCard({ session, locale, signedInEmail, saveLabel, savedLa
           ) : null}
           <div className="session-card-footer">
             <div className="stack-list">
-              <p className="session-freshness">
-                {labels.refreshed} {formatVerifiedAt(session.lastVerifiedAt, locale)}
-              </p>
               <div className="session-card-links">
-                <Link href={`/${locale}/${session.citySlug}/studios/${venue.slug}`} className="inline-link">
+                <Link as={NextLink} href={`/${locale}/${session.citySlug}/studios/${venue.slug}`} className="inline-link">
                   {labels.studio}
                 </Link>
-                <Link href={`/${locale}/${session.citySlug}/teachers/${instructor.slug}`} className="inline-link">
+                <Link as={NextLink} href={`/${locale}/${session.citySlug}/teachers/${instructor.slug}`} className="inline-link">
                   {labels.teacher}
                 </Link>
               </div>
@@ -137,7 +130,6 @@ export function SessionCard({ session, locale, signedInEmail, saveLabel, savedLa
                 label={labels.bookNow}
               />
               <ScheduleButton sessionId={session.id} locale={locale} signedInEmail={signedInEmail} label={scheduleLabel} />
-              <FavoriteButton entitySlug={session.id} entityType="session" locale={locale} signedInEmail={signedInEmail} label={saveLabel} savedLabel={savedLabel} />
             </div>
           </div>
         </div>

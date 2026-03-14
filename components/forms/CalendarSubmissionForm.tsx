@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { Button, Checkbox, Input, Select, SelectItem, Textarea } from '@heroui/react';
 
 import type { Locale } from '@/lib/catalog/types';
 
@@ -54,7 +55,7 @@ export function CalendarSubmissionForm({ locale, citySlug }: CalendarSubmissionF
 
   return (
     <form
-      className="panel form-stack"
+      className="form-stack calendar-submission-form"
       onSubmit={async (event) => {
         event.preventDefault();
         setStatus('loading');
@@ -95,52 +96,30 @@ export function CalendarSubmissionForm({ locale, citySlug }: CalendarSubmissionF
     >
       <h2>{labels.title}</h2>
 
-      <label>
-        {labels.type}
-        <select name="submitterType" defaultValue="studio" required>
-          <option value="studio">{labels.studio}</option>
-          <option value="teacher">{labels.teacher}</option>
-        </select>
-      </label>
+      <Select name="submitterType" label={labels.type} defaultSelectedKeys={['studio']} isRequired>
+        <SelectItem key="studio">{labels.studio}</SelectItem>
+        <SelectItem key="teacher">{labels.teacher}</SelectItem>
+      </Select>
 
-      <label>
-        {labels.org}
-        <input name="organizationName" required />
-      </label>
+      <Input name="organizationName" label={labels.org} isRequired />
 
-      <label>
-        {labels.contact}
-        <input name="contactName" required />
-      </label>
+      <Input name="contactName" label={labels.contact} isRequired />
 
-      <label>
-        {labels.email}
-        <input name="email" type="email" required />
-      </label>
+      <Input name="email" type="email" label={labels.email} isRequired />
 
-      <label>
-        {labels.phone}
-        <input name="phone" type="tel" />
-      </label>
+      <Input name="phone" type="tel" label={labels.phone} />
 
-      <label>
-        {labels.urls}
-        <textarea name="sourceUrls" rows={4} required placeholder="https://example.com/schedule" />
-      </label>
+      <Textarea name="sourceUrls" label={labels.urls} minRows={4} isRequired placeholder="https://example.com/schedule" />
 
-      <label>
-        {labels.schedule}
-        <textarea name="scheduleText" rows={5} required />
-      </label>
+      <Textarea name="scheduleText" label={labels.schedule} minRows={5} isRequired />
 
-      <label className="filter-checkbox">
-        <input type="checkbox" name="consent" value="true" required />
+      <Checkbox name="consent" value="true" isRequired className="calendar-consent">
         {labels.consent}
-      </label>
+      </Checkbox>
 
-      <button className="button button-primary" type="submit" disabled={status === 'loading'}>
+      <Button className="button button-primary" color="primary" radius="full" type="submit" isDisabled={status === 'loading'}>
         {status === 'loading' ? labels.submitting : labels.submit}
-      </button>
+      </Button>
       {status === 'done' ? <p className="muted">{labels.done}</p> : null}
       {status === 'error' ? <p className="muted">{labels.error}</p> : null}
     </form>

@@ -1,4 +1,6 @@
 import { redirect } from 'next/navigation';
+import NextLink from 'next/link';
+import { Button, Chip, Input } from '@heroui/react';
 
 import { isSupabaseConfigured } from '@/lib/auth/supabase';
 import { getSessionUser } from '@/lib/auth/session';
@@ -23,15 +25,15 @@ export default async function SignInPage({
       ? {
           title: 'Salva la tua routine',
           demoTag: 'Accesso demo',
-          demoLead: 'Quando Supabase non e configurato, usiamo una sessione firmata locale per i flussi gated.',
+          demoLead: 'Quando Supabase non è configurato, usiamo una sessione firmata locale per i flussi gated.',
           email: 'Email',
           continue: 'Continua',
           supabaseTag: 'Supabase Auth',
           supabaseLead: 'Attiva accesso reale con magic link o Google OAuth.',
           magicLink: 'Invia magic link',
           google: 'Continua con Google',
-          checkEmail: 'Controlla la tua email: il magic link e stato inviato.',
-          mode: 'Modalita',
+          checkEmail: 'Controlla la tua email: il magic link è stato inviato.',
+          mode: 'Modalità',
           live: 'Auth reale attiva',
           fallback: 'Fallback demo locale'
         }
@@ -57,44 +59,49 @@ export default async function SignInPage({
         <p className="eyebrow">{isSupabaseConfigured ? copy.supabaseTag : copy.demoTag}</p>
         <h1>{copy.title}</h1>
         <p className="lead">{isSupabaseConfigured ? copy.supabaseLead : copy.demoLead}</p>
-        {checkEmail ? <p className="meta-pill">{copy.checkEmail}</p> : null}
+        {checkEmail ? (
+          <div>
+            <Chip radius="full" variant="flat" className="meta-pill">
+              {copy.checkEmail}
+            </Chip>
+          </div>
+        ) : null}
 
         {isSupabaseConfigured ? (
           <>
             <form action="/api/auth/magic-link" method="post" className="form-stack">
               <input type="hidden" name="locale" value={locale} />
-              <label>
-                {copy.email}
-                <input name="email" type="email" required placeholder="you@example.com" />
-              </label>
-              <button className="button button-primary" type="submit">
+              <Input name="email" type="email" label={copy.email} required placeholder="you@example.com" />
+              <Button className="button button-primary" color="primary" radius="full" type="submit">
                 {copy.magicLink}
-              </button>
+              </Button>
             </form>
             <form action="/api/auth/oauth" method="post" className="form-stack">
               <input type="hidden" name="locale" value={locale} />
               <input type="hidden" name="provider" value="google" />
-              <button className="button button-ghost" type="submit">
+              <Button className="button button-ghost" variant="ghost" radius="full" type="submit">
                 {copy.google}
-              </button>
+              </Button>
             </form>
           </>
         ) : (
           <form action="/api/auth/demo" method="post" className="form-stack">
             <input type="hidden" name="locale" value={locale} />
-            <label>
-              {copy.email}
-              <input name="email" type="email" required placeholder="you@example.com" />
-            </label>
-            <button className="button button-primary" type="submit">
+            <Input name="email" type="email" label={copy.email} required placeholder="you@example.com" />
+            <Button className="button button-primary" color="primary" radius="full" type="submit">
               {copy.continue}
-            </button>
+            </Button>
           </form>
         )}
       </div>
       <div className="panel">
         <p className="eyebrow">{copy.mode}</p>
         <p className="lead">{isSupabaseConfigured ? copy.live : copy.fallback}</p>
+        <div className="site-actions">
+          <Button as={NextLink} href={`/${locale}`} variant="light" radius="full">
+            {locale === 'it' ? 'Torna alla home' : 'Back to home'}
+          </Button>
+        </div>
       </div>
     </section>
   );

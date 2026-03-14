@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 
-import type { DiscoveryFilters, Session, TimeBucket } from '@/lib/catalog/types';
+import type { DiscoveryFilters, Session, TimeBucket, WeekdayFilter } from '@/lib/catalog/types';
 
 export const getTimeBucket = (iso: string): TimeBucket => {
   const hour = DateTime.fromISO(iso).hour;
@@ -25,15 +25,31 @@ const datePresetMatches = (session: Session, preset: DiscoveryFilters['date']) =
   return start.hasSame(saturday, 'day') || start.hasSame(sunday, 'day');
 };
 
+const weekdayMap: Record<WeekdayFilter, number> = {
+  mon: 1,
+  tue: 2,
+  wed: 3,
+  thu: 4,
+  fri: 5,
+  sat: 6,
+  sun: 7
+};
+
 export const applySessionFilters = (sessions: Session[], filters: DiscoveryFilters) => {
   const now = DateTime.now().setZone('Europe/Rome');
+  const selectedTimeBuckets = filters.time_buckets?.length
+    ? filters.time_buckets
+    : filters.time_bucket
+      ? [filters.time_bucket]
+      : [];
 
   return sessions.filter((session) => {
     const start = DateTime.fromISO(session.startAt).setZone('Europe/Rome');
     const end = DateTime.fromISO(session.endAt).setZone('Europe/Rome');
 
     if (!datePresetMatches(session, filters.date)) return false;
-    if (filters.time_bucket && getTimeBucket(session.startAt) !== filters.time_bucket) return false;
+    if (filters.weekday && start.weekday !== weekdayMap[filters.weekday]) return false;
+    if (selectedTimeBuckets.length > 0 && !selectedTimeBuckets.includes(getTimeBucket(session.startAt))) return false;
     if (filters.category && session.categorySlug !== filters.category) return false;
     if (filters.style && session.styleSlug !== filters.style) return false;
     if (filters.level && session.level !== filters.level) return false;
@@ -51,10 +67,20 @@ export const applySessionFilters = (sessions: Session[], filters: DiscoveryFilte
 
 export const parseFilters = (searchParams: Record<string, string | string[] | undefined>): DiscoveryFilters => {
   const one = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);
+  const parseTimeBuckets = (raw: string | undefined): TimeBucket[] => {
+    if (!raw) return [];
+    return raw
+      .split(',')
+      .map((item) => item.trim())
+      .filter((item): item is TimeBucket => item === 'early' || item === 'morning' || item === 'midday' || item === 'evening');
+  };
+  const parsedTimeBuckets = parseTimeBuckets(one(searchParams.time_bucket));
 
   return {
     date: one(searchParams.date) as DiscoveryFilters['date'],
-    time_bucket: one(searchParams.time_bucket) as DiscoveryFilters['time_bucket'],
+    weekday: one(searchParams.weekday) as DiscoveryFilters['weekday'],
+    time_bucket: parsedTimeBuckets[0],
+    time_buckets: parsedTimeBuckets,
     category: one(searchParams.category),
     style: one(searchParams.style),
     level: one(searchParams.level) as DiscoveryFilters['level'],

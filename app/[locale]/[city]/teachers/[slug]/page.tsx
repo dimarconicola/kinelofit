@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { DateTime } from 'luxon';
+import { Chip } from '@heroui/react';
 
 import { SessionCard } from '@/components/discovery/SessionCard';
 import { FavoriteButton } from '@/components/state/FavoriteButton';
@@ -36,7 +37,7 @@ export default async function TeacherPage({ params }: { params: Promise<{ locale
           eyebrow: 'Insegnante',
           trust: 'Impatto locale',
           upcoming: 'Sessioni in arrivo',
-          why: 'Perche conta',
+          why: 'Perché conta',
           sessions: 'sessioni',
           venues: 'studi',
           languages: 'lingue'
@@ -60,10 +61,14 @@ export default async function TeacherPage({ params }: { params: Promise<{ locale
           <p className="lead">{instructor.shortBio[locale]}</p>
           <div className="badge-row">
             {instructor.languages.map((language) => (
-              <span key={language} className="meta-pill">{language}</span>
+              <Chip key={language} className="meta-pill" radius="full" variant="flat">
+                {language}
+              </Chip>
             ))}
             {instructor.specialties.map((specialty) => (
-              <span key={specialty} className="meta-pill">{specialty}</span>
+              <Chip key={specialty} className="meta-pill" radius="full" variant="flat">
+                {specialty}
+              </Chip>
             ))}
           </div>
           <FavoriteButton entitySlug={instructor.slug} entityType="instructor" locale={locale} signedInEmail={user?.email} label={dict.save} savedLabel={dict.unsave} />
@@ -106,8 +111,12 @@ export default async function TeacherPage({ params }: { params: Promise<{ locale
                     <h2>{day.toFormat(locale === 'it' ? 'd LLLL' : 'd LLLL')}</h2>
                   </div>
                   <div className="day-group-meta">
-                    <span className="meta-pill">{daySessions.length} {teacherCopy.sessions}</span>
-                    <span className="meta-pill">{venues.size} {teacherCopy.venues}</span>
+                    <Chip radius="full" variant="flat" className="meta-pill">
+                      {daySessions.length} {teacherCopy.sessions}
+                    </Chip>
+                    <Chip radius="full" variant="flat" className="meta-pill">
+                      {venues.size} {teacherCopy.venues}
+                    </Chip>
                   </div>
                 </div>
                 <div className="session-day-stack">
@@ -117,8 +126,6 @@ export default async function TeacherPage({ params }: { params: Promise<{ locale
                       session={session}
                       locale={locale}
                       signedInEmail={user?.email}
-                      saveLabel={dict.save}
-                      savedLabel={dict.unsave}
                       scheduleLabel={dict.saveSchedule}
                     />
                   ))}

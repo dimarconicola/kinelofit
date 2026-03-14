@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Button, Checkbox, CheckboxGroup, Input } from '@heroui/react';
 
 import type { Locale } from '@/lib/catalog/types';
 
@@ -67,20 +68,31 @@ export function DigestForm({ citySlug, locale, className, showIntro = true, surf
           <p className="muted">{copy.lead}</p>
         </>
       ) : null}
-      <label>
-        {copy.email}
-        <input name="email" type="email" required />
-      </label>
+      <Input
+        name="email"
+        type="email"
+        label={copy.email}
+        isRequired
+        radius="lg"
+        variant={surface === 'plain' ? 'bordered' : 'flat'}
+        classNames={{ inputWrapper: 'digest-input-wrapper' }}
+      />
       {compact ? null : (
-        <div className="chip-row">
-          <label className="chip-option"><input type="checkbox" name="preferences" value="english" /> {copy.english}</label>
-          <label className="chip-option"><input type="checkbox" name="preferences" value="beginner" /> {copy.beginner}</label>
-          <label className="chip-option"><input type="checkbox" name="preferences" value="weekend" /> {copy.weekend}</label>
-        </div>
+        <CheckboxGroup className="chip-row" orientation="horizontal">
+          <Checkbox name="preferences" value="english" className="chip-option">
+            {copy.english}
+          </Checkbox>
+          <Checkbox name="preferences" value="beginner" className="chip-option">
+            {copy.beginner}
+          </Checkbox>
+          <Checkbox name="preferences" value="weekend" className="chip-option">
+            {copy.weekend}
+          </Checkbox>
+        </CheckboxGroup>
       )}
-      <button className="button button-primary" type="submit" disabled={status === 'loading'}>
+      <Button type="submit" color="primary" radius="full" isDisabled={status === 'loading'} className="digest-submit">
         {status === 'loading' ? copy.saving : copy.cta}
-      </button>
+      </Button>
       {status === 'done' ? <p className="muted">{copy.done}</p> : null}
     </form>
   );

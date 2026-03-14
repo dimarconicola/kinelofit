@@ -1,4 +1,5 @@
-import Link from 'next/link';
+import NextLink from 'next/link';
+import { Button, Card, CardBody, Link } from '@heroui/react';
 
 import { DigestForm } from '@/components/forms/DigestForm';
 import { SessionCard } from '@/components/discovery/SessionCard';
@@ -62,12 +63,18 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
           <h1>{getLocaleLabel(locale, city.hero)}</h1>
           <p>{dict.browseWithoutSignup}</p>
           <div className="site-actions">
-            <Link href={`/${locale}/${citySlug}/classes`} className="button button-primary">
+            <Button as={NextLink} href={`/${locale}/${citySlug}/classes`} color="primary" radius="full" className="button button-primary">
               {dict.exploreClasses}
-            </Link>
-            <Link href={`/${locale}/${citySlug}/collections/today-nearby`} className="button button-ghost">
+            </Button>
+            <Button
+              as={NextLink}
+              href={`/${locale}/${citySlug}/collections/today-nearby`}
+              variant="ghost"
+              radius="full"
+              className="button button-ghost"
+            >
               {dict.todayNearby}
-            </Link>
+            </Button>
           </div>
         </div>
         <div className="hero-copy city-hero-metrics">
@@ -90,7 +97,7 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
               <p className="eyebrow">{copy.featured}</p>
               <h2>{copy.featuredTitle}</h2>
             </div>
-            <Link href={`/${locale}/${citySlug}/classes`} className="inline-link">
+            <Link as={NextLink} href={`/${locale}/${citySlug}/classes`} className="inline-link">
               {copy.fullCalendar}
             </Link>
           </div>
@@ -101,8 +108,6 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
                 session={session}
                 locale={locale}
                 signedInEmail={user?.email}
-                saveLabel={dict.save}
-                savedLabel={dict.unsave}
                 scheduleLabel={dict.saveSchedule}
               />
             ))}
@@ -113,10 +118,12 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
             <p className="eyebrow">{copy.categories}</p>
             <div className="card-grid">
               {categories.map((category) => (
-                <Link key={category.slug} href={`/${locale}/${citySlug}/categories/${category.slug}`} className="collection-card">
-                  <strong>{getLocaleLabel(locale, category.name)}</strong>
-                  <span className="muted">{getLocaleLabel(locale, category.description)}</span>
-                </Link>
+                <Card as={NextLink} key={category.slug} href={`/${locale}/${citySlug}/categories/${category.slug}`} isPressable className="collection-card">
+                  <CardBody>
+                    <strong>{getLocaleLabel(locale, category.name)}</strong>
+                    <span className="muted">{getLocaleLabel(locale, category.description)}</span>
+                  </CardBody>
+                </Card>
               ))}
             </div>
           </div>
@@ -124,10 +131,12 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
             <p className="eyebrow">{copy.neighborhoods}</p>
             <div className="card-grid">
               {neighborhoods.map((item) => (
-                <Link key={item.slug} href={`/${locale}/${citySlug}/neighborhoods/${item.slug}`} className="collection-card">
-                  <strong>{getLocaleLabel(locale, item.name)}</strong>
-                  <span className="muted">{getLocaleLabel(locale, item.description)}</span>
-                </Link>
+                <Card as={NextLink} key={item.slug} href={`/${locale}/${citySlug}/neighborhoods/${item.slug}`} isPressable className="collection-card">
+                  <CardBody>
+                    <strong>{getLocaleLabel(locale, item.name)}</strong>
+                    <span className="muted">{getLocaleLabel(locale, item.description)}</span>
+                  </CardBody>
+                </Card>
               ))}
             </div>
           </div>
@@ -135,10 +144,12 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
             <p className="eyebrow">{copy.collections}</p>
             <div className="stack-list">
               {collections.map((collection) => (
-                <Link key={collection.slug} href={`/${locale}/${citySlug}/collections/${collection.slug}`} className="collection-card">
-                  <strong>{getLocaleLabel(locale, collection.title)}</strong>
-                  <span className="muted">{getLocaleLabel(locale, collection.description)}</span>
-                </Link>
+                <Card as={NextLink} key={collection.slug} href={`/${locale}/${citySlug}/collections/${collection.slug}`} isPressable className="collection-card">
+                  <CardBody>
+                    <strong>{getLocaleLabel(locale, collection.title)}</strong>
+                    <span className="muted">{getLocaleLabel(locale, collection.description)}</span>
+                  </CardBody>
+                </Card>
               ))}
             </div>
           </div>
