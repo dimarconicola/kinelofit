@@ -108,14 +108,19 @@ export function getStatusCode(error: unknown): number {
 
 /**
  * Report error to external tracking service (Sentry, etc.)
- * This is a stub that can be extended with actual service integration
  */
 export function reportError(error: unknown, context?: Record<string, unknown>) {
   if (error instanceof Error) {
     logger.error(`Reported: ${error.message}`, error, context);
 
-    // TODO: Integrate with Sentry or similar
-    // Sentry.captureException(error, { extra: context });
+    // Report to Sentry if configured
+    try {
+      import('@/lib/observability/sentry').then(({ captureException }) => {
+        captureException(error, context);
+      });
+    } catch {
+      // Silently fail if Sentry import fails
+    }
   } else {
     logger.error(`Reported unknown error: ${String(error)}`, undefined, context);
   }
