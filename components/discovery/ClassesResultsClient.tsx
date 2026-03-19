@@ -8,6 +8,7 @@ import { Button, Chip } from '@heroui/react';
 
 import { MapPanel } from '@/components/discovery/MapPanel';
 import { SessionCard } from '@/components/discovery/SessionCard';
+import type { ResolvedSessionCardData } from '@/lib/catalog/session-card-data';
 import type { ClassView, Locale, Session, Venue } from '@/lib/catalog/types';
 
 interface ClassesResultsClientProps {
@@ -19,6 +20,7 @@ interface ClassesResultsClientProps {
   initialWeekOffset: number;
   sessionResults: Session[];
   pagedSessions: Session[];
+  resolvedSessionCards: Record<string, ResolvedSessionCardData>;
   visibleVenues: Venue[];
   signedInEmail?: string;
   scheduleLabel: string;
@@ -48,6 +50,7 @@ export function ClassesResultsClient({
   initialWeekOffset,
   sessionResults,
   pagedSessions,
+  resolvedSessionCards,
   visibleVenues,
   signedInEmail,
   scheduleLabel,
@@ -226,7 +229,14 @@ export function ClassesResultsClient({
             </div>
             {pagedSessions.length > 0 ? (
               pagedSessions.map((session) => (
-                <SessionCard key={session.id} session={session} locale={locale} signedInEmail={signedInEmail} scheduleLabel={scheduleLabel} />
+                <SessionCard
+                  key={session.id}
+                  session={session}
+                  locale={locale}
+                  resolved={resolvedSessionCards[session.id]}
+                  signedInEmail={signedInEmail}
+                  scheduleLabel={scheduleLabel}
+                />
               ))
             ) : (
               <div className="empty-state">
@@ -241,7 +251,14 @@ export function ClassesResultsClient({
         <section className="stack-list">
           {pagedSessions.length > 0 ? (
             pagedSessions.map((session) => (
-              <SessionCard key={session.id} session={session} locale={locale} signedInEmail={signedInEmail} scheduleLabel={scheduleLabel} />
+              <SessionCard
+                key={session.id}
+                session={session}
+                locale={locale}
+                resolved={resolvedSessionCards[session.id]}
+                signedInEmail={signedInEmail}
+                scheduleLabel={scheduleLabel}
+              />
             ))
           ) : (
             <div className="empty-state">

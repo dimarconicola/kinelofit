@@ -3,7 +3,7 @@ import { Button } from '@heroui/react';
 
 import { SavedScheduleClient } from '@/components/state/SavedScheduleClient';
 import { getSessionUser } from '@/lib/auth/session';
-import { sessions } from '@/lib/catalog/seed';
+import { getCatalogSnapshot } from '@/lib/catalog/repository';
 import { resolveLocale } from '@/lib/i18n/routing';
 import { listUserSchedule } from '@/lib/runtime/store';
 import { formatSessionTime } from '@/lib/ui/format';
@@ -42,7 +42,8 @@ export default async function SchedulePage({ params }: { params: Promise<{ local
   }
 
   const scheduleRows = await listUserSchedule(user.id);
-  const sessionItems = sessions.map((session) => ({
+  const catalog = await getCatalogSnapshot();
+  const sessionItems = catalog.sessions.map((session) => ({
     id: session.id,
     href: `/${locale}/${session.citySlug}/studios/${session.venueSlug}`,
     title: session.title[locale],

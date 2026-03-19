@@ -1,0 +1,221 @@
+import { cache } from 'react';
+
+import {
+  bookingTargets as seedBookingTargets,
+  categories as seedCategories,
+  cities as seedCities,
+  collections as seedCollections,
+  instructors as seedInstructors,
+  neighborhoods as seedNeighborhoods,
+  sessions as seedSessions,
+  styles as seedStyles,
+  venues as seedVenues
+} from '@/lib/catalog/seed';
+import type {
+  ActivityCategory,
+  BookingTarget,
+  City,
+  EditorialCollection,
+  Instructor,
+  KidsAgeBand,
+  Neighborhood,
+  Session,
+  Style,
+  Venue
+} from '@/lib/catalog/types';
+import { getDb } from '@/lib/data/db';
+import {
+  activityCategories,
+  bookingTargets,
+  cities,
+  editorialCollections,
+  instructors,
+  neighborhoods,
+  sessions,
+  styles,
+  venues
+} from '@/lib/data/schema';
+
+export interface CatalogSnapshot {
+  sourceMode: 'database' | 'seed';
+  cities: City[];
+  neighborhoods: Neighborhood[];
+  categories: ActivityCategory[];
+  styles: Style[];
+  instructors: Instructor[];
+  venues: Venue[];
+  bookingTargets: BookingTarget[];
+  sessions: Session[];
+  collections: EditorialCollection[];
+}
+
+const seedVenueImages = new Map(seedVenues.filter((venue) => venue.coverImage).map((venue) => [venue.slug, venue.coverImage]));
+
+const seedSnapshot: CatalogSnapshot = {
+  sourceMode: 'seed',
+  cities: seedCities,
+  neighborhoods: seedNeighborhoods,
+  categories: seedCategories,
+  styles: seedStyles,
+  instructors: seedInstructors,
+  venues: seedVenues,
+  bookingTargets: seedBookingTargets,
+  sessions: seedSessions,
+  collections: seedCollections
+};
+
+const toNumber = (value: string | number | null | undefined) => {
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string') {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return 0;
+};
+
+const toIso = (value: Date | string) => (value instanceof Date ? value.toISOString() : new Date(value).toISOString());
+
+const isKidsAgeBand = (value: string | null | undefined): value is KidsAgeBand =>
+  value === '0-2' || value === '3-5' || value === '6-10' || value === '11-14' || value === 'mixed-kids';
+
+const loadDatabaseSnapshot = async (): Promise<CatalogSnapshot | null> => {
+  const db = getDb();
+  if (!db) return null;
+
+  try {
+    const [
+      cityRows,
+      neighborhoodRows,
+      categoryRows,
+      styleRows,
+      instructorRows,
+      venueRows,
+      bookingTargetRows,
+      sessionRows,
+      collectionRows
+    ] = await Promise.all([
+      db.select().from(cities),
+      db.select().from(neighborhoods),
+      db.select().from(activityCategories),
+      db.select().from(styles),
+      db.select().from(instructors),
+      db.select().from(venues),
+      db.select().from(bookingTargets),
+      db.select().from(sessions),
+      db.select().from(editorialCollections)
+    ]);
+
+    return {
+      sourceMode: 'database',
+      cities: cityRows.map((row) => ({
+        slug: row.slug,
+        countryCode: row.countryCode,
+        timezone: row.timezone,
+        status: row.status,
+        bounds: row.bounds,
+        name: row.name,
+        hero: row.hero
+      })),
+      neighborhoods: neighborhoodRows.map((row) => ({
+        slug: row.slug,
+        citySlug: row.citySlug,
+        name: row.name,
+        description: row.description,
+        center: {
+          lat: toNumber(row.centerLat),
+          lng: toNumber(row.centerLng)
+        }
+      })),
+      categories: categoryRows.map((row) => ({
+        slug: row.slug,
+        citySlug: row.citySlug,
+        name: row.name,
+        description: row.description,
+        visibility: row.visibility,
+        heroMetric: row.heroMetric
+      })),
+      styles: styleRows.map((row) => ({
+        slug: row.slug,
+        categorySlug: row.categorySlug,
+        name: row.name,
+        description: row.description
+      })),
+      instructors: instructorRows.map((row) => ({
+        slug: row.slug,
+        citySlug: row.citySlug,
+        name: row.name,
+        shortBio: row.shortBio,
+        specialties: row.specialties,
+        languages: row.languages
+      })),
+      venues: venueRows.map((row) => ({
+        slug: row.slug,
+        citySlug: row.citySlug,
+        neighborhoodSlug: row.neighborhoodSlug,
+        name: row.name,
+        tagline: row.tagline,
+        description: row.description,
+        address: row.address,
+        geo: {
+          lat: toNumber(row.lat),
+          lng: toNumber(row.lng)
+        },
+        amenities: row.amenities,
+        languages: row.languages,
+        styleSlugs: row.styleSlugs,
+        categorySlugs: row.categorySlugs,
+        bookingTargetOrder: row.bookingTargetOrder,
+        freshnessNote: row.freshnessNote,
+        sourceUrl: row.sourceUrl,
+        lastVerifiedAt: toIso(row.lastVerifiedAt),
+        coverImage: seedVenueImages.get(row.slug)
+      })),
+      bookingTargets: bookingTargetRows.map((row) => ({
+        slug: row.slug,
+        type: row.type,
+        label: row.label,
+        href: row.href
+      })),
+      sessions: sessionRows.map((row) => ({
+        id: row.id,
+        citySlug: row.citySlug,
+        venueSlug: row.venueSlug,
+        instructorSlug: row.instructorSlug,
+        categorySlug: row.categorySlug,
+        styleSlug: row.styleSlug,
+        title: row.title,
+        startAt: toIso(row.startAt),
+        endAt: toIso(row.endAt),
+        level: row.level,
+        language: row.language,
+        format: row.format,
+        bookingTargetSlug: row.bookingTargetSlug,
+        sourceUrl: row.sourceUrl,
+        lastVerifiedAt: toIso(row.lastVerifiedAt),
+        verificationStatus: row.verificationStatus,
+        audience: row.audience,
+        attendanceModel: row.attendanceModel,
+        ageMin: row.ageMin ?? undefined,
+        ageMax: row.ageMax ?? undefined,
+        ageBand: isKidsAgeBand(row.ageBand) ? row.ageBand : undefined,
+        guardianRequired: row.guardianRequired,
+        priceNote: row.priceNote ?? undefined
+      })),
+      collections: collectionRows.map((row) => ({
+        slug: row.slug,
+        citySlug: row.citySlug,
+        title: row.title,
+        description: row.description,
+        cta: row.cta,
+        kind: row.kind as 'rule' | 'editorial'
+      }))
+    };
+  } catch {
+    return null;
+  }
+};
+
+export const getCatalogSnapshot = cache(async (): Promise<CatalogSnapshot> => {
+  const databaseSnapshot = await loadDatabaseSnapshot();
+  return databaseSnapshot ?? seedSnapshot;
+});

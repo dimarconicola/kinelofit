@@ -5,8 +5,9 @@ import { Chip } from '@heroui/react';
 import { SessionCard } from '@/components/discovery/SessionCard';
 import { FavoriteButton } from '@/components/state/FavoriteButton';
 import { getSessionUser } from '@/lib/auth/session';
-import { getInstructor, getInstructorSessions, getVenue } from '@/lib/catalog/data';
-import { requirePublicCity } from '@/lib/catalog/guards';
+import { resolveSessionCardData } from '@/lib/catalog/session-card-data';
+import { requirePublicCityServer } from '@/lib/catalog/guards';
+import { getInstructor, getInstructorSessions, getVenue } from '@/lib/catalog/server-data';
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
 
@@ -14,13 +15,23 @@ export default async function TeacherPage({ params }: { params: Promise<{ locale
   const { locale: rawLocale, city: citySlug, slug } = await params;
   const locale = resolveLocale(rawLocale);
   const dict = getDictionary(locale);
-  requirePublicCity(citySlug);
-  const instructor = getInstructor(slug);
+  await requirePublicCityServer(citySlug);
+  const [instructor, user] = await Promise.all([getInstructor(slug), getSessionUser()]);
   if (!instructor) notFound();
-  const sessions = getInstructorSessions(slug)
+  const sessions = (await getInstructorSessions(slug))
     .sort((left, right) => left.startAt.localeCompare(right.startAt))
     .slice(0, 20);
-  const user = await getSessionUser();
+  const resolvedSessions = await resolveSessionCardData(sessions);
+  const venueNameBySlug = new Map(
+    (
+      await Promise.all(
+        [...new Set(sessions.map((session) => session.venueSlug))].map(async (venueSlug) => {
+          const venue = await getVenue(venueSlug);
+          return [venueSlug, venue?.name] as const;
+        })
+      )
+    ).filter((entry): entry is readonly [string, string] => Boolean(entry[1]))
+  );
   const sessionsByDay = Object.values(
     sessions.reduce<Record<string, typeof sessions>>((groups, session) => {
       const key = DateTime.fromISO(session.startAt).setZone('Europe/Rome').toISODate();
@@ -102,7 +113,7 @@ export default async function TeacherPage({ params }: { params: Promise<{ locale
         <div className="stack-list">
           {sessionsByDay.map((daySessions) => {
             const day = DateTime.fromISO(daySessions[0].startAt).setZone('Europe/Rome');
-            const venues = new Set(daySessions.map((session) => getVenue(session.venueSlug)?.name).filter(Boolean));
+            const venues = new Set(daySessions.map((session) => venueNameBySlug.get(session.venueSlug)).filter(Boolean));
             return (
               <section key={day.toISODate() ?? daySessions[0].id} className="session-day-group panel">
                 <div className="day-group-header">
@@ -125,6 +136,7 @@ export default async function TeacherPage({ params }: { params: Promise<{ locale
                       key={session.id}
                       session={session}
                       locale={locale}
+                      resolved={resolvedSessions.get(session.id)!}
                       signedInEmail={user?.email}
                       scheduleLabel={dict.saveSchedule}
                     />

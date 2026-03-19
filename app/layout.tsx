@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { AppProviders } from '@/components/providers/AppProviders';
-import { defaultLocale } from '@/lib/catalog/data';
+import { defaultLocale } from '@/lib/catalog/constants';
 import { env } from '@/lib/env';
 
 export const metadata: Metadata = {

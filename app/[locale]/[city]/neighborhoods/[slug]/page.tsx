@@ -5,8 +5,9 @@ import { Button } from '@heroui/react';
 import { MapPanel } from '@/components/discovery/MapPanel';
 import { SessionCard } from '@/components/discovery/SessionCard';
 import { getSessionUser } from '@/lib/auth/session';
-import { getNeighborhoodSessions, getNeighborhoods, getVenue } from '@/lib/catalog/data';
-import { requirePublicCity } from '@/lib/catalog/guards';
+import { resolveSessionCardData } from '@/lib/catalog/session-card-data';
+import { requirePublicCityServer } from '@/lib/catalog/guards';
+import { getNeighborhoodSessions, getNeighborhoods, getVenue } from '@/lib/catalog/server-data';
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
 
@@ -14,14 +15,18 @@ export default async function NeighborhoodPage({ params }: { params: Promise<{ l
   const { locale: rawLocale, city: citySlug, slug } = await params;
   const locale = resolveLocale(rawLocale);
   const dict = getDictionary(locale);
-  const city = requirePublicCity(citySlug);
-  const neighborhood = getNeighborhoods(citySlug).find((item) => item.slug === slug);
+  const [city, neighborhoods, sessions, user] = await Promise.all([
+    requirePublicCityServer(citySlug),
+    getNeighborhoods(citySlug),
+    getNeighborhoodSessions(citySlug, slug),
+    getSessionUser()
+  ]);
+  const neighborhood = neighborhoods.find((item) => item.slug === slug);
   if (!neighborhood) notFound();
-  const sessions = getNeighborhoodSessions(citySlug, slug);
-  const venues = [...new Set(sessions.map((session) => session.venueSlug))]
-    .map((venueSlug) => getVenue(venueSlug))
-    .filter((venue): venue is NonNullable<typeof venue> => Boolean(venue));
-  const user = await getSessionUser();
+  const venues = (await Promise.all([...new Set(sessions.map((session) => session.venueSlug))].map((venueSlug) => getVenue(venueSlug)))).filter(
+    (venue): venue is NonNullable<typeof venue> => Boolean(venue)
+  );
+  const resolvedSessions = await resolveSessionCardData(sessions);
   const labels = locale === 'it' ? { neighborhood: 'Quartiere' } : { neighborhood: 'Neighborhood' };
 
   return (
@@ -49,6 +54,7 @@ export default async function NeighborhoodPage({ params }: { params: Promise<{ l
               key={session.id}
               session={session}
               locale={locale}
+              resolved={resolvedSessions.get(session.id)!}
               signedInEmail={user?.email}
               scheduleLabel={dict.saveSchedule}
             />

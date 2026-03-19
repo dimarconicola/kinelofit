@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { Button, Card, CardBody, Chip, Link } from '@heroui/react';
 
 import { DigestForm } from '@/components/forms/DigestForm';
-import { getCityMetrics, getFeaturedSessions, getStyle, getVenue } from '@/lib/catalog/data';
+import { getCityMetrics, getFeaturedSessions, getStyle, getVenue } from '@/lib/catalog/server-data';
 import { resolveLocale } from '@/lib/i18n/routing';
 
 type IconName = 'map' | 'calendar' | 'mail' | 'leaf' | 'heart' | 'sun';
@@ -58,8 +58,7 @@ function InlineIcon({ name }: { name: IconName }) {
 
 export default async function LocaleHome({ params }: { params: Promise<{ locale: string }> }) {
   const locale = resolveLocale((await params).locale);
-  const metrics = getCityMetrics('palermo');
-  const featured = getFeaturedSessions('palermo').slice(0, 4);
+  const [metrics, featured] = await Promise.all([getCityMetrics('palermo'), getFeaturedSessions('palermo')]);
 
   const levelLabel = (level: string) => {
     if (locale === 'it') {
@@ -283,9 +282,9 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
             </div>
           </div>
           <div className="home-v2-cards-grid">
-            {featured.map((session) => {
-              const venue = getVenue(session.venueSlug);
-              const style = getStyle(session.styleSlug);
+            {(await Promise.all(
+              featured.slice(0, 4).map(async (session) => {
+                const [venue, style] = await Promise.all([getVenue(session.venueSlug), getStyle(session.styleSlug)]);
               if (!venue || !style) return null;
               const start = DateTime.fromISO(session.startAt).setZone('Europe/Rome');
               const end = DateTime.fromISO(session.endAt).setZone('Europe/Rome');
@@ -309,7 +308,8 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
                   </Link>
                 </Card>
               );
-            })}
+              })
+            ))}
           </div>
           <div className="home-v2-cityhub-cta">
             <Button

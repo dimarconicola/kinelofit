@@ -3,7 +3,7 @@ import { Button } from '@heroui/react';
 
 import { FavoritesCollectionsClient } from '@/components/state/FavoritesCollectionsClient';
 import { getSessionUser } from '@/lib/auth/session';
-import { sessions, instructors, venues } from '@/lib/catalog/seed';
+import { getCatalogSnapshot } from '@/lib/catalog/repository';
 import { resolveLocale } from '@/lib/i18n/routing';
 import { listUserFavorites, listUserSchedule } from '@/lib/runtime/store';
 import { formatSessionTime } from '@/lib/ui/format';
@@ -53,22 +53,23 @@ export default async function FavoritesPage({ params }: { params: Promise<{ loca
 
   const favoriteRows = await listUserFavorites(user.id);
   const scheduleRows = await listUserSchedule(user.id);
+  const catalog = await getCatalogSnapshot();
 
-  const venueItems = venues
+  const venueItems = catalog.venues
     .map((venue) => ({
       slug: venue.slug,
       href: `/${locale}/${venue.citySlug}/studios/${venue.slug}`,
       title: venue.name,
       meta: venue.tagline[locale]
     }));
-  const instructorItems = instructors
+  const instructorItems = catalog.instructors
     .map((instructor) => ({
       slug: instructor.slug,
       href: `/${locale}/${instructor.citySlug}/teachers/${instructor.slug}`,
       title: instructor.name,
       meta: instructor.shortBio[locale]
     }));
-  const sessionItems = sessions.map((session) => ({
+  const sessionItems = catalog.sessions.map((session) => ({
     id: session.id,
     href: `/${locale}/${session.citySlug}/studios/${session.venueSlug}`,
     title: session.title[locale],

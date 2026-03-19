@@ -31,19 +31,8 @@ export function initSentry() {
     Sentry.init({
       dsn,
       environment: process.env.NODE_ENV,
-      integrations: [
-        new Sentry.Replay({
-          // Mask sensitive data in session replays
-          maskAllText: false,
-          maskAllInputs: false
-        })
-      ],
       // Performance Monitoring - sample 5% of transactions in production
       tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.05 : 1.0,
-
-      // Session Replay - sample 10% of errors, 1% of transactions
-      replaysOnErrorSampleRate: 1.0,
-      replaySessionSampleRate: 0.01,
 
       // Release tracking
       release: process.env.NEXT_PUBLIC_APP_VERSION || 'unknown'

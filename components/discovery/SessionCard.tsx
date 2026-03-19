@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { Chip, Link } from '@heroui/react';
 
 import { ScheduleButton } from '@/components/state/ScheduleButton';
-import { getBookingTarget, getInstructor, getStyle, getVenue } from '@/lib/catalog/data';
+import type { ResolvedSessionCardData } from '@/lib/catalog/session-card-data';
 import type { Locale, Session } from '@/lib/catalog/types';
 import { formatSessionTime } from '@/lib/ui/format';
 import { BookingLink } from './BookingLink';
@@ -11,15 +11,13 @@ import { BookingLink } from './BookingLink';
 interface SessionCardProps {
   session: Session;
   locale: Locale;
+  resolved: ResolvedSessionCardData;
   signedInEmail?: string;
   scheduleLabel: string;
 }
 
-export function SessionCard({ session, locale, signedInEmail, scheduleLabel }: SessionCardProps) {
-  const venue = getVenue(session.venueSlug);
-  const instructor = getInstructor(session.instructorSlug);
-  const style = getStyle(session.styleSlug);
-  const target = getBookingTarget(session.bookingTargetSlug);
+export function SessionCard({ session, locale, resolved, signedInEmail, scheduleLabel }: SessionCardProps) {
+  const { venue, instructor, style, target } = resolved;
   const labels =
     locale === 'it'
       ? {
@@ -60,10 +58,6 @@ export function SessionCard({ session, locale, signedInEmail, scheduleLabel }: S
           },
           price: 'Price'
         };
-
-  if (!venue || !instructor || !style || !target) {
-    return null;
-  }
 
   const start = DateTime.fromISO(session.startAt).setZone('Europe/Rome');
   const end = DateTime.fromISO(session.endAt).setZone('Europe/Rome');

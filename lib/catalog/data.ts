@@ -1,11 +1,9 @@
 import { DateTime } from 'luxon';
 
 import { applySessionFilters } from '@/lib/catalog/filters';
+export { defaultLocale, locales } from '@/lib/catalog/constants';
 import { bookingTargets, categories, cities, collections, instructors, neighborhoods, sessions, styles, venues } from '@/lib/catalog/seed';
 import type { DiscoveryFilters, Locale, Session } from '@/lib/catalog/types';
-
-export const defaultLocale: Locale = 'it';
-export const locales: Locale[] = ['en', 'it'];
 
 export const getLocaleLabel = (locale: Locale, value: Record<Locale, string>) => value[locale];
 

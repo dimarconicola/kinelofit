@@ -4,11 +4,11 @@ import { Button, Chip } from '@heroui/react';
 import { ClassesResultsClient } from '@/components/discovery/ClassesResultsClient';
 import { FilterBar } from '@/components/discovery/FilterBar';
 import { getSessionUser } from '@/lib/auth/session';
-import { getCityMetrics, getNeighborhoods, getPublicCategories, getSessions, getStyle, getVenue } from '@/lib/catalog/data';
+import { resolveSessionCardData } from '@/lib/catalog/session-card-data';
+import { getCityMetrics, getNeighborhoods, getPublicCategories, getSessions, getStyles, getVenue } from '@/lib/catalog/server-data';
 import { parseFilters } from '@/lib/catalog/filters';
-import { requirePublicCity } from '@/lib/catalog/guards';
-import { getCityReadiness } from '@/lib/catalog/readiness';
-import { styles } from '@/lib/catalog/seed';
+import { requirePublicCityServer } from '@/lib/catalog/guards';
+import { getCityReadinessServer } from '@/lib/catalog/readiness';
 import type { ClassView } from '@/lib/catalog/types';
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
@@ -42,7 +42,7 @@ export default async function ClassesPage({
   const { locale: rawLocale, city: citySlug } = await params;
   const locale = resolveLocale(rawLocale);
   const dict = getDictionary(locale);
-  const city = requirePublicCity(citySlug);
+  const city = await requirePublicCityServer(citySlug);
   const rawSearch = await searchParams;
   const urlParams = flattenParams(rawSearch);
   const filters = parseFilters(rawSearch);
@@ -54,16 +54,22 @@ export default async function ClassesPage({
   const requestedWeekOffset = Number.parseInt(urlParams.get('week_offset') ?? '0', 10);
   const weekOffset = Number.isFinite(requestedWeekOffset) ? Math.max(0, requestedWeekOffset) : 0;
 
-  const metrics = getCityMetrics(citySlug);
-  const readiness = getCityReadiness(citySlug);
-  const categories = getPublicCategories(citySlug);
-  const neighborhoods = getNeighborhoods(citySlug);
-  const cityStyleSlugs = new Set(getSessions(citySlug, { date: 'week' }).map((session) => session.styleSlug));
+  const [metrics, readiness, categories, neighborhoods, allStyles, weekSessions, filteredSessions] = await Promise.all([
+    getCityMetrics(citySlug),
+    getCityReadinessServer(citySlug),
+    getPublicCategories(citySlug),
+    getNeighborhoods(citySlug),
+    getStyles(),
+    getSessions(citySlug, { date: 'week' }),
+    getSessions(citySlug, filters)
+  ]);
+  const cityStyleSlugs = new Set(weekSessions.map((session) => session.styleSlug));
 
-  const sessionResults = getSessions(citySlug, filters).sort((left, right) => left.startAt.localeCompare(right.startAt));
-  const visibleVenues = [...new Set(sessionResults.map((session) => session.venueSlug))]
-    .map((slug) => getVenue(slug))
-    .filter((venue): venue is NonNullable<typeof venue> => Boolean(venue));
+  const sessionResults = filteredSessions.sort((left, right) => left.startAt.localeCompare(right.startAt));
+  const visibleVenueRows = await Promise.all([...new Set(sessionResults.map((session) => session.venueSlug))].map((slug) => getVenue(slug)));
+  const visibleVenues = visibleVenueRows.filter((venue): venue is NonNullable<typeof venue> => Boolean(venue));
+  const resolvedSessionCards = Object.fromEntries(await resolveSessionCardData(sessionResults));
+  const styleLabelBySlug = new Map(allStyles.map((style) => [style.slug, style.name[locale]]));
 
   const selectedTimeBuckets = filters.time_buckets?.length
     ? filters.time_buckets
@@ -112,7 +118,7 @@ export default async function ClassesPage({
     filters.weekday ? weekdayLabels[filters.weekday] : null,
     ...selectedTimeBuckets.map((bucket) => filterValueToLabel.time_bucket[bucket]),
     filters.category ? categories.find((category) => category.slug === filters.category)?.name[locale] ?? filters.category : null,
-    filters.style ? getStyle(filters.style)?.name[locale] ?? filters.style : null,
+    filters.style ? styleLabelBySlug.get(filters.style) ?? filters.style : null,
     filters.level ? filterValueToLabel.level[filters.level] : null,
     filters.language ? filters.language : null,
     filters.neighborhood ? neighborhoods.find((item) => item.slug === filters.neighborhood)?.name[locale] ?? filters.neighborhood : null,
@@ -217,9 +223,9 @@ export default async function ClassesPage({
         filters={filters}
         categories={categories.map((item) => ({ slug: item.slug, name: item.name[locale] }))}
         neighborhoods={neighborhoods.map((item) => ({ slug: item.slug, name: item.name[locale] }))}
-        styles={styles
+        styles={allStyles
           .filter((style) => cityStyleSlugs.has(style.slug))
-          .map((style) => ({ slug: style.slug, name: getStyle(style.slug)?.name[locale] ?? style.slug }))}
+          .map((style) => ({ slug: style.slug, name: style.name[locale] }))}
         activeFilters={activeFilters}
       />
 
@@ -231,6 +237,7 @@ export default async function ClassesPage({
         initialView={view}
         sessionResults={sessionResults}
         pagedSessions={pagedSessions}
+        resolvedSessionCards={resolvedSessionCards}
         visibleVenues={visibleVenues}
         signedInEmail={user?.email}
         scheduleLabel={locale === 'it' ? 'Aggiungi in agenda' : 'Add to schedule'}

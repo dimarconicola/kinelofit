@@ -1,10 +1,9 @@
-import { getCategories } from '@/lib/catalog/data';
-import { styles } from '@/lib/catalog/seed';
+import { getCategories, getStyles } from '@/lib/catalog/server-data';
 import { resolveLocale } from '@/lib/i18n/routing';
 
 export default async function AdminTaxonomyPage({ params }: { params: Promise<{ locale: string }> }) {
   resolveLocale((await params).locale);
-  const categories = getCategories('palermo');
+  const [categories, styles] = await Promise.all([getCategories('palermo'), getStyles()]);
 
   return (
     <div className="stack-list">

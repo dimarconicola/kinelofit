@@ -1,8 +1,17 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { SessionCard } from '@/components/discovery/SessionCard';
+import type { ResolvedSessionCardData } from '@/lib/catalog/session-card-data';
 import type { Session } from '@/lib/catalog/types';
 import { HeroUIProvider } from '@heroui/react';
+
+vi.mock('@/components/discovery/BookingLink', () => ({
+  BookingLink: ({ label }: { label: string }) => <button type="button">{label}</button>
+}));
+
+vi.mock('@/components/state/ScheduleButton', () => ({
+  ScheduleButton: ({ label }: { label: string }) => <button type="button">{label}</button>
+}));
 
 // Wrapper component to provide HeroUIProvider
 function TestWrapper({ children }: { children: React.ReactNode }) {
@@ -11,6 +20,7 @@ function TestWrapper({ children }: { children: React.ReactNode }) {
 
 describe('SessionCard', () => {
   let mockSession: Session;
+  let resolved: ResolvedSessionCardData;
 
   beforeEach(() => {
     mockSession = {
@@ -33,6 +43,46 @@ describe('SessionCard', () => {
       audience: 'adults',
       attendanceModel: 'drop_in'
     };
+    resolved = {
+      venue: {
+        slug: 'venue-1',
+        citySlug: 'palermo',
+        neighborhoodSlug: 'politeama',
+        name: 'Test Studio',
+        tagline: { en: 'A great studio', it: 'Un bellissimo studio' },
+        description: { en: 'Description', it: 'Descrizione' },
+        address: '123 Main St, Palermo',
+        geo: { lat: 38.116, lng: 13.361 },
+        amenities: ['mats'],
+        languages: ['English', 'Italian'],
+        styleSlugs: ['hatha'],
+        categorySlugs: ['yoga'],
+        bookingTargetOrder: ['direct-booking'],
+        freshnessNote: { en: 'Updated today', it: 'Aggiornato oggi' },
+        sourceUrl: 'https://example.com/studio',
+        lastVerifiedAt: '2026-03-16T00:00:00Z'
+      },
+      instructor: {
+        slug: 'teacher-1',
+        citySlug: 'palermo',
+        name: 'Test Teacher',
+        shortBio: { en: 'Bio', it: 'Bio' },
+        specialties: ['hatha'],
+        languages: ['English']
+      },
+      style: {
+        slug: 'hatha',
+        categorySlug: 'yoga',
+        name: { en: 'Hatha', it: 'Hatha' },
+        description: { en: 'Style', it: 'Stile' }
+      },
+      target: {
+        slug: 'direct-booking',
+        type: 'website',
+        label: 'Book',
+        href: 'https://example.com/book'
+      }
+    };
   });
 
   it('should render session title in correct locale', () => {
@@ -41,6 +91,7 @@ describe('SessionCard', () => {
         <SessionCard
           session={mockSession}
           locale="en"
+          resolved={resolved}
           scheduleLabel="Save to schedule"
         />
       </TestWrapper>
@@ -60,6 +111,7 @@ describe('SessionCard', () => {
         <SessionCard
           session={italianSession}
           locale="it"
+          resolved={resolved}
           scheduleLabel="Salva in agenda"
         />
       </TestWrapper>
@@ -79,6 +131,7 @@ describe('SessionCard', () => {
         <SessionCard
           session={verifiedSession}
           locale="en"
+          resolved={resolved}
           scheduleLabel="Save to schedule"
         />
       </TestWrapper>
@@ -101,6 +154,7 @@ describe('SessionCard', () => {
         <SessionCard
           session={staleSession}
           locale="en"
+          resolved={resolved}
           scheduleLabel="Save to schedule"
         />
       </TestWrapper>
@@ -121,6 +175,7 @@ describe('SessionCard', () => {
         <SessionCard
           session={advancedSession}
           locale="en"
+          resolved={resolved}
           scheduleLabel="Save to schedule"
         />
       </TestWrapper>
@@ -140,6 +195,7 @@ describe('SessionCard', () => {
         <SessionCard
           session={advancedSession}
           locale="it"
+          resolved={resolved}
           scheduleLabel="Salva in agenda"
         />
       </TestWrapper>
@@ -159,6 +215,7 @@ describe('SessionCard', () => {
         <SessionCard
           session={hybridSession}
           locale="en"
+          resolved={resolved}
           scheduleLabel="Save to schedule"
         />
       </TestWrapper>
@@ -178,6 +235,7 @@ describe('SessionCard', () => {
         <SessionCard
           session={onlineSession}
           locale="it"
+          resolved={resolved}
           scheduleLabel="Salva in agenda"
         />
       </TestWrapper>
@@ -192,6 +250,7 @@ describe('SessionCard', () => {
         <SessionCard
           session={mockSession}
           locale="en"
+          resolved={resolved}
           signedInEmail="user@example.com"
           scheduleLabel="Save to schedule"
         />
@@ -207,6 +266,7 @@ describe('SessionCard', () => {
         <SessionCard
           session={mockSession}
           locale="en"
+          resolved={resolved}
           scheduleLabel="Save to schedule"
         />
       </TestWrapper>

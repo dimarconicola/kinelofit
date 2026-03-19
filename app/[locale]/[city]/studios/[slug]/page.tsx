@@ -6,8 +6,9 @@ import { VenueCover } from '@/components/catalog/VenueCover';
 import { ClaimFormDialog } from '@/components/forms/ClaimFormDialog';
 import { SessionCard } from '@/components/discovery/SessionCard';
 import { getSessionUser } from '@/lib/auth/session';
-import { getNeighborhoods, getVenue, getVenueSessions } from '@/lib/catalog/data';
-import { requirePublicCity } from '@/lib/catalog/guards';
+import { resolveSessionCardData } from '@/lib/catalog/session-card-data';
+import { getNeighborhoods, getVenue, getVenueSessions } from '@/lib/catalog/server-data';
+import { requirePublicCityServer } from '@/lib/catalog/guards';
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
 import { formatVerifiedAt } from '@/lib/ui/format';
@@ -16,15 +17,16 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
   const { locale: rawLocale, city: citySlug, slug } = await params;
   const locale = resolveLocale(rawLocale);
   const dict = getDictionary(locale);
-  requirePublicCity(citySlug);
-  const venue = getVenue(slug);
+  await requirePublicCityServer(citySlug);
+  const venue = await getVenue(slug);
   if (!venue) notFound();
 
-  const neighborhood = getNeighborhoods(citySlug).find((item) => item.slug === venue.neighborhoodSlug);
-  const sessions = getVenueSessions(slug)
+  const [neighborhoods, venueSessions] = await Promise.all([getNeighborhoods(citySlug), getVenueSessions(slug)]);
+  const neighborhood = neighborhoods.find((item) => item.slug === venue.neighborhoodSlug);
+  const sessions = venueSessions
     .sort((left, right) => left.startAt.localeCompare(right.startAt))
     .slice(0, 20);
-  const user = await getSessionUser();
+  const [user, resolvedSessions] = await Promise.all([getSessionUser(), resolveSessionCardData(sessions)]);
   const groupedSessions = Object.values(
     sessions.reduce<Record<string, typeof sessions>>((groups, session) => {
       const key = DateTime.fromISO(session.startAt).setZone('Europe/Rome').toISODate();
@@ -152,6 +154,7 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
                       key={session.id}
                       session={session}
                       locale={locale}
+                      resolved={resolvedSessions.get(session.id)!}
                       signedInEmail={user?.email}
                       scheduleLabel={dict.saveSchedule}
                     />

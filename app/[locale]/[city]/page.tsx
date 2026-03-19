@@ -5,9 +5,10 @@ import { DigestForm } from '@/components/forms/DigestForm';
 import { SessionCard } from '@/components/discovery/SessionCard';
 import { StatCard } from '@/components/admin/StatCard';
 import { getSessionUser } from '@/lib/auth/session';
-import { getCityMetrics, getCollections, getFeaturedSessions, getLocaleLabel, getNeighborhoods, getPublicCategories } from '@/lib/catalog/data';
-import { requirePublicCity } from '@/lib/catalog/guards';
-import { getCityReadiness } from '@/lib/catalog/readiness';
+import { resolveSessionCardData } from '@/lib/catalog/session-card-data';
+import { getCityMetrics, getCollections, getFeaturedSessions, getLocaleLabel, getNeighborhoods, getPublicCategories } from '@/lib/catalog/server-data';
+import { requirePublicCityServer } from '@/lib/catalog/guards';
+import { getCityReadinessServer } from '@/lib/catalog/readiness';
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
 
@@ -15,13 +16,16 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
   const { locale: rawLocale, city: citySlug } = await params;
   const locale = resolveLocale(rawLocale);
   const dict = getDictionary(locale);
-  const city = requirePublicCity(citySlug);
-  const metrics = getCityMetrics(citySlug);
-  const readiness = getCityReadiness(citySlug);
-  const categories = getPublicCategories(citySlug);
-  const neighborhoods = getNeighborhoods(citySlug);
-  const collections = getCollections(citySlug);
-  const user = await getSessionUser();
+  const city = await requirePublicCityServer(citySlug);
+  const [metrics, readiness, categories, neighborhoods, collections, featuredSessions] = await Promise.all([
+    getCityMetrics(citySlug),
+    getCityReadinessServer(citySlug),
+    getPublicCategories(citySlug),
+    getNeighborhoods(citySlug),
+    getCollections(citySlug),
+    getFeaturedSessions(citySlug)
+  ]);
+  const [user, resolvedFeaturedSessions] = await Promise.all([getSessionUser(), resolveSessionCardData(featuredSessions.slice(0, 4))]);
   const copy =
     locale === 'it'
       ? {
@@ -102,11 +106,12 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
             </Link>
           </div>
           <div className="stack-list">
-            {getFeaturedSessions(citySlug).slice(0, 4).map((session) => (
+            {featuredSessions.slice(0, 4).map((session) => (
               <SessionCard
                 key={session.id}
                 session={session}
                 locale={locale}
+                resolved={resolvedFeaturedSessions.get(session.id)!}
                 signedInEmail={user?.email}
                 scheduleLabel={dict.saveSchedule}
               />

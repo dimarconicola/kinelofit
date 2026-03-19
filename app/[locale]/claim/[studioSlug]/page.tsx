@@ -3,13 +3,13 @@ import NextLink from 'next/link';
 import { Button } from '@heroui/react';
 
 import { ClaimForm } from '@/components/forms/ClaimForm';
-import { getVenue } from '@/lib/catalog/data';
+import { getVenue } from '@/lib/catalog/server-data';
 import { resolveLocale } from '@/lib/i18n/routing';
 
 export default async function ClaimStudioPage({ params }: { params: Promise<{ locale: string; studioSlug: string }> }) {
   const { locale: rawLocale, studioSlug } = await params;
   const locale = resolveLocale(rawLocale);
-  const venue = getVenue(studioSlug);
+  const venue = await getVenue(studioSlug);
   if (!venue) notFound();
   const copy =
     locale === 'it'

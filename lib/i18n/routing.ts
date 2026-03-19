@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { defaultLocale, locales } from '@/lib/catalog/data';
+import { defaultLocale, locales } from '@/lib/catalog/constants';
 import type { Locale } from '@/lib/catalog/types';
 
 export const resolveLocale = (value: string): Locale => {

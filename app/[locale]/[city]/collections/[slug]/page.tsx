@@ -5,8 +5,9 @@ import { Button } from '@heroui/react';
 import { TodayNearbyLocationHint } from '@/components/discovery/TodayNearbyLocationHint';
 import { SessionCard } from '@/components/discovery/SessionCard';
 import { getSessionUser } from '@/lib/auth/session';
-import { getCollectionSessions, getCollections, getVenue } from '@/lib/catalog/data';
-import { requirePublicCity } from '@/lib/catalog/guards';
+import { resolveSessionCardData } from '@/lib/catalog/session-card-data';
+import { getCollectionSessions, getCollections, getVenue } from '@/lib/catalog/server-data';
+import { requirePublicCityServer } from '@/lib/catalog/guards';
 import { getEditorialComponent } from '@/lib/content/registry';
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
@@ -39,8 +40,9 @@ export default async function CollectionPage({
   const { locale: rawLocale, city: citySlug, slug } = await params;
   const locale = resolveLocale(rawLocale);
   const dict = getDictionary(locale);
-  const city = requirePublicCity(citySlug);
-  const collection = getCollections(citySlug).find((item) => item.slug === slug);
+  const city = await requirePublicCityServer(citySlug);
+  const cityCollections = await getCollections(citySlug);
+  const collection = cityCollections.find((item) => item.slug === slug);
   if (!collection) notFound();
   const rawSearch = await searchParams;
   const lat = toCoordinate(Array.isArray(rawSearch.lat) ? rawSearch.lat[0] : rawSearch.lat);
@@ -52,18 +54,23 @@ export default async function CollectionPage({
   };
   const orderOrigin = hasGeolocation ? { lat: lat as number, lng: lng as number } : fallbackCenter;
 
-  const sessions = slug === 'today-nearby'
-    ? getCollectionSessions(citySlug, slug)
-        .map((session) => {
-          const venue = getVenue(session.venueSlug);
-          const distance = venue ? haversineKm(orderOrigin, venue.geo) : Number.POSITIVE_INFINITY;
-          return { session, distance };
-        })
-        .sort((left, right) => left.distance - right.distance || left.session.startAt.localeCompare(right.session.startAt))
-        .map((item) => item.session)
-    : getCollectionSessions(citySlug, slug);
+  const collectionSessions = await getCollectionSessions(citySlug, slug);
+  const sessions =
+    slug === 'today-nearby'
+      ? (
+          await Promise.all(
+            collectionSessions.map(async (session) => {
+              const venue = await getVenue(session.venueSlug);
+              const distance = venue ? haversineKm(orderOrigin, venue.geo) : Number.POSITIVE_INFINITY;
+              return { session, distance };
+            })
+          )
+        )
+          .sort((left, right) => left.distance - right.distance || left.session.startAt.localeCompare(right.session.startAt))
+          .map((item) => item.session)
+      : collectionSessions;
   const Component = getEditorialComponent(citySlug, slug, locale);
-  const user = await getSessionUser();
+  const [user, resolvedSessions] = await Promise.all([getSessionUser(), resolveSessionCardData(sessions)]);
   const statusCopy =
     locale === 'it'
       ? {
@@ -121,6 +128,7 @@ export default async function CollectionPage({
               key={session.id}
               session={session}
               locale={locale}
+              resolved={resolvedSessions.get(session.id)!}
               signedInEmail={user?.email}
               scheduleLabel={dict.saveSchedule}
             />

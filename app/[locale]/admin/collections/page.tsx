@@ -1,11 +1,11 @@
 import Link from 'next/link';
 
-import { getCollections } from '@/lib/catalog/data';
+import { getCollections } from '@/lib/catalog/server-data';
 import { resolveLocale } from '@/lib/i18n/routing';
 
 export default async function AdminCollectionsPage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = resolveLocale((await params).locale);
-  const collections = getCollections('palermo');
+  const collections = await getCollections('palermo');
 
   return (
     <div className="stack-list">

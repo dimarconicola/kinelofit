@@ -2,6 +2,7 @@ import { DateTime } from 'luxon';
 import { and, desc, eq, isNull, or } from 'drizzle-orm';
 
 import { sessions, venues } from '@/lib/catalog/seed';
+import { getCatalogSourceMode } from '@/lib/catalog/server-data';
 import { getDb } from '@/lib/data/db';
 import { sessions as sessionTable } from '@/lib/data/schema';
 import { getLatestFreshnessSnapshot } from '@/lib/freshness/service';
@@ -12,7 +13,7 @@ export default async function AdminFreshnessPage({ params }: { params: Promise<{
   const citySlug = 'palermo';
   const db = getDb();
 
-  const latestSnapshot = await getLatestFreshnessSnapshot(citySlug);
+  const [latestSnapshot, sourceMode] = await Promise.all([getLatestFreshnessSnapshot(citySlug), getCatalogSourceMode()]);
 
   let staleSessions = sessions
     .filter((session) => session.verificationStatus === 'stale')
@@ -71,6 +72,7 @@ export default async function AdminFreshnessPage({ params }: { params: Promise<{
         ) : (
           <p className="muted">No automated freshness run has been recorded yet.</p>
         )}
+        <p className="muted">Catalog source: {sourceMode}</p>
       </section>
       <section className="saved-grid">
         <div className="panel">
