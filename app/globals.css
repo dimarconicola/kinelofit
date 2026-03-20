@@ -318,6 +318,7 @@ main.site-main {
 }
 
 .filter-grid select,
+.form-stack select,
 .form-stack input,
 .form-stack textarea,
 .digest-form input {
@@ -1306,10 +1307,28 @@ body {
 }
 
 .filter-grid select,
+.form-stack select,
 .form-stack input,
 .form-stack textarea,
 .digest-form input {
   background: rgba(255, 255, 255, 0.9);
+}
+
+.checkbox-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.checkbox-field input {
+  margin-top: 0.18rem;
+  accent-color: var(--brand);
 }
 
 .filter-checkbox {
