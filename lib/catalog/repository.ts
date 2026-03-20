@@ -1,16 +1,5 @@
 import { cache } from 'react';
 
-import {
-  bookingTargets as seedBookingTargets,
-  categories as seedCategories,
-  cities as seedCities,
-  collections as seedCollections,
-  instructors as seedInstructors,
-  neighborhoods as seedNeighborhoods,
-  sessions as seedSessions,
-  styles as seedStyles,
-  venues as seedVenues
-} from '@/lib/catalog/seed';
 import type {
   ActivityCategory,
   BookingTarget,
@@ -49,20 +38,27 @@ export interface CatalogSnapshot {
   collections: EditorialCollection[];
 }
 
-const seedVenueImages = new Map(seedVenues.filter((venue) => venue.coverImage).map((venue) => [venue.slug, venue.coverImage]));
+const getSeedResources = cache(async () => {
+  const seed = await import('@/lib/catalog/seed');
+  const seedVenueImages = new Map(seed.venues.filter((venue) => venue.coverImage).map((venue) => [venue.slug, venue.coverImage]));
+  const seedSnapshot: CatalogSnapshot = {
+    sourceMode: 'seed',
+    cities: seed.cities,
+    neighborhoods: seed.neighborhoods,
+    categories: seed.categories,
+    styles: seed.styles,
+    instructors: seed.instructors,
+    venues: seed.venues,
+    bookingTargets: seed.bookingTargets,
+    sessions: seed.sessions,
+    collections: seed.collections
+  };
 
-const seedSnapshot: CatalogSnapshot = {
-  sourceMode: 'seed',
-  cities: seedCities,
-  neighborhoods: seedNeighborhoods,
-  categories: seedCategories,
-  styles: seedStyles,
-  instructors: seedInstructors,
-  venues: seedVenues,
-  bookingTargets: seedBookingTargets,
-  sessions: seedSessions,
-  collections: seedCollections
-};
+  return {
+    seedSnapshot,
+    seedVenueImages
+  };
+});
 
 const toNumber = (value: string | number | null | undefined) => {
   if (typeof value === 'number') return value;
@@ -92,7 +88,8 @@ const loadDatabaseSnapshot = async (): Promise<CatalogSnapshot | null> => {
       venueRows,
       bookingTargetRows,
       sessionRows,
-      collectionRows
+      collectionRows,
+      { seedVenueImages }
     ] = await Promise.all([
       db.select().from(cities),
       db.select().from(neighborhoods),
@@ -102,7 +99,8 @@ const loadDatabaseSnapshot = async (): Promise<CatalogSnapshot | null> => {
       db.select().from(venues),
       db.select().from(bookingTargets),
       db.select().from(sessions),
-      db.select().from(editorialCollections)
+      db.select().from(editorialCollections),
+      getSeedResources()
     ]);
 
     return {
@@ -217,5 +215,7 @@ const loadDatabaseSnapshot = async (): Promise<CatalogSnapshot | null> => {
 
 export const getCatalogSnapshot = cache(async (): Promise<CatalogSnapshot> => {
   const databaseSnapshot = await loadDatabaseSnapshot();
-  return databaseSnapshot ?? seedSnapshot;
+  if (databaseSnapshot) return databaseSnapshot;
+
+  return (await getSeedResources()).seedSnapshot;
 });
