@@ -50,6 +50,7 @@ export function FavoriteButton({ entitySlug, entityType, locale, signedInEmail, 
 
     setPending(true);
     const optimisticSaved = storageKey ? toggleStoredFavorite(signedInEmail, storageKey) : false;
+    const previousSaved = saved;
     setSaved(optimisticSaved);
     try {
       const response = await fetch('/api/state/favorites', {
@@ -59,19 +60,24 @@ export function FavoriteButton({ entitySlug, entityType, locale, signedInEmail, 
       });
       if (!response.ok) {
         if (response.status === 401) router.push(`/${locale}/sign-in`);
+        setSaved(previousSaved);
+        if (storageKey) syncStoredFavorite(signedInEmail, storageKey, previousSaved);
         return;
       }
 
       const payload = (await response.json()) as { saved: boolean };
       setSaved(Boolean(payload.saved));
       if (storageKey) syncStoredFavorite(signedInEmail, storageKey, Boolean(payload.saved));
+    } catch {
+      setSaved(previousSaved);
+      if (storageKey) syncStoredFavorite(signedInEmail, storageKey, previousSaved);
     } finally {
       setPending(false);
     }
   };
 
   return (
-    <button className="button button-ghost" onClick={toggle} type="button" disabled={pending}>
+    <button className="button button-ghost" onClick={toggle} type="button" disabled={pending} aria-pressed={saved} aria-busy={pending}>
       {saved ? savedLabel : label}
     </button>
   );

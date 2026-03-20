@@ -2,7 +2,6 @@
 
 import NextLink from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from '@heroui/react';
 
 import { readStoredFavorites, readStoredSchedule } from '@/components/state/storage';
 
@@ -79,10 +78,10 @@ export function FavoritesCollectionsClient({
         {venueFavorites.length > 0 ? (
           <div className="stack-list">
             {venueFavorites.map((item) => (
-              <Link as={NextLink} href={item.href} key={`venue:${item.href}`} className="list-link">
+              <NextLink href={item.href} key={`venue:${item.href}`} className="list-link">
                 <strong>{item.title}</strong>
                 <span>{item.meta}</span>
-              </Link>
+              </NextLink>
             ))}
           </div>
         ) : (
@@ -95,10 +94,10 @@ export function FavoritesCollectionsClient({
         {instructorFavorites.length > 0 ? (
           <div className="stack-list">
             {instructorFavorites.map((item) => (
-              <Link as={NextLink} href={item.href} key={`instructor:${item.href}`} className="list-link">
+              <NextLink href={item.href} key={`instructor:${item.href}`} className="list-link">
                 <strong>{item.title}</strong>
                 <span>{item.meta}</span>
-              </Link>
+              </NextLink>
             ))}
           </div>
         ) : (
@@ -111,10 +110,10 @@ export function FavoritesCollectionsClient({
         {sessionFavorites.length > 0 ? (
           <div className="stack-list">
             {sessionFavorites.map((item) => (
-              <Link as={NextLink} href={item.href} key={`session:${item.href}`} className="list-link">
+              <NextLink href={item.href} key={`session:${item.href}`} className="list-link">
                 <strong>{item.title}</strong>
                 <span>{item.meta}</span>
-              </Link>
+              </NextLink>
             ))}
           </div>
         ) : (
@@ -127,10 +126,10 @@ export function FavoritesCollectionsClient({
         {scheduleItems.length > 0 ? (
           <div className="stack-list">
             {scheduleItems.map((item) => (
-              <Link as={NextLink} href={item.href} key={item.id} className="list-link">
+              <NextLink href={item.href} key={item.id} className="list-link">
                 <strong>{item.title}</strong>
                 <span>{item.meta}</span>
-              </Link>
+              </NextLink>
             ))}
           </div>
         ) : (

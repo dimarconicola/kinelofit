@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { DateTime } from 'luxon';
 
 import { DigestForm } from '@/components/forms/DigestForm';
@@ -210,12 +211,12 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
             </div>
             <div className="home-v2-hero-visual">
               <div className="home-v2-photo-wrap">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src="/home-hero.jpg"
                   alt="Yoga class in Palermo"
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
+                  fill
+                  sizes="(max-width: 960px) 100vw, 44vw"
+                  priority
                 />
                 <div className="home-v2-photo-ring" aria-hidden />
               </div>

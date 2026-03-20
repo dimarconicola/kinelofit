@@ -25,6 +25,7 @@ export function SiteHeader({ locale, dict, signedInEmail }: SiteHeaderProps) {
     { href: `/${locale}/favorites`, label: dict.favorites },
     { href: `/${locale}/schedule`, label: dict.schedule }
   ];
+  const mobileNavId = `mobile-nav-${locale}`;
 
   return (
     <div className="site-header-wrap">
@@ -62,6 +63,9 @@ export function SiteHeader({ locale, dict, signedInEmail }: SiteHeaderProps) {
             type="button"
             className="button mobile-menu-toggle"
             onClick={() => setMenuOpen((current) => !current)}
+            aria-expanded={menuOpen}
+            aria-controls={mobileNavId}
+            aria-label={menuOpen ? menuCopy.close : menuCopy.open}
           >
             {menuOpen ? menuCopy.close : menuCopy.open}
           </button>
@@ -69,12 +73,27 @@ export function SiteHeader({ locale, dict, signedInEmail }: SiteHeaderProps) {
       </div>
 
       {menuOpen ? (
-        <div className="site-shell mobile-nav-panel">
+        <div className="site-shell mobile-nav-panel" id={mobileNavId}>
           {navItems.map((item) => (
             <NextLink key={item.href} href={item.href} onClick={() => setMenuOpen(false)}>
               {item.label}
             </NextLink>
           ))}
+          {signedInEmail ? (
+            <form action="/api/auth/signout" method="post" className="mobile-nav-form">
+              <input type="hidden" name="locale" value={locale} />
+              <button type="submit" className="button button-account">
+                {signedInEmail}
+              </button>
+            </form>
+          ) : (
+            <NextLink href={`/${locale}/sign-in`} className="button button-signin mobile-nav-action" onClick={() => setMenuOpen(false)}>
+              {dict.signIn}
+            </NextLink>
+          )}
+          <NextLink href={switchLocalePath(pathname, alternate)} className="button locale-toggle mobile-nav-action" onClick={() => setMenuOpen(false)}>
+            {alternate.toUpperCase()}
+          </NextLink>
         </div>
       ) : null}
     </div>
