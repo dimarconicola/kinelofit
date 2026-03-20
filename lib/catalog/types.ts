@@ -15,6 +15,7 @@ export type SourceCadence = 'daily' | 'weekly' | 'quarterly';
 export type SourceTrustTier = 'tier_a' | 'tier_b' | 'tier_c';
 export type SourcePurpose = 'catalog' | 'discovery';
 export type DiscoveryLeadStatus = 'new' | 'reviewed' | 'imported' | 'rejected';
+export type ReviewStatus = 'new' | 'reviewing' | 'approved' | 'rejected' | 'imported' | 'resolved';
 export type VenueProfile = 'studio' | 'association' | 'independent_teacher' | 'gym_with_classes' | 'event_series';
 
 export type LocalizedText = Record<Locale, string>;
@@ -132,12 +133,17 @@ export interface EditorialCollection {
 }
 
 export interface ClaimSubmission {
+  id?: string;
   studioSlug: string;
   locale: Locale;
   name: string;
   email: string;
   role: string;
   notes: string;
+  reviewStatus?: ReviewStatus;
+  assignedTo?: string;
+  reviewNotes?: string;
+  reviewedAt?: string;
   createdAt: string;
 }
 
@@ -176,6 +182,7 @@ export interface DiscoveryFilters {
 }
 
 export interface CalendarSubmission {
+  id?: string;
   locale: Locale;
   citySlug: string;
   submitterType: 'studio' | 'teacher';
@@ -186,6 +193,10 @@ export interface CalendarSubmission {
   sourceUrls: string[];
   scheduleText: string;
   consent: boolean;
+  reviewStatus?: ReviewStatus;
+  assignedTo?: string;
+  reviewNotes?: string;
+  reviewedAt?: string;
   createdAt: string;
 }
 
@@ -205,16 +216,35 @@ export interface SourceRegistryEntry {
 }
 
 export interface DiscoveryLead {
+  id?: string;
   citySlug: string;
   sourceUrl: string;
   title: string;
   snippet?: string;
   discoveredFromUrl: string;
   status: DiscoveryLeadStatus;
+  assignedTo?: string;
+  reviewNotes?: string;
+  reviewedAt?: string;
   confidence: number;
   tags: string[];
   lastSeenAt: string;
   createdAt: string;
+}
+
+export interface FreshnessRunSourceCheck {
+  runId: string;
+  citySlug: string;
+  sourceUrl: string;
+  reachable: boolean;
+  changed: boolean;
+  impacted: boolean;
+  status: number;
+  finalUrl: string;
+  error?: string;
+  parserSignals: number;
+  autoReverified: number;
+  checkedAt: string;
 }
 
 export interface CityReadiness {

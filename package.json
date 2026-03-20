@@ -16,7 +16,7 @@
     "db:setup": "npm run db:push && npm run db:bootstrap",
     "test": "npm run test:vitest && npm run test:node",
     "test:vitest": "vitest run",
-    "test:node": "node --import tsx --test tests/filters.test.ts tests/freshness-adapters.test.ts tests/freshness.test.ts tests/policy.test.ts tests/readiness.test.ts",
+    "test:node": "node --import tsx --test tests/filters.test.ts tests/freshness-adapters.test.ts tests/freshness.test.ts tests/import-validator.test.ts tests/policy.test.ts tests/readiness.test.ts",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "catalog:bootstrap": "node --import tsx scripts/bootstrap-catalog.ts",
@@ -28,6 +28,7 @@
     "research:report": "bash scripts/report-palermo-research-db.sh",
     "catalog:export": "node --import tsx scripts/export-palermo-catalog.ts",
     "catalog:sync": "npm run research:build && npm run catalog:export"
+    ,"catalog:coverage": "node --import tsx scripts/report-catalog-coverage.ts"
   },
   "dependencies": {
     "@heroui/react": "^2.8.10",

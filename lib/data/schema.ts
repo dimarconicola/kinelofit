@@ -12,6 +12,7 @@ export const sourceCadenceEnum = pgEnum('source_cadence', ['daily', 'weekly', 'q
 export const sourceTrustTierEnum = pgEnum('source_trust_tier', ['tier_a', 'tier_b', 'tier_c']);
 export const sourcePurposeEnum = pgEnum('source_purpose', ['catalog', 'discovery']);
 export const discoveryLeadStatusEnum = pgEnum('discovery_lead_status', ['new', 'reviewed', 'imported', 'rejected']);
+export const reviewStatusEnum = pgEnum('review_status', ['new', 'reviewing', 'approved', 'rejected', 'imported', 'resolved']);
 
 export const cities = pgTable('cities', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -167,6 +168,10 @@ export const claims = pgTable('claims', {
   email: varchar('email', { length: 160 }).notNull(),
   role: varchar('role', { length: 80 }).notNull(),
   notes: text('notes').notNull(),
+  reviewStatus: reviewStatusEnum('review_status').notNull().default('new'),
+  assignedTo: varchar('assigned_to', { length: 120 }),
+  reviewNotes: text('review_notes'),
+  reviewedAt: timestamp('reviewed_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 });
 
@@ -182,6 +187,10 @@ export const calendarSubmissions = pgTable('calendar_submissions', {
   sourceUrls: jsonb('source_urls').$type<string[]>().notNull(),
   scheduleText: text('schedule_text').notNull(),
   consent: boolean('consent').notNull().default(true),
+  reviewStatus: reviewStatusEnum('review_status').notNull().default('new'),
+  assignedTo: varchar('assigned_to', { length: 120 }),
+  reviewNotes: text('review_notes'),
+  reviewedAt: timestamp('reviewed_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 });
 
@@ -216,6 +225,9 @@ export const discoveryLeads = pgTable('discovery_leads', {
   snippet: text('snippet'),
   discoveredFromUrl: text('discovered_from_url').notNull(),
   status: discoveryLeadStatusEnum('status').notNull().default('new'),
+  assignedTo: varchar('assigned_to', { length: 120 }),
+  reviewNotes: text('review_notes'),
+  reviewedAt: timestamp('reviewed_at', { withTimezone: true }),
   confidence: numeric('confidence', { precision: 4, scale: 3 }).notNull(),
   tags: jsonb('tags').$type<string[]>().notNull(),
   lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull(),
@@ -256,3 +268,23 @@ export const freshnessRuns = pgTable('freshness_runs', {
   notes: text('notes'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 });
+
+export const freshnessRunSources = pgTable('freshness_run_sources', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  runId: uuid('run_id').notNull(),
+  citySlug: varchar('city_slug', { length: 80 }).notNull(),
+  sourceUrl: text('source_url').notNull(),
+  reachable: boolean('reachable').notNull().default(false),
+  changed: boolean('changed').notNull().default(false),
+  impacted: boolean('impacted').notNull().default(false),
+  status: integer('status').notNull().default(0),
+  finalUrl: text('final_url').notNull(),
+  error: text('error'),
+  parserSignals: integer('parser_signals').notNull().default(0),
+  autoReverified: integer('auto_reverified').notNull().default(0),
+  checkedAt: timestamp('checked_at', { withTimezone: true }).notNull()
+}, (table) => ({
+  runIndex: index('freshness_run_sources_run_idx').on(table.runId),
+  cityIndex: index('freshness_run_sources_city_idx').on(table.citySlug),
+  checkedIndex: index('freshness_run_sources_checked_idx').on(table.checkedAt)
+}));

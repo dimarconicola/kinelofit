@@ -1,4 +1,4 @@
-const baseUrl = process.env.SMOKE_BASE_URL ?? 'http://localhost:3000';
+const baseUrl = process.env.SMOKE_BASE_URL ?? 'http://127.0.0.1:3000';
 
 const checks = [
   { path: '/it', markers: ['kinelo.fit', 'Palermo'] },

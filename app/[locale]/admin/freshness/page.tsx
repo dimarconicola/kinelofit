@@ -5,7 +5,7 @@ import { sessions, venues } from '@/lib/catalog/seed';
 import { getCatalogSourceMode } from '@/lib/catalog/server-data';
 import { getDb } from '@/lib/data/db';
 import { sessions as sessionTable } from '@/lib/data/schema';
-import { getLatestFreshnessSnapshot } from '@/lib/freshness/service';
+import { getLatestFreshnessSnapshot, listRecentFreshnessRunSources } from '@/lib/freshness/service';
 import { resolveLocale } from '@/lib/i18n/routing';
 
 export default async function AdminFreshnessPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -13,7 +13,11 @@ export default async function AdminFreshnessPage({ params }: { params: Promise<{
   const citySlug = 'palermo';
   const db = getDb();
 
-  const [latestSnapshot, sourceMode] = await Promise.all([getLatestFreshnessSnapshot(citySlug), getCatalogSourceMode()]);
+  const [latestSnapshot, sourceMode, recentSourceChecks] = await Promise.all([
+    getLatestFreshnessSnapshot(citySlug),
+    getCatalogSourceMode(),
+    listRecentFreshnessRunSources(citySlug, 40)
+  ]);
 
   let staleSessions = sessions
     .filter((session) => session.verificationStatus === 'stale')
@@ -90,6 +94,27 @@ export default async function AdminFreshnessPage({ params }: { params: Promise<{
           <p className="eyebrow">Broken links</p>
           {brokenLinks === 0 ? <p className="muted">No broken links in the current dataset.</p> : <p className="muted">{brokenLinks} sessions without a valid booking target.</p>}
         </div>
+      </section>
+      <section className="panel">
+        <p className="eyebrow">Recent source checks</p>
+        {recentSourceChecks.length === 0 ? (
+          <p className="muted">No per-source freshness checks stored yet.</p>
+        ) : (
+          <div className="stack-list">
+            {recentSourceChecks.map((check) => (
+              <article className="metric-card" key={`${check.runId}-${check.sourceUrl}`}>
+                <strong>{check.sourceUrl}</strong>
+                <span className="muted">
+                  {check.reachable ? 'reachable' : 'unreachable'} · status {check.status} · changed {check.changed ? 'yes' : 'no'} · impacted {check.impacted ? 'yes' : 'no'}
+                </span>
+                <span className="muted">
+                  parser signals {check.parserSignals} · auto reverified {check.autoReverified} · checked {DateTime.fromISO(check.checkedAt).toFormat('dd LLL HH:mm')}
+                </span>
+                {check.error ? <span className="muted">{check.error}</span> : null}
+              </article>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

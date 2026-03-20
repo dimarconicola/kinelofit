@@ -69,6 +69,28 @@ const palermoDiscoverySources: SourceRegistryEntry[] = [
   },
   {
     citySlug: 'palermo',
+    sourceUrl: 'https://www.diariapalermo.org/corsi/costi-diaria/',
+    sourceType: 'official_site',
+    cadence: 'weekly',
+    trustTier: 'tier_a',
+    purpose: 'catalog',
+    tags: ['palermo', 'pricing', 'pilates', 'yoga'],
+    active: true,
+    notes: 'Weekly pricing check for Diaria to keep venue-level pricing notes current.'
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://www.circopificio.it/circomotricita/',
+    sourceType: 'official_site',
+    cadence: 'weekly',
+    trustTier: 'tier_a',
+    purpose: 'catalog',
+    tags: ['palermo', 'kids', 'circo'],
+    active: true,
+    notes: 'Weekly kids activity check for Circo Pificio.'
+  },
+  {
+    citySlug: 'palermo',
     sourceUrl: 'https://www.panteatro.it/',
     sourceType: 'official_site',
     cadence: 'quarterly',

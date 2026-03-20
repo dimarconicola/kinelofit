@@ -3,8 +3,9 @@ import { join } from 'node:path';
 
 import { and, desc, eq, inArray } from 'drizzle-orm';
 
-import type { CalendarSubmission, ClaimSubmission, DigestSubscription, OutboundEvent } from '@/lib/catalog/types';
+import type { CalendarSubmission, ClaimSubmission, DigestSubscription, OutboundEvent, ReviewStatus } from '@/lib/catalog/types';
 import { getDb, isDatabaseConfigured } from '@/lib/data/db';
+import { env } from '@/lib/env';
 import { calendarSubmissions, claims, digestSubscriptions, favorites, outboundClicks } from '@/lib/data/schema';
 
 type FavoriteEntityType = 'venue' | 'session' | 'instructor';
@@ -51,11 +52,21 @@ const toIso = (value: Date | string) => new Date(value).toISOString();
 
 export const isPersistentStoreConfigured = () => isDatabaseConfigured;
 
+const assertPersistentStoreAvailable = () => {
+  if (!env.requirePersistentStore) return;
+  if (getDb()) return;
+  throw new Error('Persistent store is required in this environment, but DATABASE_URL is not configured.');
+};
+
+const normalizeReviewStatus = (value: string | null | undefined): ReviewStatus =>
+  value === 'reviewing' || value === 'approved' || value === 'rejected' || value === 'imported' || value === 'resolved' ? value : 'new';
+
 export const appendClaim = async (payload: ClaimSubmission) => {
   const db = getDb();
   if (!db) {
+    assertPersistentStoreAvailable();
     const items = await readCollection<ClaimSubmission>('claims');
-    items.unshift(payload);
+    items.unshift({ ...payload, reviewStatus: payload.reviewStatus ?? 'new' });
     await writeCollection('claims', items);
     return;
   }
@@ -67,31 +78,69 @@ export const appendClaim = async (payload: ClaimSubmission) => {
     email: payload.email,
     role: payload.role,
     notes: payload.notes,
+    reviewStatus: payload.reviewStatus ?? 'new',
+    assignedTo: payload.assignedTo ?? null,
+    reviewNotes: payload.reviewNotes ?? null,
+    reviewedAt: payload.reviewedAt ? new Date(payload.reviewedAt) : null,
     createdAt: new Date(payload.createdAt)
   });
 };
 
 export const listClaims = async (): Promise<ClaimSubmission[]> => {
   const db = getDb();
-  if (!db) return readCollection<ClaimSubmission>('claims');
+  if (!db) {
+    assertPersistentStoreAvailable();
+    return readCollection<ClaimSubmission>('claims');
+  }
 
   const rows = await db.select().from(claims).orderBy(desc(claims.createdAt)).limit(300);
   return rows.map((row) => ({
+    id: row.id,
     studioSlug: row.studioSlug,
     locale: row.locale as 'en' | 'it',
     name: row.name,
     email: row.email,
     role: row.role,
     notes: row.notes,
+    reviewStatus: normalizeReviewStatus(row.reviewStatus),
+    assignedTo: row.assignedTo ?? undefined,
+    reviewNotes: row.reviewNotes ?? undefined,
+    reviewedAt: row.reviewedAt ? toIso(row.reviewedAt) : undefined,
     createdAt: toIso(row.createdAt)
   }));
+};
+
+export const updateClaimReview = async (id: string, payload: { reviewStatus: ReviewStatus; assignedTo?: string; reviewNotes?: string }) => {
+  const db = getDb();
+  if (!db) {
+    assertPersistentStoreAvailable();
+    const items = await readCollection<ClaimSubmission & { id?: string }>('claims');
+    const next = items.map((item) =>
+      item.createdAt === id || item.email === id
+        ? { ...item, reviewStatus: payload.reviewStatus, assignedTo: payload.assignedTo, reviewNotes: payload.reviewNotes, reviewedAt: new Date().toISOString() }
+        : item
+    );
+    await writeCollection('claims', next);
+    return;
+  }
+
+  await db
+    .update(claims)
+    .set({
+      reviewStatus: payload.reviewStatus,
+      assignedTo: payload.assignedTo ?? null,
+      reviewNotes: payload.reviewNotes ?? null,
+      reviewedAt: new Date()
+    })
+    .where(eq(claims.id, id));
 };
 
 export const appendCalendarSubmission = async (payload: CalendarSubmission) => {
   const db = getDb();
   if (!db) {
+    assertPersistentStoreAvailable();
     const items = await readCollection<CalendarSubmission>('calendar-submissions');
-    items.unshift(payload);
+    items.unshift({ ...payload, reviewStatus: payload.reviewStatus ?? 'new' });
     await writeCollection('calendar-submissions', items);
     return;
   }
@@ -107,16 +156,24 @@ export const appendCalendarSubmission = async (payload: CalendarSubmission) => {
     sourceUrls: payload.sourceUrls,
     scheduleText: payload.scheduleText,
     consent: payload.consent,
+    reviewStatus: payload.reviewStatus ?? 'new',
+    assignedTo: payload.assignedTo ?? null,
+    reviewNotes: payload.reviewNotes ?? null,
+    reviewedAt: payload.reviewedAt ? new Date(payload.reviewedAt) : null,
     createdAt: new Date(payload.createdAt)
   });
 };
 
 export const listCalendarSubmissions = async (): Promise<CalendarSubmission[]> => {
   const db = getDb();
-  if (!db) return readCollection<CalendarSubmission>('calendar-submissions');
+  if (!db) {
+    assertPersistentStoreAvailable();
+    return readCollection<CalendarSubmission>('calendar-submissions');
+  }
 
   const rows = await db.select().from(calendarSubmissions).orderBy(desc(calendarSubmissions.createdAt)).limit(500);
   return rows.map((row) => ({
+    id: row.id,
     locale: row.locale as 'en' | 'it',
     citySlug: row.citySlug,
     submitterType: row.submitterType as 'studio' | 'teacher',
@@ -127,13 +184,46 @@ export const listCalendarSubmissions = async (): Promise<CalendarSubmission[]> =
     sourceUrls: row.sourceUrls,
     scheduleText: row.scheduleText,
     consent: row.consent,
+    reviewStatus: normalizeReviewStatus(row.reviewStatus),
+    assignedTo: row.assignedTo ?? undefined,
+    reviewNotes: row.reviewNotes ?? undefined,
+    reviewedAt: row.reviewedAt ? toIso(row.reviewedAt) : undefined,
     createdAt: toIso(row.createdAt)
   }));
+};
+
+export const updateCalendarSubmissionReview = async (
+  id: string,
+  payload: { reviewStatus: ReviewStatus; assignedTo?: string; reviewNotes?: string }
+) => {
+  const db = getDb();
+  if (!db) {
+    assertPersistentStoreAvailable();
+    const items = await readCollection<CalendarSubmission & { id?: string }>('calendar-submissions');
+    const next = items.map((item) =>
+      item.createdAt === id || item.email === id
+        ? { ...item, reviewStatus: payload.reviewStatus, assignedTo: payload.assignedTo, reviewNotes: payload.reviewNotes, reviewedAt: new Date().toISOString() }
+        : item
+    );
+    await writeCollection('calendar-submissions', next);
+    return;
+  }
+
+  await db
+    .update(calendarSubmissions)
+    .set({
+      reviewStatus: payload.reviewStatus,
+      assignedTo: payload.assignedTo ?? null,
+      reviewNotes: payload.reviewNotes ?? null,
+      reviewedAt: new Date()
+    })
+    .where(eq(calendarSubmissions.id, id));
 };
 
 export const appendDigestSubscription = async (payload: DigestSubscription) => {
   const db = getDb();
   if (!db) {
+    assertPersistentStoreAvailable();
     const items = await readCollection<DigestSubscription>('digests');
     items.unshift(payload);
     await writeCollection('digests', items);
@@ -151,7 +241,10 @@ export const appendDigestSubscription = async (payload: DigestSubscription) => {
 
 export const listDigestSubscriptions = async (): Promise<DigestSubscription[]> => {
   const db = getDb();
-  if (!db) return readCollection<DigestSubscription>('digests');
+  if (!db) {
+    assertPersistentStoreAvailable();
+    return readCollection<DigestSubscription>('digests');
+  }
 
   const rows = await db.select().from(digestSubscriptions).orderBy(desc(digestSubscriptions.createdAt)).limit(500);
   return rows.map((row) => ({
@@ -166,6 +259,7 @@ export const listDigestSubscriptions = async (): Promise<DigestSubscription[]> =
 export const appendOutboundEvent = async (payload: OutboundEvent) => {
   const db = getDb();
   if (!db) {
+    assertPersistentStoreAvailable();
     const items = await readCollection<OutboundEvent>('outbound-events');
     items.unshift(payload);
     await writeCollection('outbound-events', items);
@@ -185,7 +279,10 @@ export const appendOutboundEvent = async (payload: OutboundEvent) => {
 
 export const listOutboundEvents = async (): Promise<OutboundEvent[]> => {
   const db = getDb();
-  if (!db) return readCollection<OutboundEvent>('outbound-events');
+  if (!db) {
+    assertPersistentStoreAvailable();
+    return readCollection<OutboundEvent>('outbound-events');
+  }
 
   const rows = await db.select().from(outboundClicks).orderBy(desc(outboundClicks.createdAt)).limit(1000);
   return rows.map((row) => ({
@@ -206,6 +303,7 @@ const writeStoredEntities = (items: StoredEntityRow[]) => writeCollection('user-
 export const listUserFavorites = async (userId: string): Promise<StoredFavorite[]> => {
   const db = getDb();
   if (!db) {
+    assertPersistentStoreAvailable();
     const rows = await listStoredEntities();
     return rows
       .filter((row) => row.userId === userId && row.entityType !== 'schedule')
@@ -237,6 +335,7 @@ export const listUserFavorites = async (userId: string): Promise<StoredFavorite[
 export const isUserFavorite = async (userId: string, entityType: FavoriteEntityType, entitySlug: string) => {
   const db = getDb();
   if (!db) {
+    assertPersistentStoreAvailable();
     const rows = await listStoredEntities();
     return rows.some((row) => row.userId === userId && row.entityType === entityType && row.entitySlug === entitySlug);
   }
@@ -253,6 +352,7 @@ export const isUserFavorite = async (userId: string, entityType: FavoriteEntityT
 export const toggleUserFavorite = async (userId: string, entityType: FavoriteEntityType, entitySlug: string) => {
   const db = getDb();
   if (!db) {
+    assertPersistentStoreAvailable();
     const rows = await listStoredEntities();
     const index = rows.findIndex((row) => row.userId === userId && row.entityType === entityType && row.entitySlug === entitySlug);
     if (index >= 0) {
@@ -290,6 +390,7 @@ export const toggleUserFavorite = async (userId: string, entityType: FavoriteEnt
 export const listUserSchedule = async (userId: string): Promise<string[]> => {
   const db = getDb();
   if (!db) {
+    assertPersistentStoreAvailable();
     const rows = await listStoredEntities();
     return rows
       .filter((row) => row.userId === userId && row.entityType === 'schedule')
@@ -309,6 +410,7 @@ export const listUserSchedule = async (userId: string): Promise<string[]> => {
 export const isUserScheduleSaved = async (userId: string, sessionId: string) => {
   const db = getDb();
   if (!db) {
+    assertPersistentStoreAvailable();
     const rows = await listStoredEntities();
     return rows.some((row) => row.userId === userId && row.entityType === 'schedule' && row.entitySlug === sessionId);
   }
@@ -325,6 +427,7 @@ export const isUserScheduleSaved = async (userId: string, sessionId: string) => 
 export const toggleUserSchedule = async (userId: string, sessionId: string) => {
   const db = getDb();
   if (!db) {
+    assertPersistentStoreAvailable();
     const rows = await listStoredEntities();
     const index = rows.findIndex((row) => row.userId === userId && row.entityType === 'schedule' && row.entitySlug === sessionId);
     if (index >= 0) {

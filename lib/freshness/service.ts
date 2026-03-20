@@ -5,9 +5,9 @@ import { join } from 'node:path';
 import { and, desc, eq, inArray, isNull, lt, ne, or } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 
-import type { SourceCadence, SourceRegistryEntry } from '@/lib/catalog/types';
+import type { DiscoveryLead, FreshnessRunSourceCheck, SourceCadence, SourceRegistryEntry } from '@/lib/catalog/types';
 import { getDb, isDatabaseConfigured } from '@/lib/data/db';
-import { discoveryLeads, freshnessRuns, sessions, sourceRecords, sourceRegistry } from '@/lib/data/schema';
+import { discoveryLeads, freshnessRunSources, freshnessRuns, sessions, sourceRecords, sourceRegistry } from '@/lib/data/schema';
 import { buildSessionTimeSignature, evaluateAdapterAutoReverify, getAdapterForSource, parseSourceWithAdapter } from '@/lib/freshness/adapters';
 import { cadenceIncludes, getSeedSourceRegistry, getSourceUrlsForCadence } from '@/lib/freshness/source-registry';
 
@@ -22,6 +22,11 @@ const DEFAULT_CADENCE: SourceCadence = 'daily';
 type PriorSourceSignal = {
   hash: string;
   reachable: boolean;
+};
+
+type RunSourceAggregate = {
+  parserSignals: number;
+  autoReverified: number;
 };
 
 export type SourceSignal = {
@@ -272,6 +277,14 @@ const isSupportedSourcePurpose = (value: string): SourceRegistryEntry['purpose']
 
 const isSupportedTrustTier = (value: string): SourceRegistryEntry['trustTier'] =>
   value === 'tier_a' || value === 'tier_b' || value === 'tier_c' ? value : 'tier_b';
+
+const addRunSourceAggregate = (summary: Map<string, RunSourceAggregate>, sourceUrl: string, parserSignals: number, autoReverified: number) => {
+  const current = summary.get(sourceUrl) ?? { parserSignals: 0, autoReverified: 0 };
+  summary.set(sourceUrl, {
+    parserSignals: current.parserSignals + parserSignals,
+    autoReverified: current.autoReverified + autoReverified
+  });
+};
 
 const toSourceRegistryEntry = (
   row: typeof sourceRegistry.$inferSelect
@@ -579,6 +592,7 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
   let totalSessionsTracked = 0;
   let discoveryLeadsDiscovered = 0;
   let runStored = false;
+  const runSourceSummary = new Map<string, RunSourceAggregate>();
 
   if (!options.dryRun && useDb && db) {
     if (signalsToPersist.length > 0) {
@@ -708,6 +722,7 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
         ? evaluateAdapterAutoReverify(parsed.thresholds, signatureSet.size, matchedSignatures.size)
         : null;
       const allowAutoReverify = confidenceEvaluation ? confidenceEvaluation.accepted : true;
+      let autoReverifiedForSource = 0;
 
       if (allowAutoReverify && idsToReverify.length > 0) {
         await db
@@ -718,7 +733,10 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
           })
           .where(inArray(sessions.id, idsToReverify));
         autoReverified += idsToReverify.length;
+        autoReverifiedForSource = idsToReverify.length;
       }
+
+      addRunSourceAggregate(runSourceSummary, signal.sourceUrl, parsed.sessions.length, autoReverifiedForSource);
 
       await db.insert(sourceRecords).values({
         entityType: SOURCE_PARSE_ENTITY,
@@ -801,7 +819,7 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
     }
 
     const reportTimestamp = new Date();
-    await db.insert(freshnessRuns).values({
+    const insertedRun = await db.insert(freshnessRuns).values({
       citySlug,
       cadence,
       totalSessions: String(totalSessionsTracked),
@@ -822,7 +840,27 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
         checkedAt: reportTimestamp.toISOString()
       }),
       createdAt: reportTimestamp
-    });
+    }).returning({ id: freshnessRuns.id });
+
+    const runId = insertedRun[0]?.id;
+    if (runId) {
+      await db.insert(freshnessRunSources).values(
+        checkedSignals.map((signal) => ({
+          runId,
+          citySlug,
+          sourceUrl: signal.sourceUrl,
+          reachable: signal.reachable,
+          changed: changedSourceSet.has(signal.sourceUrl),
+          impacted: impactedSourceUrls.includes(signal.sourceUrl),
+          status: signal.status,
+          finalUrl: signal.finalUrl,
+          error: signal.error,
+          parserSignals: runSourceSummary.get(signal.sourceUrl)?.parserSignals ?? 0,
+          autoReverified: runSourceSummary.get(signal.sourceUrl)?.autoReverified ?? 0,
+          checkedAt: new Date(signal.checkedAt)
+        }))
+      );
+    }
 
     runStored = true;
   } else if (!options.dryRun) {
@@ -891,10 +929,41 @@ export type DiscoveryLeadSummary = {
   snippet?: string;
   discoveredFromUrl: string;
   status: 'new' | 'reviewed' | 'imported' | 'rejected';
+  assignedTo?: string;
+  reviewNotes?: string;
+  reviewedAt?: string;
   confidence: number;
   tags: string[];
   lastSeenAt: string;
   createdAt: string;
+};
+
+export const listRecentFreshnessRunSources = async (citySlug: string, limit = 120): Promise<FreshnessRunSourceCheck[]> => {
+  const normalizedCity = toLowerSafe(citySlug);
+  const db = getDb();
+  if (!db) return [];
+
+  const rows = await db
+    .select()
+    .from(freshnessRunSources)
+    .where(eq(freshnessRunSources.citySlug, normalizedCity))
+    .orderBy(desc(freshnessRunSources.checkedAt))
+    .limit(limit);
+
+  return rows.map((row) => ({
+    runId: row.runId,
+    citySlug: row.citySlug,
+    sourceUrl: row.sourceUrl,
+    reachable: row.reachable,
+    changed: row.changed,
+    impacted: row.impacted,
+    status: row.status,
+    finalUrl: row.finalUrl,
+    error: row.error ?? undefined,
+    parserSignals: row.parserSignals,
+    autoReverified: row.autoReverified,
+    checkedAt: row.checkedAt.toISOString()
+  }));
 };
 
 export const getLatestFreshnessSnapshot = async (citySlug: string): Promise<FreshnessRunSnapshot | null> => {
@@ -1044,9 +1113,36 @@ export const listDiscoveryLeadSummaries = async (citySlug: string, limit = 300):
     snippet: row.snippet ?? undefined,
     discoveredFromUrl: row.discoveredFromUrl,
     status: row.status,
+    assignedTo: row.assignedTo ?? undefined,
+    reviewNotes: row.reviewNotes ?? undefined,
+    reviewedAt: row.reviewedAt?.toISOString(),
     confidence: parseNumber(row.confidence),
     tags: row.tags,
     lastSeenAt: row.lastSeenAt.toISOString(),
     createdAt: row.createdAt.toISOString()
   }));
+};
+
+export const updateDiscoveryLeadReview = async (
+  id: string,
+  payload: {
+    status: DiscoveryLead['status'];
+    assignedTo?: string;
+    reviewNotes?: string;
+  }
+) => {
+  const db = getDb();
+  if (!db) {
+    throw new Error('Discovery lead review requires a configured database.');
+  }
+
+  await db
+    .update(discoveryLeads)
+    .set({
+      status: payload.status,
+      assignedTo: payload.assignedTo ?? null,
+      reviewNotes: payload.reviewNotes ?? null,
+      reviewedAt: new Date()
+    })
+    .where(eq(discoveryLeads.id, id));
 };

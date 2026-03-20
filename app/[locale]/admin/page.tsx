@@ -1,22 +1,27 @@
 import Link from 'next/link';
 
 import { StatCard } from '@/components/admin/StatCard';
+import { getRuntimeHealth } from '@/lib/ops/health';
 import { getCatalogSourceMode, getCollections, getPublicCities, getSeedCities } from '@/lib/catalog/server-data';
 import { getCityReadinessServer } from '@/lib/catalog/readiness';
-import { isPersistentStoreConfigured, listClaims, listDigestSubscriptions, listOutboundEvents } from '@/lib/runtime/store';
+import { isPersistentStoreConfigured, listCalendarSubmissions, listClaims, listDigestSubscriptions, listOutboundEvents } from '@/lib/runtime/store';
+import { listDiscoveryLeadSummaries } from '@/lib/freshness/service';
 import { resolveLocale } from '@/lib/i18n/routing';
 
 export default async function AdminPage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = resolveLocale((await params).locale);
-  const claims = await listClaims();
-  const digests = await listDigestSubscriptions();
-  const outbound = await listOutboundEvents();
-  const [readiness, sourceMode, publicCities, seedCities, collections] = await Promise.all([
+  const [claims, submissions, leads, digests, outbound, readiness, sourceMode, publicCities, seedCities, collections, health] = await Promise.all([
+    listClaims(),
+    listCalendarSubmissions(),
+    listDiscoveryLeadSummaries('palermo', 60),
+    listDigestSubscriptions(),
+    listOutboundEvents(),
     getCityReadinessServer('palermo'),
     getCatalogSourceMode(),
     getPublicCities(),
     getSeedCities(),
-    getCollections('palermo')
+    getCollections('palermo'),
+    getRuntimeHealth('palermo')
   ]);
 
   return (
@@ -32,17 +37,20 @@ export default async function AdminPage({ params }: { params: Promise<{ locale: 
         <StatCard label="Catalog source" value={sourceMode} detail="Internal runtime source mode." />
         <StatCard
           label="Operator inbox"
-          value={String(claims.length + digests.length)}
-          detail={isPersistentStoreConfigured() ? 'Claims and digest signups stored in Postgres.' : 'Claims and digest signups stored in local fallback files.'}
+          value={String(claims.length + submissions.length + leads.length)}
+          detail={isPersistentStoreConfigured() ? 'Claims, submissions, and lead review stored in Postgres.' : 'Operational queues are on fallback storage.'}
         />
         <StatCard label="Outbound clicks" value={String(outbound.length)} detail="Intent tracking captured via click-out CTAs." />
         <StatCard label="Collections" value={String(collections.length)} detail="Rule-based and editorial surfaces." />
+        <StatCard label="Runtime health" value={health.hasFailures ? 'Fail' : health.hasWarnings ? 'Warn' : 'OK'} detail={`${health.checks.length} release checks`} />
+        <StatCard label="Digest signups" value={String(digests.length)} detail="Retention signal before monetization." />
       </section>
       <section className="card-grid">
         <Link href={`/${locale}/admin/imports`} className="admin-link">Import spec and CSV validation</Link>
+        <Link href={`/${locale}/admin/health`} className="admin-link">Release health and env checks</Link>
         <Link href={`/${locale}/admin/freshness`} className="admin-link">Freshness queue and broken-link review</Link>
         <Link href={`/${locale}/admin/sources`} className="admin-link">Source registry and discovery leads</Link>
-        <Link href={`/${locale}/admin/claims`} className="admin-link">Claims and calendar submissions inbox</Link>
+        <Link href={`/${locale}/admin/inbox`} className="admin-link">Unified moderation inbox</Link>
         <Link href={`/${locale}/admin/collections`} className="admin-link">Editorial collections</Link>
         <Link href={`/${locale}/admin/taxonomy`} className="admin-link">Category visibility and city rules</Link>
       </section>

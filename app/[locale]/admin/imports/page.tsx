@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 
+import { importOptionalHeaders, importRequiredHeaders } from '@/lib/catalog/import-validator';
 import { resolveLocale } from '@/lib/i18n/routing';
 
 export default async function AdminImportsPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -23,7 +24,10 @@ export default async function AdminImportsPage({ params }: { params: Promise<{ l
         </form>
         <div className="panel">
           <p className="eyebrow">Expected fields</p>
-          <p className="lead">city, venue, location, category, style, time range, level, language, format, booking target, source URL, freshness timestamp, verification state.</p>
+          <p className="lead">Il validator controlla scope, URL, coordinate, ISO datetime, pricing coverage e attendance model.</p>
+          <p className="muted">Required: {importRequiredHeaders.join(', ')}</p>
+          <p className="muted">Optional but recommended: {importOptionalHeaders.join(', ')}</p>
+          <p className="muted">Policy: docs/catalog-policy.md</p>
         </div>
       </section>
     </div>

@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
 
+import { ReviewStatusForm } from '@/components/admin/ReviewStatusForm';
 import { getSourceRegistrySnapshot, listDiscoveryLeadSummaries } from '@/lib/freshness/service';
 import { resolveLocale } from '@/lib/i18n/routing';
 
@@ -124,6 +125,17 @@ export default async function AdminSourcesPage({ params }: { params: Promise<{ l
                   {copy.status}: {lead.status} · {copy.confidence}: {lead.confidence.toFixed(3)} · {copy.lastSeen}:{' '}
                   {DateTime.fromISO(lead.lastSeenAt).toFormat('dd LLL yyyy HH:mm')}
                 </span>
+                {lead.assignedTo ? <span className="muted">Owner: {lead.assignedTo}</span> : null}
+                {lead.reviewNotes ? <span className="muted">{lead.reviewNotes}</span> : null}
+                <ReviewStatusForm
+                  entityType="discovery_lead"
+                  entityId={lead.id}
+                  currentStatus={lead.status}
+                  assignedTo={lead.assignedTo}
+                  reviewNotes={lead.reviewNotes}
+                  redirectTo={`/${locale}/admin/sources`}
+                  statusOptions={['new', 'reviewed', 'imported', 'rejected']}
+                />
               </article>
             ))}
           </div>
