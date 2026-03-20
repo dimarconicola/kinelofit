@@ -36,12 +36,14 @@ export async function GET(request: NextRequest) {
     const dryRun = request.nextUrl.searchParams.get('dryRun') === '1';
     const maxSources = parsePositiveNumber(request.nextUrl.searchParams.get('maxSources'));
     const cadence = parseCadence(request.nextUrl.searchParams.get('cadence'));
+    const respectSchedule = request.nextUrl.searchParams.get('respectSchedule') !== '0';
 
     const report = await runDailyFreshnessCheck({
       citySlug,
       dryRun,
       maxSources,
-      cadence
+      cadence,
+      respectSchedule
     });
 
     return NextResponse.json({ ok: true, report }, { status: 200 });

@@ -194,6 +194,29 @@ export const calendarSubmissions = pgTable('calendar_submissions', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 });
 
+export const importBatches = pgTable('import_batches', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  citySlug: varchar('city_slug', { length: 80 }).notNull(),
+  locale: varchar('locale', { length: 2 }).notNull(),
+  fileName: varchar('file_name', { length: 220 }).notNull(),
+  sourceLabel: varchar('source_label', { length: 160 }),
+  csvContent: text('csv_content').notNull(),
+  rowsCount: integer('rows_count').notNull().default(0),
+  errorsCount: integer('errors_count').notNull().default(0),
+  warningsCount: integer('warnings_count').notNull().default(0),
+  validationSummary: jsonb('validation_summary').$type<Record<string, unknown>>().notNull(),
+  reviewStatus: reviewStatusEnum('review_status').notNull().default('new'),
+  assignedTo: varchar('assigned_to', { length: 120 }),
+  reviewNotes: text('review_notes'),
+  reviewedAt: timestamp('reviewed_at', { withTimezone: true }),
+  importedAt: timestamp('imported_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+}, (table) => ({
+  cityIndex: index('import_batches_city_idx').on(table.citySlug),
+  statusIndex: index('import_batches_status_idx').on(table.reviewStatus),
+  createdIndex: index('import_batches_created_idx').on(table.createdAt)
+}));
+
 export const sourceRegistry = pgTable('source_registry', {
   id: uuid('id').defaultRandom().primaryKey(),
   citySlug: varchar('city_slug', { length: 80 }).notNull(),

@@ -1,10 +1,11 @@
 import { readFile } from 'node:fs/promises';
 
+import { ImportBatchPanel } from '@/components/admin/ImportBatchPanel';
 import { importOptionalHeaders, importRequiredHeaders } from '@/lib/catalog/import-validator';
 import { resolveLocale } from '@/lib/i18n/routing';
 
 export default async function AdminImportsPage({ params }: { params: Promise<{ locale: string }> }) {
-  resolveLocale((await params).locale);
+  const locale = resolveLocale((await params).locale);
   const sampleCsv = await readFile('data/imports/palermo_seed.csv', 'utf8');
 
   return (
@@ -15,12 +16,22 @@ export default async function AdminImportsPage({ params }: { params: Promise<{ l
         <p className="lead">The app starts from manual curation. Every imported row carries source and freshness metadata.</p>
       </section>
       <section className="detail-hero">
-        <form className="panel form-stack" action="/api/import/validate" method="post">
+        <form className="panel form-stack" action="/api/admin/imports" method="post">
+          <input type="hidden" name="locale" value={locale} />
+          <input type="hidden" name="citySlug" value="palermo" />
+          <label>
+            File name
+            <input name="fileName" defaultValue="palermo-manual-import.csv" />
+          </label>
+          <label>
+            Source label
+            <input name="sourceLabel" defaultValue="manual admin import" />
+          </label>
           <label>
             CSV content
             <textarea name="csv" rows={16} defaultValue={sampleCsv} />
           </label>
-          <button className="button button-primary" type="submit">Validate import</button>
+          <button className="button button-primary" type="submit">Crea batch review</button>
         </form>
         <div className="panel">
           <p className="eyebrow">Expected fields</p>
@@ -29,6 +40,10 @@ export default async function AdminImportsPage({ params }: { params: Promise<{ l
           <p className="muted">Optional but recommended: {importOptionalHeaders.join(', ')}</p>
           <p className="muted">Policy: docs/catalog-policy.md</p>
         </div>
+      </section>
+      <section className="panel">
+        <p className="eyebrow">Import review queue</p>
+        <ImportBatchPanel locale={locale} />
       </section>
     </div>
   );

@@ -5,7 +5,7 @@ import { sessions, venues } from '@/lib/catalog/seed';
 import { getCatalogSourceMode } from '@/lib/catalog/server-data';
 import { getDb } from '@/lib/data/db';
 import { sessions as sessionTable } from '@/lib/data/schema';
-import { getLatestFreshnessSnapshot, listRecentFreshnessRunSources } from '@/lib/freshness/service';
+import { getLatestFreshnessSnapshot, getSourceRegistrySnapshot, listRecentFreshnessRunSources } from '@/lib/freshness/service';
 import { resolveLocale } from '@/lib/i18n/routing';
 
 export default async function AdminFreshnessPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -13,10 +13,11 @@ export default async function AdminFreshnessPage({ params }: { params: Promise<{
   const citySlug = 'palermo';
   const db = getDb();
 
-  const [latestSnapshot, sourceMode, recentSourceChecks] = await Promise.all([
+  const [latestSnapshot, sourceMode, recentSourceChecks, registry] = await Promise.all([
     getLatestFreshnessSnapshot(citySlug),
     getCatalogSourceMode(),
-    listRecentFreshnessRunSources(citySlug, 40)
+    listRecentFreshnessRunSources(citySlug, 40),
+    getSourceRegistrySnapshot(citySlug)
   ]);
 
   let staleSessions = sessions
@@ -79,6 +80,15 @@ export default async function AdminFreshnessPage({ params }: { params: Promise<{
         <p className="muted">Catalog source: {sourceMode}</p>
       </section>
       <section className="saved-grid">
+        <div className="panel">
+          <p className="eyebrow">Scheduled ops</p>
+          <p className="muted">
+            Due now {registry.dueNow} · daily {registry.overdueByCadence.daily} · weekly {registry.overdueByCadence.weekly} · quarterly {registry.overdueByCadence.quarterly}
+          </p>
+          <p className="muted">
+            Cron endpoint accepts `cadence=daily|weekly|quarterly` and `respectSchedule=1` by default.
+          </p>
+        </div>
         <div className="panel">
           <p className="eyebrow">Stale sessions</p>
           <div className="stack-list">

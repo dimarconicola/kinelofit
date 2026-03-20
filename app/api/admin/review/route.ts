@@ -3,10 +3,11 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { updateDiscoveryLeadReview } from '@/lib/freshness/service';
+import { updateImportBatchReview } from '@/lib/imports/service';
 import { updateCalendarSubmissionReview, updateClaimReview } from '@/lib/runtime/store';
 
 const formSchema = z.object({
-  entityType: z.enum(['claim', 'calendar_submission', 'discovery_lead']),
+  entityType: z.enum(['claim', 'calendar_submission', 'discovery_lead', 'import_batch']),
   entityId: z.string().min(1),
   status: z.string().min(1),
   assignedTo: z.string().trim().optional(),
@@ -40,6 +41,12 @@ export async function POST(request: Request) {
       assignedTo,
       reviewNotes
     });
+  } else if (parsed.entityType === 'import_batch') {
+    await updateImportBatchReview(parsed.entityId, {
+      reviewStatus: parsed.status as 'new' | 'reviewing' | 'approved' | 'rejected' | 'imported' | 'resolved',
+      assignedTo,
+      reviewNotes
+    });
   } else {
     await updateDiscoveryLeadReview(parsed.entityId, {
       status: parsed.status as 'new' | 'reviewed' | 'imported' | 'rejected',
@@ -52,6 +59,7 @@ export async function POST(request: Request) {
   revalidatePath('/it/admin');
   revalidatePath('/it/admin/claims');
   revalidatePath('/it/admin/inbox');
+  revalidatePath('/it/admin/imports');
   revalidatePath('/it/admin/sources');
 
   return NextResponse.redirect(new URL(parsed.redirectTo, request.url), { status: 303 });

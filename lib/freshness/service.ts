@@ -9,6 +9,7 @@ import type { DiscoveryLead, FreshnessRunSourceCheck, SourceCadence, SourceRegis
 import { getDb, isDatabaseConfigured } from '@/lib/data/db';
 import { discoveryLeads, freshnessRunSources, freshnessRuns, sessions, sourceRecords, sourceRegistry } from '@/lib/data/schema';
 import { buildSessionTimeSignature, evaluateAdapterAutoReverify, getAdapterForSource, parseSourceWithAdapter } from '@/lib/freshness/adapters';
+import { computeNextCheckAt, isSourceDueAt } from '@/lib/freshness/schedule';
 import { cadenceIncludes, getSeedSourceRegistry, getSourceUrlsForCadence } from '@/lib/freshness/source-registry';
 
 const SOURCE_HEALTH_ENTITY = 'source_health';
@@ -70,6 +71,7 @@ export type FreshnessRunOptions = {
   dryRun?: boolean;
   timeoutMs?: number;
   maxSources?: number;
+  respectSchedule?: boolean;
 };
 
 const stableHash = (value: string) => createHash('sha256').update(value).digest('hex');
@@ -371,6 +373,8 @@ const loadSourcesForRun = async (citySlug: string, runCadence: SourceCadence, us
     .orderBy(sourceRegistry.sourceUrl);
 
   const sourceEntries = rows.map(toSourceRegistryEntry);
+  const referenceIso = new Date().toISOString();
+  const dueEntries = sourceEntries.filter((entry) => isSourceDueAt(entry.nextCheckAt, referenceIso));
   if (sourceEntries.length === 0) {
     const fallback = getSeedSourceRegistry(citySlug);
     return {
@@ -382,7 +386,7 @@ const loadSourcesForRun = async (citySlug: string, runCadence: SourceCadence, us
 
   return {
     sourceEntries,
-    sourceUrls: getSourceUrlsForCadence(sourceEntries, runCadence),
+    sourceUrls: getSourceUrlsForCadence(dueEntries.length > 0 ? dueEntries : sourceEntries, runCadence),
     registrySourcesSeeded
   };
 };
@@ -558,7 +562,8 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
   const db = getDb();
   const useDb = isDatabaseConfigured && Boolean(db);
   const { sourceEntries, sourceUrls, registrySourcesSeeded } = await loadSourcesForRun(citySlug, cadence, useDb);
-  const slicedSources = typeof options.maxSources === 'number' ? sourceUrls.slice(0, options.maxSources) : sourceUrls;
+  const candidateSourceUrls = options.respectSchedule === false ? getSourceUrlsForCadence(sourceEntries, cadence) : sourceUrls;
+  const slicedSources = typeof options.maxSources === 'number' ? candidateSourceUrls.slice(0, options.maxSources) : candidateSourceUrls;
   const sourceSlugs = slicedSources.map((url) => buildSourceSlug(url));
 
   const priorSignals = useDb ? await loadPriorSignalsFromDatabase(sourceSlugs) : await mapFromLocalFile();
@@ -618,6 +623,7 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
 
     if (slicedSources.length > 0) {
       const checkedAt = new Date();
+      const sourceEntriesByUrl = new Map(sourceEntries.map((entry) => [entry.sourceUrl, entry]));
       await db
         .update(sourceRegistry)
         .set({
@@ -625,6 +631,18 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
           updatedAt: checkedAt
         })
         .where(and(eq(sourceRegistry.citySlug, citySlug), inArray(sourceRegistry.sourceUrl, slicedSources)));
+
+      for (const sourceUrl of slicedSources) {
+        const entry = sourceEntriesByUrl.get(sourceUrl);
+        if (!entry) continue;
+        await db
+          .update(sourceRegistry)
+          .set({
+            nextCheckAt: new Date(computeNextCheckAt(checkedAt.toISOString(), entry.cadence) ?? checkedAt.toISOString()),
+            updatedAt: checkedAt
+          })
+          .where(and(eq(sourceRegistry.citySlug, citySlug), eq(sourceRegistry.sourceUrl, sourceUrl)));
+      }
     }
 
     if (impactedSourceUrls.length > 0) {
@@ -919,6 +937,8 @@ export type SourceRegistrySnapshot = {
   byPurpose: { catalog: number; discovery: number };
   entries: SourceRegistryEntry[];
   mode: 'database' | 'seed';
+  dueNow: number;
+  overdueByCadence: Record<SourceCadence, number>;
 };
 
 export type DiscoveryLeadSummary = {
@@ -1059,6 +1079,7 @@ const summarizeRegistry = (entries: SourceRegistryEntry[]) => {
 export const getSourceRegistrySnapshot = async (citySlug: string): Promise<SourceRegistrySnapshot> => {
   const normalizedCity = toLowerSafe(citySlug);
   const db = getDb();
+  const referenceIso = new Date().toISOString();
 
   if (db) {
     await ensureSourceRegistrySeed(normalizedCity);
@@ -1070,6 +1091,14 @@ export const getSourceRegistrySnapshot = async (citySlug: string): Promise<Sourc
 
     const entries = rows.map(toSourceRegistryEntry);
     const summary = summarizeRegistry(entries);
+    const overdueByCadence: Record<SourceCadence, number> = { daily: 0, weekly: 0, quarterly: 0 };
+    let dueNow = 0;
+    for (const entry of entries) {
+      if (isSourceDueAt(entry.nextCheckAt, referenceIso)) {
+        dueNow += 1;
+        overdueByCadence[entry.cadence] += 1;
+      }
+    }
 
     return {
       citySlug: normalizedCity,
@@ -1077,7 +1106,9 @@ export const getSourceRegistrySnapshot = async (citySlug: string): Promise<Sourc
       byCadence: summary.byCadence,
       byPurpose: summary.byPurpose,
       entries,
-      mode: 'database'
+      mode: 'database',
+      dueNow,
+      overdueByCadence
     };
   }
 
@@ -1089,7 +1120,13 @@ export const getSourceRegistrySnapshot = async (citySlug: string): Promise<Sourc
     byCadence: summary.byCadence,
     byPurpose: summary.byPurpose,
     entries,
-    mode: 'seed'
+    mode: 'seed',
+    dueNow: entries.length,
+    overdueByCadence: {
+      daily: entries.filter((entry) => entry.cadence === 'daily').length,
+      weekly: entries.filter((entry) => entry.cadence === 'weekly').length,
+      quarterly: entries.filter((entry) => entry.cadence === 'quarterly').length
+    }
   };
 };
 

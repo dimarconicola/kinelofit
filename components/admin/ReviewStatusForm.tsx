@@ -12,7 +12,7 @@ export function ReviewStatusForm({
   statusOptions,
   submitLabel = 'Aggiorna'
 }: {
-  entityType: 'claim' | 'calendar_submission' | 'discovery_lead';
+  entityType: 'claim' | 'calendar_submission' | 'discovery_lead' | 'import_batch';
   entityId: string;
   currentStatus: StatusValue;
   assignedTo?: string;
