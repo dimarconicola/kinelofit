@@ -1,7 +1,5 @@
-import NextLink from 'next/link';
-import { Button } from '@heroui/react';
-
 import { FavoritesCollectionsClient } from '@/components/state/FavoritesCollectionsClient';
+import { ServerButtonLink } from '@/components/ui/server';
 import { getSessionUser } from '@/lib/auth/session';
 import { getCatalogSnapshot } from '@/lib/catalog/repository';
 import { resolveLocale } from '@/lib/i18n/routing';
@@ -44,9 +42,9 @@ export default async function FavoritesPage({ params }: { params: Promise<{ loca
     return (
       <div className="empty-state">
         <p>{copy.signInNeeded}</p>
-        <Button as={NextLink} href={`/${locale}/sign-in`} color="primary" radius="full" className="button button-primary">
+        <ServerButtonLink href={`/${locale}/sign-in`} className="button-primary">
           {copy.signIn}
-        </Button>
+        </ServerButtonLink>
       </div>
     );
   }

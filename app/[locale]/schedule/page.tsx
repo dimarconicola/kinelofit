@@ -1,7 +1,5 @@
-import NextLink from 'next/link';
-import { Button } from '@heroui/react';
-
 import { SavedScheduleClient } from '@/components/state/SavedScheduleClient';
+import { ServerButtonLink } from '@/components/ui/server';
 import { getSessionUser } from '@/lib/auth/session';
 import { getCatalogSnapshot } from '@/lib/catalog/repository';
 import { resolveLocale } from '@/lib/i18n/routing';
@@ -34,9 +32,9 @@ export default async function SchedulePage({ params }: { params: Promise<{ local
     return (
       <div className="empty-state">
         <p>{copy.signInNeeded}</p>
-        <Button as={NextLink} href={`/${locale}/sign-in`} color="primary" radius="full" className="button button-primary">
+        <ServerButtonLink href={`/${locale}/sign-in`} className="button-primary">
           {copy.signIn}
-        </Button>
+        </ServerButtonLink>
       </div>
     );
   }

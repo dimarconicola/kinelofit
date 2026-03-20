@@ -1,6 +1,4 @@
-import NextLink from 'next/link';
-import { Button } from '@heroui/react';
-
+import { ServerButtonLink } from '@/components/ui/server';
 import { resolveLocale } from '@/lib/i18n/routing';
 
 export default async function WhoWeArePage({ params }: { params: Promise<{ locale: string }> }) {
@@ -28,9 +26,9 @@ export default async function WhoWeArePage({ params }: { params: Promise<{ local
       <h1>{copy.title}</h1>
       <p className="lead">{copy.lead}</p>
       <div className="site-actions">
-        <Button as={NextLink} href={`/${locale}/palermo/classes`} color="primary" radius="full" className="button button-primary">
+        <ServerButtonLink href={`/${locale}/palermo/classes`} className="button-primary">
           {copy.cta}
-        </Button>
+        </ServerButtonLink>
       </div>
     </section>
   );

@@ -1,7 +1,5 @@
-import NextLink from 'next/link';
-import { Link } from '@heroui/react';
-
 import type { Locale } from '@/lib/catalog/types';
+import { ServerLink } from '@/components/ui/server';
 
 export function SiteFooter({ locale }: { locale: Locale }) {
   const copy =
@@ -35,24 +33,12 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           <p className="footer-meta">{meta}</p>
         </div>
         <div className="footer-links">
-          <Link as={NextLink} href={`/${locale}/palermo`}>
-            Palermo
-          </Link>
-          <Link as={NextLink} href={`/${locale}/palermo/classes`}>
-            {labels.classes}
-          </Link>
-          <Link as={NextLink} href={`/${locale}/who-we-are`}>
-            {labels.whoWeAre}
-          </Link>
-          <Link as={NextLink} href={`/${locale}/suggest-calendar`}>
-            {labels.suggestCalendar}
-          </Link>
-          <Link as={NextLink} href={`/${locale}/privacy-policy`}>
-            {labels.privacy}
-          </Link>
-          <Link as={NextLink} href={`/${locale}/cookies`}>
-            {labels.cookies}
-          </Link>
+          <ServerLink href={`/${locale}/palermo`}>Palermo</ServerLink>
+          <ServerLink href={`/${locale}/palermo/classes`}>{labels.classes}</ServerLink>
+          <ServerLink href={`/${locale}/who-we-are`}>{labels.whoWeAre}</ServerLink>
+          <ServerLink href={`/${locale}/suggest-calendar`}>{labels.suggestCalendar}</ServerLink>
+          <ServerLink href={`/${locale}/privacy-policy`}>{labels.privacy}</ServerLink>
+          <ServerLink href={`/${locale}/cookies`}>{labels.cookies}</ServerLink>
         </div>
       </div>
     </footer>

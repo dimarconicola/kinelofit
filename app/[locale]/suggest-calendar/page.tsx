@@ -1,7 +1,5 @@
-import NextLink from 'next/link';
-import { Button } from '@heroui/react';
-
 import { CalendarSubmissionForm } from '@/components/forms/CalendarSubmissionForm';
+import { ServerButtonLink } from '@/components/ui/server';
 import { resolveLocale } from '@/lib/i18n/routing';
 
 export default async function SuggestCalendarPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -32,12 +30,12 @@ export default async function SuggestCalendarPage({ params }: { params: Promise<
         <h1>{copy.title}</h1>
         <p className="lead">{copy.lead}</p>
         <div className="site-actions">
-          <Button as="a" href="mailto:hello@kinelo.fit" color="primary" radius="full" className="button button-primary">
+          <ServerButtonLink href="mailto:hello@kinelo.fit" className="button-primary">
             {copy.cta}
-          </Button>
-          <Button as={NextLink} href={`/${locale}/palermo/classes`} variant="ghost" radius="full" className="button button-ghost">
+          </ServerButtonLink>
+          <ServerButtonLink href={`/${locale}/palermo/classes`} className="button-ghost">
             {locale === 'it' ? 'Vedi classi Palermo' : 'See Palermo classes'}
-          </Button>
+          </ServerButtonLink>
         </div>
       </section>
       <section className="panel stack-list">

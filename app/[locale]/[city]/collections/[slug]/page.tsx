@@ -1,9 +1,7 @@
 import { notFound } from 'next/navigation';
-import NextLink from 'next/link';
-import { Button } from '@heroui/react';
-
 import { TodayNearbyLocationHint } from '@/components/discovery/TodayNearbyLocationHint';
 import { SessionCard } from '@/components/discovery/SessionCard';
+import { ServerButtonLink } from '@/components/ui/server';
 import { getSessionUser } from '@/lib/auth/session';
 import { resolveSessionCardData } from '@/lib/catalog/session-card-data';
 import { getCollectionSessions, getCollections, getVenue } from '@/lib/catalog/server-data';
@@ -100,15 +98,9 @@ export default async function CollectionPage({
           <h1>{collection.title[locale]}</h1>
           <p className="lead">{collection.description[locale]}</p>
           <div className="site-actions">
-            <Button
-              as={NextLink}
-              href={`/${locale}/${citySlug}/classes`}
-              radius="full"
-              color="primary"
-              className="button button-primary"
-            >
+            <ServerButtonLink href={`/${locale}/${citySlug}/classes`} className="button-primary">
               {dict.exploreClasses}
-            </Button>
+            </ServerButtonLink>
           </div>
           {Component ? <Component /> : null}
         </div>

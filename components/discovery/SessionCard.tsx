@@ -1,8 +1,7 @@
-import NextLink from 'next/link';
 import { DateTime } from 'luxon';
-import { Chip, Link } from '@heroui/react';
 
 import { ScheduleButton } from '@/components/state/ScheduleButton';
+import { ServerChip, ServerLink } from '@/components/ui/server';
 import type { ResolvedSessionCardData } from '@/lib/catalog/session-card-data';
 import type { Locale, Session } from '@/lib/catalog/types';
 import { formatSessionTime } from '@/lib/ui/format';
@@ -82,20 +81,20 @@ export function SessionCard({ session, locale, resolved, signedInEmail, schedule
           </div>
           <p className="session-meta">{formatSessionTime(session.startAt, locale)}</p>
           <p className="muted">
-            <Link as={NextLink} href={`/${locale}/${session.citySlug}/studios/${venue.slug}`} className="inline-link">
+            <ServerLink href={`/${locale}/${session.citySlug}/studios/${venue.slug}`} className="inline-link">
               {venue.name}
-            </Link>{' '}
+            </ServerLink>{' '}
             ·{' '}
-            <Link as={NextLink} href={`/${locale}/${session.citySlug}/teachers/${instructor.slug}`} className="inline-link">
+            <ServerLink href={`/${locale}/${session.citySlug}/teachers/${instructor.slug}`} className="inline-link">
               {instructor.name}
-            </Link>
+            </ServerLink>
           </p>
           <p className="muted">{venue.address}</p>
           <div className="session-tags">
-            <Chip radius="full" size="sm">{style.name[locale]}</Chip>
-            <Chip radius="full" size="sm">{labels.level[session.level]}</Chip>
-            <Chip radius="full" size="sm">{session.language}</Chip>
-            <Chip radius="full" size="sm">{labels.format[session.format]}</Chip>
+            <ServerChip>{style.name[locale]}</ServerChip>
+            <ServerChip>{labels.level[session.level]}</ServerChip>
+            <ServerChip>{session.language}</ServerChip>
+            <ServerChip>{labels.format[session.format]}</ServerChip>
           </div>
           {session.priceNote ? (
             <p className="muted">
@@ -105,12 +104,12 @@ export function SessionCard({ session, locale, resolved, signedInEmail, schedule
           <div className="session-card-footer">
             <div className="stack-list">
               <div className="session-card-links">
-                <Link as={NextLink} href={`/${locale}/${session.citySlug}/studios/${venue.slug}`} className="inline-link">
+                <ServerLink href={`/${locale}/${session.citySlug}/studios/${venue.slug}`} className="inline-link">
                   {labels.studio}
-                </Link>
-                <Link as={NextLink} href={`/${locale}/${session.citySlug}/teachers/${instructor.slug}`} className="inline-link">
+                </ServerLink>
+                <ServerLink href={`/${locale}/${session.citySlug}/teachers/${instructor.slug}`} className="inline-link">
                   {labels.teacher}
-                </Link>
+                </ServerLink>
               </div>
             </div>
             <div className="session-actions">

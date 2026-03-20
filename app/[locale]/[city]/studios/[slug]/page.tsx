@@ -1,10 +1,10 @@
 import { notFound } from 'next/navigation';
 import { DateTime } from 'luxon';
-import { Button, Chip, Link } from '@heroui/react';
 
 import { VenueCover } from '@/components/catalog/VenueCover';
 import { ClaimFormDialog } from '@/components/forms/ClaimFormDialog';
 import { SessionCard } from '@/components/discovery/SessionCard';
+import { ServerButtonLink, ServerChip, ServerLink } from '@/components/ui/server';
 import { getSessionUser } from '@/lib/auth/session';
 import { resolveSessionCardData } from '@/lib/catalog/session-card-data';
 import { getNeighborhoods, getVenue, getVenueSessions } from '@/lib/catalog/server-data';
@@ -74,9 +74,9 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
               <p className="lead">{venue.description[locale]}</p>
               <div className="profile-chip-row">
                 {venue.amenities.map((amenity) => (
-                  <Chip key={amenity} radius="sm" size="sm" variant="flat" color="default">
+                  <ServerChip key={amenity} tone="meta">
                     {amenity}
-                  </Chip>
+                  </ServerChip>
                 ))}
               </div>
               <div className="profile-meta">
@@ -85,9 +85,9 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
               </div>
               <div className="site-actions profile-links">
                 {hasWebsite ? (
-                  <Button as="a" href={venue.sourceUrl} className="button button-secondary" variant="flat" radius="full" target="_blank" rel="noreferrer">
+                  <ServerButtonLink href={venue.sourceUrl} className="button-secondary" target="_blank" rel="noreferrer">
                     {profileCopy.website}
-                  </Button>
+                  </ServerButtonLink>
                 ) : null}
               </div>
             </div>
@@ -100,9 +100,9 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
             <h2>{profileCopy.schedule}</h2>
             <p className="muted">
               {profileCopy.source}:{' '}
-              <Link as="a" href={venue.sourceUrl} target="_blank" rel="noreferrer" className="inline-link">
+              <ServerLink href={venue.sourceUrl} target="_blank" rel="noreferrer" className="inline-link">
                 {venue.sourceUrl}
-              </Link>
+              </ServerLink>
             </p>
             <div className="classes-stat-grid profile-metrics">
               <div className="classes-stat-card">
@@ -143,9 +143,9 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
                     <h2>{day.toFormat(locale === 'it' ? 'd LLLL' : 'd LLLL')}</h2>
                   </div>
                   <div className="day-group-meta">
-                    <Chip radius="full" variant="flat" className="meta-pill">
+                    <ServerChip tone="meta">
                       {daySessions.length}
-                    </Chip>
+                    </ServerChip>
                   </div>
                 </div>
                 <div className="session-day-stack">

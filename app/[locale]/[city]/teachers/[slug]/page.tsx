@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation';
 import { DateTime } from 'luxon';
-import { Chip } from '@heroui/react';
 
 import { SessionCard } from '@/components/discovery/SessionCard';
 import { FavoriteButton } from '@/components/state/FavoriteButton';
+import { ServerChip } from '@/components/ui/server';
 import { getSessionUser } from '@/lib/auth/session';
 import { resolveSessionCardData } from '@/lib/catalog/session-card-data';
 import { requirePublicCityServer } from '@/lib/catalog/guards';
@@ -72,14 +72,14 @@ export default async function TeacherPage({ params }: { params: Promise<{ locale
           <p className="lead">{instructor.shortBio[locale]}</p>
           <div className="badge-row">
             {instructor.languages.map((language) => (
-              <Chip key={language} className="meta-pill" radius="full" variant="flat">
+              <ServerChip key={language} className="meta-pill" tone="meta">
                 {language}
-              </Chip>
+              </ServerChip>
             ))}
             {instructor.specialties.map((specialty) => (
-              <Chip key={specialty} className="meta-pill" radius="full" variant="flat">
+              <ServerChip key={specialty} className="meta-pill" tone="meta">
                 {specialty}
-              </Chip>
+              </ServerChip>
             ))}
           </div>
           <FavoriteButton entitySlug={instructor.slug} entityType="instructor" locale={locale} signedInEmail={user?.email} label={dict.save} savedLabel={dict.unsave} />
@@ -122,12 +122,12 @@ export default async function TeacherPage({ params }: { params: Promise<{ locale
                     <h2>{day.toFormat(locale === 'it' ? 'd LLLL' : 'd LLLL')}</h2>
                   </div>
                   <div className="day-group-meta">
-                    <Chip radius="full" variant="flat" className="meta-pill">
+                    <ServerChip tone="meta">
                       {daySessions.length} {teacherCopy.sessions}
-                    </Chip>
-                    <Chip radius="full" variant="flat" className="meta-pill">
+                    </ServerChip>
+                    <ServerChip tone="meta">
                       {venues.size} {teacherCopy.venues}
-                    </Chip>
+                    </ServerChip>
                   </div>
                 </div>
                 <div className="session-day-stack">

@@ -1,8 +1,7 @@
-import NextLink from 'next/link';
 import { DateTime } from 'luxon';
-import { Button, Card, CardBody, Chip, Link } from '@heroui/react';
 
 import { DigestForm } from '@/components/forms/DigestForm';
+import { ServerButtonLink, ServerCard, ServerCardLink, ServerChip } from '@/components/ui/server';
 import { getCityMetrics, getFeaturedSessions, getStyle, getVenue } from '@/lib/catalog/server-data';
 import { resolveLocale } from '@/lib/i18n/routing';
 
@@ -198,26 +197,15 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
               <h1>{copy.heroTitle}</h1>
               <p>{copy.heroBody}</p>
               <div className="home-v2-hero-actions">
-                <Button
-                  as={NextLink}
-                  href={`/${locale}/palermo/classes`}
-                  radius="full"
-                  className="home-v2-btn home-v2-btn-primary"
-                >
+                <ServerButtonLink href={`/${locale}/palermo/classes`} className="home-v2-btn home-v2-btn-primary">
                   <span>{copy.ctaPrimary}</span>
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                </Button>
-                <Button
-                  as={NextLink}
-                  href={`/${locale}/palermo`}
-                  radius="full"
-                  variant="bordered"
-                  className="home-v2-btn home-v2-btn-secondary"
-                >
+                </ServerButtonLink>
+                <ServerButtonLink href={`/${locale}/palermo`} className="home-v2-btn home-v2-btn-secondary">
                   {copy.ctaSecondary}
-                </Button>
+                </ServerButtonLink>
               </div>
             </div>
             <div className="home-v2-hero-visual">
@@ -247,15 +235,15 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
           </div>
           <div className="home-v2-features-grid">
             {features.map((feature) => (
-              <Card key={feature.title} shadow="none" className="home-v2-feature-item">
+              <ServerCard key={feature.title} className="home-v2-feature-item">
                 <div className="home-v2-feature-icon">
                   <InlineIcon name={feature.icon} />
                 </div>
-                <CardBody className="p-0">
+                <div className="p-0">
                   <h3>{feature.title}</h3>
                   <p>{feature.description}</p>
-                </CardBody>
-              </Card>
+                </div>
+              </ServerCard>
             ))}
           </div>
         </div>
@@ -267,18 +255,18 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
             <h2>{copy.cityTitle}</h2>
             <p>{copy.cityBody}</p>
             <div className="home-v2-metric-pills">
-              <Chip radius="full" variant="flat">
+              <ServerChip>
                 {metrics.sessions} {copy.classes}
-              </Chip>
-              <Chip radius="full" variant="flat">
+              </ServerChip>
+              <ServerChip>
                 {metrics.venues} {copy.venues}
-              </Chip>
-              <Chip radius="full" variant="flat">
+              </ServerChip>
+              <ServerChip>
                 {metrics.neighborhoods} {copy.neighborhoods}
-              </Chip>
-              <Chip radius="full" variant="flat">
+              </ServerChip>
+              <ServerChip>
                 {metrics.styles} {copy.styles}
-              </Chip>
+              </ServerChip>
             </div>
           </div>
           <div className="home-v2-cards-grid">
@@ -290,7 +278,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
               const end = DateTime.fromISO(session.endAt).setZone('Europe/Rome');
 
               return (
-                <Card key={session.id} radius="lg" shadow="sm" className="home-v2-class-card">
+                <ServerCard key={session.id} className="home-v2-class-card">
                   <div className="home-v2-class-top">
                     <time>{start.toFormat('HH:mm')} - {end.toFormat('HH:mm')}</time>
                     <span>{levelLabel(session.level)}</span>
@@ -300,27 +288,21 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
                     <p>{venue.name}</p>
                     <p>{style.name[locale]}</p>
                   </div>
-                  <Link as={NextLink} href={`/${locale}/${session.citySlug}/studios/${venue.slug}`} className="home-v2-class-link">
+                  <ServerCardLink href={`/${locale}/${session.citySlug}/studios/${venue.slug}`} className="home-v2-class-link">
                     {copy.viewDetails}
                     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                       <path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
-                  </Link>
-                </Card>
+                  </ServerCardLink>
+                </ServerCard>
               );
               })
             ))}
           </div>
           <div className="home-v2-cityhub-cta">
-            <Button
-              as={NextLink}
-              href={`/${locale}/palermo/classes`}
-              radius="full"
-              variant="bordered"
-              className="home-v2-btn home-v2-btn-secondary"
-            >
+            <ServerButtonLink href={`/${locale}/palermo/classes`} className="home-v2-btn home-v2-btn-secondary">
               {copy.fullSchedule}
-            </Button>
+            </ServerButtonLink>
           </div>
         </div>
       </section>

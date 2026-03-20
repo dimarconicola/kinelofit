@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import { cache } from 'react';
 
 import { cookies } from 'next/headers';
 
@@ -14,6 +15,8 @@ export interface SessionUser {
   email: string;
   provider: 'supabase' | 'demo';
 }
+
+type CookieStore = Awaited<ReturnType<typeof cookies>>;
 
 export const encodeSession = (email: string) => {
   const payload = JSON.stringify({ email, createdAt: new Date().toISOString() });
@@ -35,8 +38,13 @@ export const decodeSession = (token: string) => {
   }
 };
 
-export const getSessionUser = async () => {
-  if (isSupabaseConfigured) {
+const hasSupabaseAuthCookie = (store: CookieStore) =>
+  store.getAll().some((cookie) => cookie.name.startsWith('sb-') || cookie.name.startsWith('supabase-auth-token'));
+
+export const getSessionUser = cache(async () => {
+  const store = await cookies();
+
+  if (isSupabaseConfigured && hasSupabaseAuthCookie(store)) {
     const supabase = await getSupabaseServerClient();
     if (supabase) {
       const { data } = await supabase.auth.getUser();
@@ -51,7 +59,6 @@ export const getSessionUser = async () => {
     }
   }
 
-  const store = await cookies();
   const raw = store.get(COOKIE_NAME)?.value;
   const decoded = raw ? decodeSession(raw) : null;
   if (!decoded?.email) return null;
@@ -61,6 +68,6 @@ export const getSessionUser = async () => {
     email: decoded.email,
     provider: 'demo'
   } satisfies SessionUser;
-};
+});
 
 export const sessionCookieName = COOKIE_NAME;

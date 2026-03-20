@@ -1,8 +1,6 @@
 import { notFound } from 'next/navigation';
-import NextLink from 'next/link';
-import { Button } from '@heroui/react';
-
 import { ClaimForm } from '@/components/forms/ClaimForm';
+import { ServerButtonLink } from '@/components/ui/server';
 import { getVenue } from '@/lib/catalog/server-data';
 import { resolveLocale } from '@/lib/i18n/routing';
 
@@ -33,9 +31,9 @@ export default async function ClaimStudioPage({ params }: { params: Promise<{ lo
         <h1>{venue.name}</h1>
         <p className="lead">{copy.lead}</p>
         <div className="site-actions">
-          <Button as={NextLink} href={`/${locale}/${venue.citySlug}/studios/${venue.slug}`} variant="ghost" radius="full" className="button button-ghost">
+          <ServerButtonLink href={`/${locale}/${venue.citySlug}/studios/${venue.slug}`} className="button-ghost">
             {copy.back}
-          </Button>
+          </ServerButtonLink>
         </div>
       </div>
       <ClaimForm studioSlug={studioSlug} locale={locale} />

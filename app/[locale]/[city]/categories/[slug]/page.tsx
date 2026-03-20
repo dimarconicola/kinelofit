@@ -1,8 +1,6 @@
 import { notFound } from 'next/navigation';
-import NextLink from 'next/link';
-import { Button } from '@heroui/react';
-
 import { SessionCard } from '@/components/discovery/SessionCard';
+import { ServerButtonLink } from '@/components/ui/server';
 import { getSessionUser } from '@/lib/auth/session';
 import { resolveSessionCardData } from '@/lib/catalog/session-card-data';
 import { getCategory, getCategorySessions } from '@/lib/catalog/server-data';
@@ -28,9 +26,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ local
         <p className="lead">{category.description[locale]}</p>
         <p className="muted">{category.heroMetric[locale]}</p>
         <div className="site-actions">
-          <Button as={NextLink} href={`/${locale}/${citySlug}/classes?category=${category.slug}`} color="primary" radius="full" className="button button-primary">
+          <ServerButtonLink href={`/${locale}/${citySlug}/classes?category=${category.slug}`} className="button-primary">
             {dict.exploreClasses}
-          </Button>
+          </ServerButtonLink>
         </div>
       </section>
       <section className="panel">

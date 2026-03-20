@@ -1,10 +1,9 @@
 import { redirect } from 'next/navigation';
-import NextLink from 'next/link';
-import { Button, Chip, Input } from '@heroui/react';
 
 import { isSupabaseConfigured } from '@/lib/auth/supabase';
 import { getSessionUser } from '@/lib/auth/session';
 import { resolveLocale } from '@/lib/i18n/routing';
+import { ServerButton, ServerButtonLink, ServerChip, ServerInput } from '@/components/ui/server';
 
 export default async function SignInPage({
   params,
@@ -61,9 +60,9 @@ export default async function SignInPage({
         <p className="lead">{isSupabaseConfigured ? copy.supabaseLead : copy.demoLead}</p>
         {checkEmail ? (
           <div>
-            <Chip radius="full" variant="flat" className="meta-pill">
+            <ServerChip tone="meta">
               {copy.checkEmail}
-            </Chip>
+            </ServerChip>
           </div>
         ) : null}
 
@@ -71,26 +70,26 @@ export default async function SignInPage({
           <>
             <form action="/api/auth/magic-link" method="post" className="form-stack">
               <input type="hidden" name="locale" value={locale} />
-              <Input name="email" type="email" label={copy.email} required placeholder="you@example.com" />
-              <Button className="button button-primary" color="primary" radius="full" type="submit">
+              <ServerInput name="email" type="email" label={copy.email} required placeholder="you@example.com" />
+              <ServerButton className="button-primary" type="submit">
                 {copy.magicLink}
-              </Button>
+              </ServerButton>
             </form>
             <form action="/api/auth/oauth" method="post" className="form-stack">
               <input type="hidden" name="locale" value={locale} />
               <input type="hidden" name="provider" value="google" />
-              <Button className="button button-ghost" variant="ghost" radius="full" type="submit">
+              <ServerButton className="button-ghost" type="submit">
                 {copy.google}
-              </Button>
+              </ServerButton>
             </form>
           </>
         ) : (
           <form action="/api/auth/demo" method="post" className="form-stack">
             <input type="hidden" name="locale" value={locale} />
-            <Input name="email" type="email" label={copy.email} required placeholder="you@example.com" />
-            <Button className="button button-primary" color="primary" radius="full" type="submit">
+            <ServerInput name="email" type="email" label={copy.email} required placeholder="you@example.com" />
+            <ServerButton className="button-primary" type="submit">
               {copy.continue}
-            </Button>
+            </ServerButton>
           </form>
         )}
       </div>
@@ -98,9 +97,9 @@ export default async function SignInPage({
         <p className="eyebrow">{copy.mode}</p>
         <p className="lead">{isSupabaseConfigured ? copy.live : copy.fallback}</p>
         <div className="site-actions">
-          <Button as={NextLink} href={`/${locale}`} variant="light" radius="full">
+          <ServerButtonLink href={`/${locale}`} className="button-ghost">
             {locale === 'it' ? 'Torna alla home' : 'Back to home'}
-          </Button>
+          </ServerButtonLink>
         </div>
       </div>
     </section>

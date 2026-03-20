@@ -1,8 +1,6 @@
-import NextLink from 'next/link';
-import { Button, Chip } from '@heroui/react';
-
 import { ClassesResultsClient } from '@/components/discovery/ClassesResultsClient';
 import { FilterBar } from '@/components/discovery/FilterBar';
+import { ServerButtonLink, ServerChip } from '@/components/ui/server';
 import { getSessionUser } from '@/lib/auth/session';
 import { resolveSessionCardData } from '@/lib/catalog/session-card-data';
 import { getCityMetrics, getNeighborhoods, getPublicCategories, getSessions, getStyles, getVenue } from '@/lib/catalog/server-data';
@@ -171,29 +169,23 @@ export default async function ClassesPage({
           <h1>{dict.classes}</h1>
           <p className="lead">{intro}</p>
           <div className="badge-row classes-hero-badges">
-            <Chip radius="full" variant="flat" className="meta-pill">
+            <ServerChip tone="meta">
               {sessionResults.length} {badgeCopy.matches}
-            </Chip>
-            <Chip radius="full" variant="flat" className="meta-pill">
+            </ServerChip>
+            <ServerChip tone="meta">
               {visibleVenues.length} {badgeCopy.venues}
-            </Chip>
-            <Chip radius="full" variant="flat" className="meta-pill">
+            </ServerChip>
+            <ServerChip tone="meta">
               {metrics.styles} {badgeCopy.styles}
-            </Chip>
+            </ServerChip>
           </div>
           <div className="site-actions classes-hero-actions">
-            <Button as={NextLink} href={`/${locale}/${citySlug}`} variant="ghost" radius="full" className="button button-ghost">
+            <ServerButtonLink href={`/${locale}/${citySlug}`} className="button-ghost">
               {badgeCopy.back}
-            </Button>
-            <Button
-              as={NextLink}
-              href={`/${locale}/${citySlug}/collections/today-nearby`}
-              variant="flat"
-              radius="full"
-              className="button button-secondary"
-            >
+            </ServerButtonLink>
+            <ServerButtonLink href={`/${locale}/${citySlug}/collections/today-nearby`} className="button-secondary">
               {dict.todayNearby}
-            </Button>
+            </ServerButtonLink>
           </div>
         </div>
         <div className="panel classes-hero-side">

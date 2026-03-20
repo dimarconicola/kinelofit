@@ -1,9 +1,7 @@
 import { notFound } from 'next/navigation';
-import NextLink from 'next/link';
-import { Button } from '@heroui/react';
-
 import { MapPanel } from '@/components/discovery/MapPanel';
 import { SessionCard } from '@/components/discovery/SessionCard';
+import { ServerButtonLink } from '@/components/ui/server';
 import { getSessionUser } from '@/lib/auth/session';
 import { resolveSessionCardData } from '@/lib/catalog/session-card-data';
 import { requirePublicCityServer } from '@/lib/catalog/guards';
@@ -36,15 +34,9 @@ export default async function NeighborhoodPage({ params }: { params: Promise<{ l
         <h1>{neighborhood.name[locale]}</h1>
         <p className="lead">{neighborhood.description[locale]}</p>
         <div className="site-actions">
-          <Button
-            as={NextLink}
-            href={`/${locale}/${citySlug}/classes?neighborhood=${neighborhood.slug}`}
-            color="primary"
-            radius="full"
-            className="button button-primary"
-          >
+          <ServerButtonLink href={`/${locale}/${citySlug}/classes?neighborhood=${neighborhood.slug}`} className="button-primary">
             {dict.exploreClasses}
-          </Button>
+          </ServerButtonLink>
         </div>
       </section>
       <section className="collection-layout">
