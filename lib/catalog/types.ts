@@ -200,6 +200,25 @@ export interface CalendarSubmission {
   createdAt: string;
 }
 
+export interface ImportBatch {
+  id: string;
+  citySlug: string;
+  locale: Locale;
+  fileName: string;
+  sourceLabel?: string;
+  csvContent: string;
+  rowsCount: number;
+  errorsCount: number;
+  warningsCount: number;
+  validationSummary: Record<string, unknown>;
+  reviewStatus: ReviewStatus;
+  assignedTo?: string;
+  reviewNotes?: string;
+  reviewedAt?: string;
+  importedAt?: string;
+  createdAt: string;
+}
+
 export interface SourceRegistryEntry {
   citySlug: string;
   sourceUrl: string;
