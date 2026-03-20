@@ -2,7 +2,6 @@
 
 import NextLink from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from '@heroui/react';
 
 import { readStoredSchedule } from '@/components/state/storage';
 
@@ -33,10 +32,10 @@ export function SavedScheduleClient({ signedInEmail, initialScheduleIds, session
   return (
     <div className="stack-list">
       {scheduleItems.map((item) => (
-        <Link as={NextLink} href={item.href} key={item.id} className="list-link">
+        <NextLink href={item.href} key={item.id} className="list-link">
           <strong>{item.title}</strong>
           <span>{item.meta}</span>
-        </Link>
+        </NextLink>
       ))}
     </div>
   );

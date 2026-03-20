@@ -47,6 +47,7 @@ export function ScheduleButton({ sessionId, locale, signedInEmail, label }: Sche
 
     setPending(true);
     const optimisticSaved = toggleStoredSchedule(signedInEmail, sessionId);
+    const previousSaved = saved;
     setSaved(optimisticSaved);
     try {
       const response = await fetch('/api/state/schedule', {
@@ -56,19 +57,24 @@ export function ScheduleButton({ sessionId, locale, signedInEmail, label }: Sche
       });
       if (!response.ok) {
         if (response.status === 401) router.push(`/${locale}/sign-in`);
+        setSaved(previousSaved);
+        syncStoredSchedule(signedInEmail, sessionId, previousSaved);
         return;
       }
 
       const payload = (await response.json()) as { saved: boolean };
       setSaved(Boolean(payload.saved));
       syncStoredSchedule(signedInEmail, sessionId, Boolean(payload.saved));
+    } catch {
+      setSaved(previousSaved);
+      syncStoredSchedule(signedInEmail, sessionId, previousSaved);
     } finally {
       setPending(false);
     }
   };
 
   return (
-    <button className="button button-secondary" type="button" onClick={toggle} disabled={pending}>
+    <button className="button button-secondary" type="button" onClick={toggle} disabled={pending} aria-pressed={saved} aria-busy={pending}>
       {saved ? (locale === 'it' ? 'Salvata' : 'Saved') : label}
     </button>
   );
