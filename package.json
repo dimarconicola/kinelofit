@@ -19,6 +19,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "catalog:bootstrap": "node --import tsx scripts/bootstrap-catalog.ts",
+    "smoke:routes": "node --import tsx scripts/smoke-routes.ts",
     "readiness": "node --import tsx scripts/check-readiness.ts",
     "freshness:run": "node --import tsx scripts/run-freshness.ts",
     "validate:import": "node --import tsx scripts/validate-import.ts data/imports/palermo_seed.csv",
