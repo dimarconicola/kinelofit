@@ -15,7 +15,7 @@ export default defineConfig({
   workers: isCI ? 1 : undefined,
   reporter: isCI ? [['line'], ['html', { open: 'never' }]] : [['list']],
   use: {
-    baseURL: 'http://127.0.0.1:3000',
+    baseURL: 'http://127.0.0.1:3001',
     locale: 'it-IT',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
@@ -31,9 +31,9 @@ export default defineConfig({
   ],
   webServer: {
     command: shouldSkipBuild
-      ? 'npm run start -- --hostname 127.0.0.1 --port 3000'
-      : 'npm run build && npm run start -- --hostname 127.0.0.1 --port 3000',
-    url: 'http://127.0.0.1:3000/it',
+      ? 'npm run start -- --hostname 127.0.0.1 --port 3001'
+      : 'npm run build && npm run start -- --hostname 127.0.0.1 --port 3001',
+    url: 'http://127.0.0.1:3001/it',
     reuseExistingServer: !isCI,
     timeout: 180_000,
     stdout: 'pipe',
