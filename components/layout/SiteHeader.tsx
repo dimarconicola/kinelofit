@@ -49,9 +49,9 @@ export function SiteHeader({ locale, dict, signedInEmail }: SiteHeaderProps) {
           </NextLink>
           {signedInEmail ? (
             <div className="account-cluster">
-              <span className="button button-account-label" title={signedInEmail}>
+              <NextLink href={`/${locale}/account`} className="button button-account-label" title={signedInEmail}>
                 {signedInEmail}
-              </span>
+              </NextLink>
               <form action="/api/auth/signout" method="post">
                 <input type="hidden" name="locale" value={locale} />
                 <button type="submit" className="button button-ghost button-signout">
@@ -86,9 +86,9 @@ export function SiteHeader({ locale, dict, signedInEmail }: SiteHeaderProps) {
           ))}
           {signedInEmail ? (
             <div className="mobile-account-panel">
-              <span className="button button-account-label mobile-account-label" title={signedInEmail}>
+              <NextLink href={`/${locale}/account`} className="button button-account-label mobile-account-label" title={signedInEmail} onClick={() => setMenuOpen(false)}>
                 {signedInEmail}
-              </span>
+              </NextLink>
               <form action="/api/auth/signout" method="post" className="mobile-nav-form">
                 <input type="hidden" name="locale" value={locale} />
                 <button type="submit" className="button button-ghost button-signout">

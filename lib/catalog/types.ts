@@ -156,6 +156,15 @@ export interface DigestSubscription {
   createdAt: string;
 }
 
+export interface UserProfile {
+  userId: string;
+  email: string;
+  displayName?: string;
+  homeCitySlug: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface OutboundEvent {
   sessionId?: string;
   venueSlug: string;

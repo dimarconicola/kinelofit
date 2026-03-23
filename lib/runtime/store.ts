@@ -3,11 +3,11 @@ import { join } from 'node:path';
 
 import { and, desc, eq, inArray } from 'drizzle-orm';
 
-import type { CalendarSubmission, ClaimSubmission, DigestSubscription, OutboundEvent, ReviewStatus } from '@/lib/catalog/types';
+import type { CalendarSubmission, ClaimSubmission, DigestSubscription, OutboundEvent, ReviewStatus, UserProfile } from '@/lib/catalog/types';
 import { getDb, isDatabaseConfigured } from '@/lib/data/db';
 import { env } from '@/lib/env';
 import { AppError } from '@/lib/errors/handler';
-import { calendarSubmissions, claims, digestSubscriptions, favorites, outboundClicks } from '@/lib/data/schema';
+import { calendarSubmissions, claims, digestSubscriptions, favorites, outboundClicks, userProfiles } from '@/lib/data/schema';
 
 type FavoriteEntityType = 'venue' | 'session' | 'instructor';
 type StoredEntityType = FavoriteEntityType | 'schedule';
@@ -280,6 +280,91 @@ export const appendDigestSubscription = async (payload: DigestSubscription) => {
   }
 };
 
+export const getDigestSubscription = async (email: string, citySlug: string): Promise<DigestSubscription | null> => {
+  const db = getDb();
+  if (!db) {
+    assertPersistentStoreAvailable();
+    const items = await readCollection<DigestSubscription>('digests');
+    return items.find((item) => item.email === email && item.citySlug === citySlug) ?? null;
+  }
+
+  const row = await db
+    .select()
+    .from(digestSubscriptions)
+    .where(and(eq(digestSubscriptions.email, email), eq(digestSubscriptions.citySlug, citySlug)))
+    .limit(1)
+    .then((items) => items[0]);
+
+  if (!row) return null;
+
+  return {
+    email: row.email,
+    locale: row.locale as 'en' | 'it',
+    citySlug: row.citySlug,
+    preferences: row.preferences,
+    createdAt: toIso(row.createdAt)
+  };
+};
+
+export const upsertDigestSubscription = async (payload: DigestSubscription) => {
+  const db = getDb();
+  if (!db) {
+    assertPersistentStoreAvailable();
+    const items = await readCollection<DigestSubscription>('digests');
+    const existingIndex = items.findIndex((item) => item.email === payload.email && item.citySlug === payload.citySlug);
+    if (existingIndex >= 0) {
+      items[existingIndex] = payload;
+    } else {
+      items.unshift(payload);
+    }
+    await writeCollection('digests', items);
+    return { created: existingIndex < 0 };
+  }
+
+  const existing = await db
+    .select({ id: digestSubscriptions.id })
+    .from(digestSubscriptions)
+    .where(and(eq(digestSubscriptions.email, payload.email), eq(digestSubscriptions.citySlug, payload.citySlug)))
+    .limit(1);
+
+  if (existing.length > 0) {
+    await db
+      .update(digestSubscriptions)
+      .set({
+        locale: payload.locale,
+        preferences: payload.preferences
+      })
+      .where(and(eq(digestSubscriptions.email, payload.email), eq(digestSubscriptions.citySlug, payload.citySlug)));
+    return { created: false };
+  }
+
+  await db.insert(digestSubscriptions).values({
+    email: payload.email,
+    locale: payload.locale,
+    citySlug: payload.citySlug,
+    preferences: payload.preferences,
+    createdAt: new Date(payload.createdAt)
+  });
+  return { created: true };
+};
+
+export const removeDigestSubscription = async (email: string, citySlug: string) => {
+  const db = getDb();
+  if (!db) {
+    assertPersistentStoreAvailable();
+    const items = await readCollection<DigestSubscription>('digests');
+    await writeCollection(
+      'digests',
+      items.filter((item) => !(item.email === email && item.citySlug === citySlug))
+    );
+    return;
+  }
+
+  await db
+    .delete(digestSubscriptions)
+    .where(and(eq(digestSubscriptions.email, email), eq(digestSubscriptions.citySlug, citySlug)));
+};
+
 export const listDigestSubscriptions = async (): Promise<DigestSubscription[]> => {
   const db = getDb();
   if (!db) {
@@ -446,6 +531,92 @@ export const listUserSchedule = async (userId: string): Promise<string[]> => {
     .orderBy(desc(favorites.createdAt));
 
   return rows.map((row) => row.entitySlug);
+};
+
+const defaultUserProfile = (userId: string, email: string): UserProfile => {
+  const timestamp = new Date().toISOString();
+  return {
+    userId,
+    email,
+    homeCitySlug: 'palermo',
+    createdAt: timestamp,
+    updatedAt: timestamp
+  };
+};
+
+export const getUserProfile = async (userId: string, email: string): Promise<UserProfile> => {
+  const db = getDb();
+  if (!db) {
+    assertPersistentStoreAvailable();
+    const rows = await readCollection<UserProfile>('profiles');
+    return rows.find((row) => row.userId === userId) ?? defaultUserProfile(userId, email);
+  }
+
+  const row = await db
+    .select()
+    .from(userProfiles)
+    .where(eq(userProfiles.userId, userId))
+    .limit(1)
+    .then((items) => items[0]);
+
+  if (!row) {
+    return defaultUserProfile(userId, email);
+  }
+
+  return {
+    userId: row.userId,
+    email: row.email,
+    displayName: row.displayName ?? undefined,
+    homeCitySlug: row.homeCitySlug,
+    createdAt: toIso(row.createdAt),
+    updatedAt: toIso(row.updatedAt)
+  };
+};
+
+export const upsertUserProfile = async (payload: Pick<UserProfile, 'userId' | 'email' | 'displayName' | 'homeCitySlug'>): Promise<UserProfile> => {
+  const db = getDb();
+  const nextProfile: UserProfile = {
+    userId: payload.userId,
+    email: payload.email,
+    displayName: payload.displayName?.trim() || undefined,
+    homeCitySlug: payload.homeCitySlug,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  if (!db) {
+    assertPersistentStoreAvailable();
+    const rows = await readCollection<UserProfile>('profiles');
+    const existing = rows.find((row) => row.userId === payload.userId);
+    const merged = existing
+      ? { ...existing, ...nextProfile, createdAt: existing.createdAt, updatedAt: new Date().toISOString() }
+      : nextProfile;
+    const rest = rows.filter((row) => row.userId !== payload.userId);
+    rest.unshift(merged);
+    await writeCollection('profiles', rest);
+    return merged;
+  }
+
+  await db
+    .insert(userProfiles)
+    .values({
+      userId: payload.userId,
+      email: payload.email,
+      displayName: payload.displayName?.trim() || null,
+      homeCitySlug: payload.homeCitySlug,
+      updatedAt: new Date()
+    })
+    .onConflictDoUpdate({
+      target: userProfiles.userId,
+      set: {
+        email: payload.email,
+        displayName: payload.displayName?.trim() || null,
+        homeCitySlug: payload.homeCitySlug,
+        updatedAt: new Date()
+      }
+    });
+
+  return getUserProfile(payload.userId, payload.email);
 };
 
 export const isUserScheduleSaved = async (userId: string, sessionId: string) => {
