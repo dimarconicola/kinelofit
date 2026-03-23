@@ -30,6 +30,7 @@ const checks = [
   },
   { path: '/it/palermo/teachers/valentina-lorito', markers: ['Valentina Lorito'] },
   { path: '/it/suggest-calendar', markers: ['Segnala il tuo calendario', 'Invio rapido'] },
+  { path: '/it/account', markers: ['Account'] },
   { path: '/it/favorites', markers: ['Preferiti'] },
   { path: '/it/schedule', markers: ['Agenda salvata'] },
   {

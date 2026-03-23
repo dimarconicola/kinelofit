@@ -151,6 +151,18 @@ export const favorites = pgTable('favorites', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 });
 
+export const userProfiles = pgTable('user_profiles', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: varchar('user_id', { length: 160 }).notNull(),
+  email: varchar('email', { length: 160 }).notNull(),
+  displayName: varchar('display_name', { length: 120 }),
+  homeCitySlug: varchar('home_city_slug', { length: 80 }).notNull().default('palermo'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}, (table) => ({
+  userUnique: uniqueIndex('user_profiles_user_uidx').on(table.userId)
+}));
+
 export const digestSubscriptions = pgTable('digest_subscriptions', {
   id: uuid('id').defaultRandom().primaryKey(),
   email: varchar('email', { length: 160 }).notNull(),
