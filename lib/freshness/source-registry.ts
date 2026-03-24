@@ -33,6 +33,27 @@ const adapterForUrl = (sourceUrl: string) => {
   return undefined;
 };
 
+const classifySeedSource = (
+  sourceUrl: string
+): Pick<SourceRegistryEntry, 'sourceType' | 'cadence' | 'trustTier' | 'notes'> => {
+  const key = sourceUrl.toLowerCase();
+  if (key.includes('facebook.com') || key.includes('instagram.com')) {
+    return {
+      sourceType: 'social',
+      cadence: 'weekly',
+      trustTier: 'tier_c',
+      notes: 'Weekly low-cost social check for one-off events and schedule changes.'
+    };
+  }
+
+  return {
+    sourceType: 'official_site',
+    cadence: 'daily',
+    trustTier: 'tier_a',
+    notes: undefined
+  };
+};
+
 const palermoDiscoverySources: SourceRegistryEntry[] = [
   {
     citySlug: 'palermo',
@@ -139,16 +160,18 @@ const buildSeedCatalogSources = (citySlug: string): SourceRegistryEntry[] => {
     const sourceUrl = normalizeSourceUrl(raw);
     if (!sourceUrl || seen.has(sourceUrl)) return;
     seen.add(sourceUrl);
+    const profile = classifySeedSource(sourceUrl);
     rows.push({
       citySlug,
       sourceUrl,
-      sourceType: 'official_site',
-      cadence: 'daily',
-      trustTier: 'tier_a',
+      sourceType: profile.sourceType,
+      cadence: profile.cadence,
+      trustTier: profile.trustTier,
       purpose: 'catalog',
       parserAdapter: adapterForUrl(sourceUrl),
       tags: ['catalog', citySlug],
-      active: true
+      active: true,
+      notes: profile.notes
     });
   };
 
