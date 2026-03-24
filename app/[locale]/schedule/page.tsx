@@ -1,5 +1,6 @@
+import { AuthShell } from '@/components/auth/AuthShell';
 import { SavedScheduleClient } from '@/components/state/SavedScheduleClient';
-import { ServerButtonLink } from '@/components/ui/server';
+import { ServerButtonLink, ServerChip } from '@/components/ui/server';
 import { getSessionUser } from '@/lib/auth/session';
 import { getCatalogSnapshot } from '@/lib/catalog/repository';
 import { resolveLocale } from '@/lib/i18n/routing';
@@ -13,45 +14,94 @@ export default async function SchedulePage({ params }: { params: Promise<{ local
   const copy =
     locale === 'it'
       ? {
-          signInNeeded: 'Accedi per salvare la tua agenda personale.',
+          signInNeeded: 'Accedi per tenere insieme solo le lezioni con orario che vuoi davvero fare.',
           signIn: 'Accedi',
           unavailable: 'L’agenda salvata non è disponibile in questo momento. Continua pure a esplorare il calendario pubblico.',
           back: 'Torna alle classi',
           eyebrow: 'Agenda',
-          title: 'Agenda salvata',
-          lead: 'Qui trovi solo le lezioni con orario che hai salvato per pianificare la settimana.',
-          empty: 'Nessuna lezione salvata in agenda. Aggiungila dalle card delle classi.'
+          title: 'La tua settimana, già filtrata',
+          lead: 'Qui trovi solo le lezioni con orario che hai salvato per pianificare la settimana senza rumore.',
+          empty: 'Nessuna lezione salvata in agenda. Aggiungila dalle card delle classi.',
+          gateEyebrow: 'Blocca gli orari giusti',
+          gateTitle: 'L’agenda serve per i tempi, non per i preferiti generici',
+          gateLead: 'È il posto dove tieni insieme gli slot che vuoi davvero fare, separati da studi e insegnanti che segui.',
+          gateItems: [
+            'Solo classi con giorno e orario, nessuna lista confusa di luoghi.',
+            'Una vista rapida della settimana da rivedere prima di decidere.',
+            'Stesso calendario pubblico, ma con un tuo livello personale sopra.'
+          ],
+          gateChips: ['Solo orari', 'Settimana personale', 'Nessun rumore'],
+          scheduleCount: 'Lezioni in agenda'
         }
       : {
-          signInNeeded: 'Sign in to save your personal schedule.',
+          signInNeeded: 'Sign in to keep only the time slots you actually want to attend together.',
           signIn: 'Sign in',
           unavailable: 'Saved schedule is temporarily unavailable. You can keep browsing the public calendar.',
           back: 'Back to classes',
           eyebrow: 'Schedule',
-          title: 'Saved schedule',
-          lead: 'This page only shows time slots you saved to plan your week.',
-          empty: 'No classes saved in your schedule yet. Add them from class cards.'
+          title: 'Your week, already filtered',
+          lead: 'This page only shows the class time slots you saved to plan your week without noise.',
+          empty: 'No classes saved in your schedule yet. Add them from class cards.',
+          gateEyebrow: 'Hold on to the right time slots',
+          gateTitle: 'Schedule is for time, not generic favorites',
+          gateLead: 'Keep the sessions you actually want to attend separate from the places and teachers you follow.',
+          gateItems: [
+            'Only classes with day and time, not a mixed list of entities.',
+            'A quick weekly view to revisit before you decide.',
+            'The same public calendar, with a personal layer on top.'
+          ],
+          gateChips: ['Only time slots', 'Personal week', 'No noise'],
+          scheduleCount: 'Saved classes'
         };
 
   if (capabilities.authMode === 'unavailable' || capabilities.storeMode !== 'database') {
     return (
-      <div className="empty-state">
-        <p>{copy.unavailable}</p>
-        <ServerButtonLink href={`/${locale}/palermo/classes`} className="button-primary">
-          {copy.back}
-        </ServerButtonLink>
-      </div>
+      <AuthShell
+        eyebrow={copy.gateEyebrow}
+        title={copy.gateTitle}
+        lead={copy.unavailable}
+        sideEyebrow={copy.eyebrow}
+        sideTitle={copy.title}
+        sideLead={copy.gateLead}
+        sideItems={copy.gateItems}
+        chips={copy.gateChips}
+      >
+        <div className="auth-status-card">
+          <p className="lead">{copy.unavailable}</p>
+          <div className="site-actions">
+            <ServerButtonLink href={`/${locale}/palermo/classes`} className="button-primary">
+              {copy.back}
+            </ServerButtonLink>
+          </div>
+        </div>
+      </AuthShell>
     );
   }
 
   if (!user) {
     return (
-      <div className="empty-state">
-        <p>{copy.signInNeeded}</p>
-        <ServerButtonLink href={`/${locale}/sign-in`} className="button-primary">
-          {copy.signIn}
-        </ServerButtonLink>
-      </div>
+      <AuthShell
+        eyebrow={copy.gateEyebrow}
+        title={copy.gateTitle}
+        lead={copy.signInNeeded}
+        sideEyebrow={copy.eyebrow}
+        sideTitle={copy.title}
+        sideLead={copy.gateLead}
+        sideItems={copy.gateItems}
+        chips={copy.gateChips}
+      >
+        <div className="auth-status-card">
+          <p className="lead">{copy.signInNeeded}</p>
+          <div className="site-actions">
+            <ServerButtonLink href={`/${locale}/sign-in`} className="button-primary">
+              {copy.signIn}
+            </ServerButtonLink>
+            <ServerButtonLink href={`/${locale}/palermo/classes`} className="button-ghost">
+              {copy.back}
+            </ServerButtonLink>
+          </div>
+        </div>
+      </AuthShell>
     );
   }
 
@@ -61,12 +111,25 @@ export default async function SchedulePage({ params }: { params: Promise<{ local
     scheduleRows = await listUserSchedule(user.id);
   } catch {
     return (
-      <div className="empty-state">
-        <p>{copy.unavailable}</p>
-        <ServerButtonLink href={`/${locale}/palermo/classes`} className="button-primary">
-          {copy.back}
-        </ServerButtonLink>
-      </div>
+      <AuthShell
+        eyebrow={copy.gateEyebrow}
+        title={copy.gateTitle}
+        lead={copy.unavailable}
+        sideEyebrow={copy.eyebrow}
+        sideTitle={copy.title}
+        sideLead={copy.gateLead}
+        sideItems={copy.gateItems}
+        chips={copy.gateChips}
+      >
+        <div className="auth-status-card">
+          <p className="lead">{copy.unavailable}</p>
+          <div className="site-actions">
+            <ServerButtonLink href={`/${locale}/palermo/classes`} className="button-primary">
+              {copy.back}
+            </ServerButtonLink>
+          </div>
+        </div>
+      </AuthShell>
     );
   }
   const catalog = await getCatalogSnapshot();
@@ -79,10 +142,17 @@ export default async function SchedulePage({ params }: { params: Promise<{ local
 
   return (
     <div className="stack-list">
-      <section className="panel">
-        <p className="eyebrow">{copy.eyebrow}</p>
-        <h1>{copy.title}</h1>
-        <p className="lead">{copy.lead}</p>
+      <section className="panel saved-summary-panel">
+        <div className="saved-summary-copy">
+          <p className="eyebrow">{copy.eyebrow}</p>
+          <h1>{copy.title}</h1>
+          <p className="lead">{copy.lead}</p>
+          <div className="auth-shell-chips">
+            <ServerChip tone="meta">
+              {copy.scheduleCount}: {scheduleRows.length}
+            </ServerChip>
+          </div>
+        </div>
       </section>
 
       <section className="panel">

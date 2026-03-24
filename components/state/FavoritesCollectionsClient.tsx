@@ -73,8 +73,10 @@ export function FavoritesCollectionsClient({
 
   return (
     <section className="saved-grid">
-      <section className="panel">
-        <p className="eyebrow">{copy.favoritesStudios}</p>
+      <section className="panel saved-section-panel">
+        <div className="saved-section-header">
+          <p className="eyebrow">{copy.favoritesStudios}</p>
+        </div>
         {venueFavorites.length > 0 ? (
           <div className="stack-list">
             {venueFavorites.map((item) => (
@@ -85,12 +87,14 @@ export function FavoritesCollectionsClient({
             ))}
           </div>
         ) : (
-          <p className="muted">{copy.noFavorites}</p>
+          <p className="muted saved-empty-copy">{copy.noFavorites}</p>
         )}
       </section>
 
-      <section className="panel">
-        <p className="eyebrow">{copy.favoritesTeachers}</p>
+      <section className="panel saved-section-panel">
+        <div className="saved-section-header">
+          <p className="eyebrow">{copy.favoritesTeachers}</p>
+        </div>
         {instructorFavorites.length > 0 ? (
           <div className="stack-list">
             {instructorFavorites.map((item) => (
@@ -101,12 +105,14 @@ export function FavoritesCollectionsClient({
             ))}
           </div>
         ) : (
-          <p className="muted">{copy.noFavorites}</p>
+          <p className="muted saved-empty-copy">{copy.noFavorites}</p>
         )}
       </section>
 
-      <section className="panel">
-        <p className="eyebrow">{copy.favoritesClasses}</p>
+      <section className="panel saved-section-panel">
+        <div className="saved-section-header">
+          <p className="eyebrow">{copy.favoritesClasses}</p>
+        </div>
         {sessionFavorites.length > 0 ? (
           <div className="stack-list">
             {sessionFavorites.map((item) => (
@@ -117,12 +123,14 @@ export function FavoritesCollectionsClient({
             ))}
           </div>
         ) : (
-          <p className="muted">{copy.noFavorites}</p>
+          <p className="muted saved-empty-copy">{copy.noFavorites}</p>
         )}
       </section>
 
-      <section className="panel">
-        <p className="eyebrow">{copy.savedSchedule}</p>
+      <section className="panel saved-section-panel">
+        <div className="saved-section-header">
+          <p className="eyebrow">{copy.savedSchedule}</p>
+        </div>
         {scheduleItems.length > 0 ? (
           <div className="stack-list">
             {scheduleItems.map((item) => (
@@ -133,7 +141,7 @@ export function FavoritesCollectionsClient({
             ))}
           </div>
         ) : (
-          <p className="muted">{copy.noSchedule}</p>
+          <p className="muted saved-empty-copy">{copy.noSchedule}</p>
         )}
       </section>
     </section>

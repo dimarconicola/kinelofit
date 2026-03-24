@@ -36,11 +36,11 @@ const checks = [
   { path: '/it/palermo/teachers/valentina-lorito', markers: ['Valentina Lorito'] },
   { path: '/it/suggest-calendar', markers: ['Segnala il tuo calendario', 'Invio rapido'] },
   { path: '/it/account', markers: ['Account'] },
-  { path: '/it/favorites', markers: ['Preferiti'] },
-  { path: '/it/schedule', markers: ['Agenda salvata'] },
+  { path: '/it/favorites', markers: ['Preferiti e agenda, senza confonderli'] },
+  { path: '/it/schedule', markers: ['La tua settimana, già filtrata'] },
   {
     path: '/it/sign-in',
-    markers: ['Accedi', 'Cosa puoi salvare'],
+    markers: ['Accedi', 'Uno spazio personale leggero e utile'],
     absent: ['Supabase', 'Modalità', 'Auth reale attiva', 'Qualcosa si è interrotto']
   }
 ];

@@ -1,3 +1,4 @@
+import { AuthShell } from '@/components/auth/AuthShell';
 import { AccountDigestForm } from '@/components/account/AccountDigestForm';
 import { AccountProfileForm } from '@/components/account/AccountProfileForm';
 import { ServerButtonLink, ServerChip } from '@/components/ui/server';
@@ -33,7 +34,16 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
           providerSupabase: 'Supabase',
           providerDemo: 'Demo locale',
           digestOn: 'Attivo',
-          digestOff: 'Non attivo'
+          digestOff: 'Non attivo',
+          gateEyebrow: 'Il tuo spazio personale',
+          gateTitle: 'Profilo, preferiti e digest senza rumore',
+          gateLead: 'Da qui gestisci solo ciò che ti serve per tornare sulle scelte giuste, senza dashboard gonfie.',
+          gateItems: [
+            'Nome visibile e città base da tenere sempre aggiornati.',
+            'Digest personale per ricevere solo novità utili.',
+            'Accesso rapido a preferiti e agenda settimanale.'
+          ],
+          gateChips: ['Profilo leggero', 'Digest personale', 'Ritorno veloce']
         }
       : {
           signInNeeded: 'Sign in to view and update your profile.',
@@ -55,28 +65,66 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
           providerSupabase: 'Supabase',
           providerDemo: 'Local demo',
           digestOn: 'Active',
-          digestOff: 'Inactive'
+          digestOff: 'Inactive',
+          gateEyebrow: 'Your personal space',
+          gateTitle: 'Profile, saved items, and digest without noise',
+          gateLead: 'Only the settings that help you get back to the right places, without a bloated dashboard.',
+          gateItems: [
+            'Keep your visible name and home city up to date.',
+            'Set a personal digest with useful weekly updates.',
+            'Jump back into favorites and your saved schedule.'
+          ],
+          gateChips: ['Light profile', 'Personal digest', 'Fast return']
         };
 
   if (capabilities.authMode === 'unavailable' || capabilities.storeMode !== 'database') {
     return (
-      <div className="empty-state">
-        <p>{copy.unavailable}</p>
-        <ServerButtonLink href={`/${locale}/palermo`} className="button-primary">
-          {copy.back}
-        </ServerButtonLink>
-      </div>
+      <AuthShell
+        eyebrow={copy.gateEyebrow}
+        title={copy.gateTitle}
+        lead={copy.unavailable}
+        sideEyebrow={copy.eyebrow}
+        sideTitle={copy.title}
+        sideLead={copy.gateLead}
+        sideItems={copy.gateItems}
+        chips={copy.gateChips}
+      >
+        <div className="auth-status-card">
+          <p className="lead">{copy.unavailable}</p>
+          <div className="site-actions">
+            <ServerButtonLink href={`/${locale}/palermo`} className="button-primary">
+              {copy.back}
+            </ServerButtonLink>
+          </div>
+        </div>
+      </AuthShell>
     );
   }
 
   if (!user) {
     return (
-      <div className="empty-state">
-        <p>{copy.signInNeeded}</p>
-        <ServerButtonLink href={`/${locale}/sign-in`} className="button-primary">
-          {copy.signIn}
-        </ServerButtonLink>
-      </div>
+      <AuthShell
+        eyebrow={copy.gateEyebrow}
+        title={copy.gateTitle}
+        lead={copy.signInNeeded}
+        sideEyebrow={copy.eyebrow}
+        sideTitle={copy.title}
+        sideLead={copy.gateLead}
+        sideItems={copy.gateItems}
+        chips={copy.gateChips}
+      >
+        <div className="auth-status-card">
+          <p className="lead">{copy.signInNeeded}</p>
+          <div className="site-actions">
+            <ServerButtonLink href={`/${locale}/sign-in`} className="button-primary">
+              {copy.signIn}
+            </ServerButtonLink>
+            <ServerButtonLink href={`/${locale}/palermo`} className="button-ghost">
+              {copy.back}
+            </ServerButtonLink>
+          </div>
+        </div>
+      </AuthShell>
     );
   }
 

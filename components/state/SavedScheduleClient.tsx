@@ -26,7 +26,7 @@ export function SavedScheduleClient({ signedInEmail, initialScheduleIds, session
   );
 
   if (scheduleItems.length === 0) {
-    return <p className="muted">{emptyLabel}</p>;
+    return <p className="muted saved-empty-copy">{emptyLabel}</p>;
   }
 
   return (
