@@ -10,7 +10,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
   const labels =
     locale === 'it'
       ? {
-          classes: 'Classi',
+          classes: 'Lezioni',
           teachers: 'Insegnanti',
           whoWeAre: 'Chi siamo',
           suggestCalendar: 'Suggerisci calendario',
@@ -18,7 +18,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           cookies: 'Cookies'
         }
       : {
-          classes: 'Classes',
+          classes: 'Lessons',
           teachers: 'Teachers',
           whoWeAre: 'Who we are',
           suggestCalendar: 'Suggest calendar',
