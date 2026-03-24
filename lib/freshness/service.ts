@@ -10,15 +10,22 @@ import { getDb, isDatabaseConfigured } from '@/lib/data/db';
 import { discoveryLeads, freshnessRunSources, freshnessRuns, sessions, sourceRecords, sourceRegistry } from '@/lib/data/schema';
 import { buildSessionTimeSignature, evaluateAdapterAutoReverify, getAdapterForSource, parseSourceWithAdapter } from '@/lib/freshness/adapters';
 import { computeNextCheckAt, isSourceDueAt } from '@/lib/freshness/schedule';
+import { extractSourceEventCandidates } from '@/lib/freshness/social-events';
 import { cadenceIncludes, getSeedSourceRegistry, getSourceUrlsForCadence } from '@/lib/freshness/source-registry';
 
 const SOURCE_HEALTH_ENTITY = 'source_health';
 const SOURCE_PARSE_ENTITY = 'source_parse';
+const SOURCE_EVENT_CANDIDATE_ENTITY = 'source_event_candidate';
 const TMP_DIR = '/tmp/kinelo-fit-freshness';
 const TMP_FILE = join(TMP_DIR, 'source-health.json');
 const DEFAULT_TIMEOUT_MS = 8000;
 const DEFAULT_CONCURRENCY = 4;
 const DEFAULT_CADENCE: SourceCadence = 'daily';
+const FRESHNESS_FETCH_HEADERS = {
+  'user-agent':
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+  'accept-language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7'
+} as const;
 
 type PriorSourceSignal = {
   hash: string;
@@ -38,9 +45,15 @@ export type SourceSignal = {
   etag: string | null;
   lastModified: string | null;
   contentLength: string | null;
+  contentDigest: string | null;
   checkedAt: string;
   hash: string;
   error: string | null;
+};
+
+type FetchedSource = {
+  signal: SourceSignal;
+  bodyHtml?: string;
 };
 
 export type FreshnessRunReport = {
@@ -61,6 +74,7 @@ export type FreshnessRunReport = {
   runStored: boolean;
   registrySourcesSeeded: number;
   discoveryLeadsDiscovered: number;
+  oneOffCandidatesDiscovered: number;
   mode: 'database' | 'ephemeral';
   impactedSourceUrls: string[];
 };
@@ -102,6 +116,7 @@ export const buildSourceSignalHash = (signal: Omit<SourceSignal, 'hash' | 'check
     signal.etag ?? '',
     signal.lastModified ?? '',
     signal.contentLength ?? '',
+    signal.contentDigest ?? '',
     signal.reachable ? '1' : '0'
   ].join('|');
   return stableHash(basis);
@@ -123,7 +138,20 @@ const timeoutFetch = async (input: string, init: RequestInit, timeoutMs: number)
   }
 };
 
-const extractSignal = (sourceUrl: string, response: Response): SourceSignal => {
+const shouldFetchSourceBody = (entry: SourceRegistryEntry | undefined) =>
+  entry?.sourceType === 'social' || entry?.sourceType === 'events_calendar' || Boolean(entry?.parserAdapter);
+
+const digestSourceBody = (html: string) =>
+  stableHash(
+    html
+      .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+      .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 120_000)
+  );
+
+const extractSignal = (sourceUrl: string, response: Response, contentDigest: string | null = null): SourceSignal => {
   const base: Omit<SourceSignal, 'checkedAt' | 'hash' | 'error'> = {
     sourceUrl,
     finalUrl: response.url || sourceUrl,
@@ -131,7 +159,8 @@ const extractSignal = (sourceUrl: string, response: Response): SourceSignal => {
     reachable: response.status > 0 && response.status < 400,
     etag: response.headers.get('etag'),
     lastModified: response.headers.get('last-modified'),
-    contentLength: response.headers.get('content-length')
+    contentLength: response.headers.get('content-length'),
+    contentDigest
   };
 
   return {
@@ -142,20 +171,34 @@ const extractSignal = (sourceUrl: string, response: Response): SourceSignal => {
   };
 };
 
-const fetchSourceSignal = async (sourceUrl: string, timeoutMs: number): Promise<SourceSignal> => {
+const fetchSourceSignal = async (entry: SourceRegistryEntry | undefined, sourceUrl: string, timeoutMs: number): Promise<FetchedSource> => {
   const requestInit: RequestInit = {
     method: 'HEAD',
     redirect: 'follow',
     cache: 'no-store',
-    headers: {
-      'user-agent': 'kinelo.fit-freshness/1.0'
-    }
+    headers: FRESHNESS_FETCH_HEADERS
   };
 
   try {
+    if (shouldFetchSourceBody(entry)) {
+      const getResponse = await timeoutFetch(
+        sourceUrl,
+        {
+          ...requestInit,
+          method: 'GET'
+        },
+        timeoutMs
+      );
+      const bodyHtml = await getResponse.text();
+      return {
+        signal: extractSignal(sourceUrl, getResponse, digestSourceBody(bodyHtml)),
+        bodyHtml
+      };
+    }
+
     const headResponse = await timeoutFetch(sourceUrl, requestInit, timeoutMs);
     if (headResponse.status !== 405 && headResponse.status !== 501) {
-      return extractSignal(sourceUrl, headResponse);
+      return { signal: extractSignal(sourceUrl, headResponse) };
     }
 
     const getResponse = await timeoutFetch(
@@ -169,7 +212,7 @@ const fetchSourceSignal = async (sourceUrl: string, timeoutMs: number): Promise<
 
     // We only need headers for low-resource checking.
     await getResponse.body?.cancel();
-    return extractSignal(sourceUrl, getResponse);
+    return { signal: extractSignal(sourceUrl, getResponse) };
   } catch (error) {
     const reason = error instanceof Error ? error.message : 'network_error';
     const fallback: Omit<SourceSignal, 'checkedAt' | 'hash'> = {
@@ -180,13 +223,16 @@ const fetchSourceSignal = async (sourceUrl: string, timeoutMs: number): Promise<
       etag: null,
       lastModified: null,
       contentLength: null,
+      contentDigest: null,
       error: reason
     };
 
     return {
-      ...fallback,
-      checkedAt: new Date().toISOString(),
-      hash: stableHash(`0|${sourceUrl}|${reason}`)
+      signal: {
+        ...fallback,
+        checkedAt: new Date().toISOString(),
+        hash: stableHash(`0|${sourceUrl}|${reason}`)
+      }
     };
   }
 };
@@ -565,10 +611,19 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
   const candidateSourceUrls = options.respectSchedule === false ? getSourceUrlsForCadence(sourceEntries, cadence) : sourceUrls;
   const slicedSources = typeof options.maxSources === 'number' ? candidateSourceUrls.slice(0, options.maxSources) : candidateSourceUrls;
   const sourceSlugs = slicedSources.map((url) => buildSourceSlug(url));
+  const sourceEntriesByUrl = new Map(sourceEntries.map((entry) => [entry.sourceUrl, entry]));
 
   const priorSignals = useDb ? await loadPriorSignalsFromDatabase(sourceSlugs) : await mapFromLocalFile();
 
-  const checkedSignals = await runWithConcurrency(slicedSources, (sourceUrl) => fetchSourceSignal(sourceUrl, timeoutMs), DEFAULT_CONCURRENCY);
+  const fetchedSources = await runWithConcurrency(
+    slicedSources,
+    (sourceUrl) => fetchSourceSignal(sourceEntriesByUrl.get(sourceUrl), sourceUrl, timeoutMs),
+    DEFAULT_CONCURRENCY
+  );
+  const checkedSignals = fetchedSources.map((item) => item.signal);
+  const fetchedBodyByUrl = new Map(
+    fetchedSources.filter((item) => item.bodyHtml).map((item) => [item.signal.sourceUrl, item.bodyHtml as string])
+  );
 
   const changedSourceUrls: string[] = [];
   const unreachableSourceUrls: string[] = [];
@@ -596,6 +651,7 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
   let brokenLinks = 0;
   let totalSessionsTracked = 0;
   let discoveryLeadsDiscovered = 0;
+  let oneOffCandidatesDiscovered = 0;
   let runStored = false;
   const runSourceSummary = new Map<string, RunSourceAggregate>();
 
@@ -613,6 +669,7 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
             etag: signal.etag,
             lastModified: signal.lastModified,
             contentLength: signal.contentLength,
+            contentDigest: signal.contentDigest,
             hash: signal.hash,
             error: signal.error
           },
@@ -686,104 +743,123 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
       if (!signal.reachable) continue;
       if (!changedSourceSet.has(signal.sourceUrl)) continue;
 
+      let html = fetchedBodyByUrl.get(signal.sourceUrl);
+      if (!html) {
+        try {
+          const response = await timeoutFetch(
+            signal.sourceUrl,
+            {
+              method: 'GET',
+              redirect: 'follow',
+              cache: 'no-store',
+              headers: FRESHNESS_FETCH_HEADERS
+            },
+            timeoutMs
+          );
+          if (!response.ok) continue;
+          html = await response.text();
+        } catch {
+          continue;
+        }
+      }
+
       const adapter = getAdapterForSource(signal.sourceUrl);
-      if (!adapter) continue;
+      if (adapter) {
+        const parsed = parseSourceWithAdapter(signal.sourceUrl, html);
+        if (parsed.adapterId && parsed.sessions.length > 0) {
+          adapterSourcesChecked += 1;
+          adapterSignals += parsed.sessions.length;
 
-      let html = '';
-      try {
-        const response = await timeoutFetch(
-          signal.sourceUrl,
-          {
-            method: 'GET',
-            redirect: 'follow',
-            cache: 'no-store',
-            headers: {
-              'user-agent': 'kinelo.fit-freshness/1.0'
-            }
-          },
-          timeoutMs
-        );
-        if (!response.ok) continue;
-        html = await response.text();
-      } catch {
-        continue;
-      }
+          const signatureSet = new Set(parsed.sessions.map((entry) => buildSessionTimeSignature(entry.weekday, entry.startTime)));
+          const sourceCandidates = new Set([
+            normalizeForCompare(signal.sourceUrl),
+            normalizeForCompare(signal.finalUrl),
+            normalizeForCompare(`${signal.sourceUrl}/`)
+          ]);
 
-      const parsed = parseSourceWithAdapter(signal.sourceUrl, html);
-      if (!parsed.adapterId || parsed.sessions.length === 0) continue;
+          const matchingRows = citySessions.filter((row) => sourceCandidates.has(normalizeForCompare(row.sourceUrl)));
+          const matchedSignatures = new Set<string>();
+          const idsToReverify = matchingRows
+            .filter((row) => {
+              const start = DateTime.fromJSDate(row.startAt).setZone('Europe/Rome').setLocale('en');
+              const weekday = start.toFormat('cccc');
+              const startTime = start.toFormat('HH:mm');
+              const signature = buildSessionTimeSignature(weekday, startTime);
+              if (!signatureSet.has(signature)) return false;
+              matchedSignatures.add(signature);
+              return true;
+            })
+            .map((row) => row.id);
 
-      adapterSourcesChecked += 1;
-      adapterSignals += parsed.sessions.length;
+          const confidenceEvaluation = parsed.thresholds
+            ? evaluateAdapterAutoReverify(parsed.thresholds, signatureSet.size, matchedSignatures.size)
+            : null;
+          const allowAutoReverify = confidenceEvaluation ? confidenceEvaluation.accepted : true;
+          let autoReverifiedForSource = 0;
 
-      const signatureSet = new Set(parsed.sessions.map((entry) => buildSessionTimeSignature(entry.weekday, entry.startTime)));
-      const sourceCandidates = new Set([
-        normalizeForCompare(signal.sourceUrl),
-        normalizeForCompare(signal.finalUrl),
-        normalizeForCompare(`${signal.sourceUrl}/`)
-      ]);
+          if (allowAutoReverify && idsToReverify.length > 0) {
+            await db
+              .update(sessions)
+              .set({
+                verificationStatus: 'verified',
+                lastVerifiedAt: new Date(signal.checkedAt)
+              })
+              .where(inArray(sessions.id, idsToReverify));
+            autoReverified += idsToReverify.length;
+            autoReverifiedForSource = idsToReverify.length;
+          }
 
-      const matchingRows = citySessions.filter((row) => sourceCandidates.has(normalizeForCompare(row.sourceUrl)));
-      const matchedSignatures = new Set<string>();
-      const idsToReverify = matchingRows
-        .filter((row) => {
-          const start = DateTime.fromJSDate(row.startAt).setZone('Europe/Rome').setLocale('en');
-          const weekday = start.toFormat('cccc');
-          const startTime = start.toFormat('HH:mm');
-          const signature = buildSessionTimeSignature(weekday, startTime);
-          if (!signatureSet.has(signature)) return false;
-          matchedSignatures.add(signature);
-          return true;
-        })
-        .map((row) => row.id);
+          addRunSourceAggregate(runSourceSummary, signal.sourceUrl, parsed.sessions.length, autoReverifiedForSource);
 
-      const confidenceEvaluation = parsed.thresholds
-        ? evaluateAdapterAutoReverify(parsed.thresholds, signatureSet.size, matchedSignatures.size)
-        : null;
-      const allowAutoReverify = confidenceEvaluation ? confidenceEvaluation.accepted : true;
-      let autoReverifiedForSource = 0;
-
-      if (allowAutoReverify && idsToReverify.length > 0) {
-        await db
-          .update(sessions)
-          .set({
-            verificationStatus: 'verified',
+          await db.insert(sourceRecords).values({
+            entityType: SOURCE_PARSE_ENTITY,
+            entitySlug: `${buildSourceSlug(signal.sourceUrl)}-${parsed.adapterId}`,
+            sourceUrl: signal.sourceUrl,
+            sourcePayload: {
+              adapterId: parsed.adapterId,
+              thresholds: parsed.thresholds,
+              confidenceEvaluation: confidenceEvaluation
+                ? {
+                    accepted: confidenceEvaluation.accepted,
+                    reason: confidenceEvaluation.reason,
+                    parsedSignals: confidenceEvaluation.parsedSignals,
+                    matchedSignals: confidenceEvaluation.matchedSignals,
+                    matchRatio: Number(confidenceEvaluation.matchRatio.toFixed(4))
+                  }
+                : null,
+              matchedSessionCount: idsToReverify.length,
+              signals: parsed.sessions.map((entry) => ({
+                title: entry.title,
+                weekday: entry.weekday,
+                startTime: entry.startTime,
+                endTime: entry.endTime,
+                confidence: entry.confidence,
+                signature: entry.signature
+              }))
+            },
             lastVerifiedAt: new Date(signal.checkedAt)
-          })
-          .where(inArray(sessions.id, idsToReverify));
-        autoReverified += idsToReverify.length;
-        autoReverifiedForSource = idsToReverify.length;
+          });
+        }
       }
 
-      addRunSourceAggregate(runSourceSummary, signal.sourceUrl, parsed.sessions.length, autoReverifiedForSource);
-
-      await db.insert(sourceRecords).values({
-        entityType: SOURCE_PARSE_ENTITY,
-        entitySlug: `${buildSourceSlug(signal.sourceUrl)}-${parsed.adapterId}`,
-        sourceUrl: signal.sourceUrl,
-        sourcePayload: {
-          adapterId: parsed.adapterId,
-          thresholds: parsed.thresholds,
-          confidenceEvaluation: confidenceEvaluation
-            ? {
-                accepted: confidenceEvaluation.accepted,
-                reason: confidenceEvaluation.reason,
-                parsedSignals: confidenceEvaluation.parsedSignals,
-                matchedSignals: confidenceEvaluation.matchedSignals,
-                matchRatio: Number(confidenceEvaluation.matchRatio.toFixed(4))
-              }
-            : null,
-          matchedSessionCount: idsToReverify.length,
-          signals: parsed.sessions.map((entry) => ({
-            title: entry.title,
-            weekday: entry.weekday,
-            startTime: entry.startTime,
-            endTime: entry.endTime,
-            confidence: entry.confidence,
-            signature: entry.signature
+      const eventCandidates = extractSourceEventCandidates(signal.sourceUrl, html, signal.checkedAt);
+      if (eventCandidates.length > 0) {
+        await db.delete(sourceRecords).where(and(eq(sourceRecords.entityType, SOURCE_EVENT_CANDIDATE_ENTITY), eq(sourceRecords.sourceUrl, signal.sourceUrl)));
+        await db.insert(sourceRecords).values(
+          eventCandidates.map((candidate) => ({
+            entityType: SOURCE_EVENT_CANDIDATE_ENTITY,
+            entitySlug: candidate.id,
+            sourceUrl: signal.sourceUrl,
+            sourcePayload: candidate as unknown as Record<string, unknown>,
+            lastVerifiedAt: new Date(signal.checkedAt)
           }))
-        },
-        lastVerifiedAt: new Date(signal.checkedAt)
-      });
+        );
+        oneOffCandidatesDiscovered += eventCandidates.length;
+      } else if (
+        ['social', 'events_calendar'].includes(sourceEntriesByUrl.get(signal.sourceUrl)?.sourceType ?? 'official_site')
+      ) {
+        await db.delete(sourceRecords).where(and(eq(sourceRecords.entityType, SOURCE_EVENT_CANDIDATE_ENTITY), eq(sourceRecords.sourceUrl, signal.sourceUrl)));
+      }
     }
 
     const now = DateTime.now().setZone('Europe/Rome');
@@ -855,6 +931,7 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
         staleByAge,
         registrySourcesSeeded,
         discoveryLeadsDiscovered,
+        oneOffCandidatesDiscovered,
         checkedAt: reportTimestamp.toISOString()
       }),
       createdAt: reportTimestamp
@@ -906,6 +983,7 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
     brokenLinks,
     registrySourcesSeeded,
     discoveryLeadsDiscovered,
+    oneOffCandidatesDiscovered,
     runStored,
     mode: useDb ? 'database' : 'ephemeral',
     impactedSourceUrls
@@ -927,6 +1005,7 @@ export type FreshnessRunSnapshot = {
   autoReverified: number;
   registrySourcesSeeded: number;
   discoveryLeadsDiscovered: number;
+  oneOffCandidatesDiscovered: number;
   createdAt: string;
 };
 
@@ -1009,6 +1088,7 @@ export const getLatestFreshnessSnapshot = async (citySlug: string): Promise<Fres
   let totalSources = 0;
   let registrySourcesSeeded = 0;
   let discoveryLeadsDiscovered = 0;
+  let oneOffCandidatesDiscovered = 0;
 
   try {
     const notes = row.notes ? (JSON.parse(row.notes) as Record<string, unknown>) : {};
@@ -1033,6 +1113,11 @@ export const getLatestFreshnessSnapshot = async (citySlug: string): Promise<Fres
         ? String(notes.discoveryLeadsDiscovered)
         : (notes.discoveryLeadsDiscovered as string | undefined)
     );
+    oneOffCandidatesDiscovered = parseNumber(
+      typeof notes.oneOffCandidatesDiscovered === 'number'
+        ? String(notes.oneOffCandidatesDiscovered)
+        : (notes.oneOffCandidatesDiscovered as string | undefined)
+    );
   } catch {
     totalSources = 0;
     changedSources = 0;
@@ -1043,6 +1128,7 @@ export const getLatestFreshnessSnapshot = async (citySlug: string): Promise<Fres
     autoReverified = 0;
     registrySourcesSeeded = 0;
     discoveryLeadsDiscovered = 0;
+    oneOffCandidatesDiscovered = 0;
   }
 
   return {
@@ -1060,6 +1146,7 @@ export const getLatestFreshnessSnapshot = async (citySlug: string): Promise<Fres
     autoReverified,
     registrySourcesSeeded,
     discoveryLeadsDiscovered,
+    oneOffCandidatesDiscovered,
     createdAt: row.createdAt.toISOString()
   };
 };

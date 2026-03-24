@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import { buildSourceSignalHash, buildSourceSlug, getCitySourceUrls, getCitySourceUrlsForCadence } from '@/lib/freshness/service';
+import { getSeedSourceRegistry } from '@/lib/freshness/source-registry';
 
 test('source slug is stable for semantically equivalent URLs', () => {
   const a = buildSourceSlug('https://example.com/path/');
@@ -17,7 +18,8 @@ test('source signal hash changes when headers change', () => {
     reachable: true,
     etag: 'etag-1',
     lastModified: 'Tue, 01 Jan 2026 10:00:00 GMT',
-    contentLength: '1000'
+    contentLength: '1000',
+    contentDigest: null
   });
 
   const changed = buildSourceSignalHash({
@@ -27,7 +29,8 @@ test('source signal hash changes when headers change', () => {
     reachable: true,
     etag: 'etag-2',
     lastModified: 'Tue, 01 Jan 2026 10:00:00 GMT',
-    contentLength: '1000'
+    contentLength: '1000',
+    contentDigest: null
   });
 
   assert.notEqual(baseline, changed);
@@ -46,4 +49,11 @@ test('cadence source lists expand from daily to quarterly', () => {
   assert.ok(daily.length > 0);
   assert.ok(quarterly.length >= daily.length);
   assert.equal(quarterly.some((url) => url.includes('orangogo.it/sport/palermo')), true);
+});
+
+test('social catalog sources stay classified as weekly social checks', () => {
+  const spazioTerra = getSeedSourceRegistry('palermo').find((entry) => entry.sourceUrl === 'https://www.facebook.com/spazioterrapalermo');
+  assert.ok(spazioTerra);
+  assert.equal(spazioTerra?.sourceType, 'social');
+  assert.equal(spazioTerra?.cadence, 'weekly');
 });

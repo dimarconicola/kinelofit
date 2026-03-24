@@ -16,7 +16,7 @@
     "db:setup": "npm run db:push && npm run db:bootstrap",
     "test": "npm run test:vitest && npm run test:node",
     "test:vitest": "vitest run",
-    "test:node": "node --import tsx --test tests/filters.test.ts tests/freshness-adapters.test.ts tests/freshness-schedule.test.ts tests/freshness.test.ts tests/import-validator.test.ts tests/policy.test.ts tests/readiness.test.ts",
+    "test:node": "node --import tsx --test tests/filters.test.ts tests/freshness-adapters.test.ts tests/freshness-schedule.test.ts tests/freshness.test.ts tests/social-events.test.ts tests/import-validator.test.ts tests/policy.test.ts tests/readiness.test.ts",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:release": "npm run lint && npm run typecheck && npm test && npm run build && npm run smoke:routes && PW_SKIP_BUILD=1 playwright test && npm run catalog:coverage && npm run freshness:report",
