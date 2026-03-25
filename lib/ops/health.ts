@@ -2,6 +2,7 @@ import { getCatalogSourceMode } from '@/lib/catalog/server-data';
 import { getDb, isDatabaseConfigured } from '@/lib/data/db';
 import { env } from '@/lib/env';
 import { getLatestFreshnessSnapshot } from '@/lib/freshness/service';
+import { getMapRenderMode } from '@/lib/map/runtime';
 import { isPersistentStoreConfigured } from '@/lib/runtime/store';
 
 export type HealthStatus = 'ok' | 'warn' | 'fail';
@@ -16,6 +17,7 @@ export const getRuntimeHealth = async (citySlug = 'palermo') => {
   const latestFreshness = await getLatestFreshnessSnapshot(citySlug);
   const catalogSource = await getCatalogSourceMode();
   const db = getDb();
+  const mapRenderMode = getMapRenderMode();
 
   const checks: HealthCheck[] = [
     {
@@ -39,8 +41,13 @@ export const getRuntimeHealth = async (citySlug = 'palermo') => {
     },
     {
       label: 'Mapbox token',
-      status: env.mapboxToken ? 'ok' : 'warn',
-      detail: env.mapboxToken ? 'Map rendering enabled.' : 'NEXT_PUBLIC_MAPBOX_TOKEN missing.'
+      status: mapRenderMode === 'interactive' ? 'ok' : mapRenderMode === 'fallback' ? 'warn' : 'fail',
+      detail:
+        mapRenderMode === 'interactive'
+          ? 'Interactive map rendering enabled.'
+          : mapRenderMode === 'fallback'
+            ? 'Interactive token missing; internal fallback map active in this environment.'
+            : 'Interactive map is unavailable in production without NEXT_PUBLIC_MAPBOX_TOKEN.'
     },
     {
       label: 'Supabase public auth',

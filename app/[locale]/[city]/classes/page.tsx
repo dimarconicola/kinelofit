@@ -12,6 +12,8 @@ import { parseFilters } from '@/lib/catalog/filters';
 import type { ClassView } from '@/lib/catalog/types';
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
+import { buildMapVenueSummaries } from '@/lib/map/venue-summaries';
+import { getMapRenderMode } from '@/lib/map/runtime';
 import { getRuntimeCapabilities } from '@/lib/runtime/capabilities';
 
 const isClassView = (value: string | null): value is ClassView => value === 'list' || value === 'map' || value === 'calendar';
@@ -51,6 +53,7 @@ export default async function ClassesPage({
   const view: ClassView = isClassView(requestedView) ? requestedView : 'list';
   const requestedPage = Number.parseInt(urlParams.get('page') ?? '1', 10);
   const requestedWeekOffset = Number.parseInt(urlParams.get('week_offset') ?? '0', 10);
+  const requestedVenueSlug = urlParams.get('venue') ?? undefined;
   const weekOffset = Number.isFinite(requestedWeekOffset) ? Math.max(0, requestedWeekOffset) : 0;
 
   const [catalog, user, runtimeCapabilities] = await Promise.all([getCatalogSnapshot(), getSessionUser(), getRuntimeCapabilities()]);
@@ -169,6 +172,17 @@ export default async function ClassesPage({
   const pagedSessions = sessionResults.slice(pageSliceStart, pageSliceStart + pageSize);
   const resolvedSessionCards = Object.fromEntries(await resolveSessionCardData(pagedSessions));
   const visibleVenueNameBySlug = new Map(visibleVenues.map((venue) => [venue.slug, venue.name]));
+  const mapVenueSummaries = buildMapVenueSummaries({
+    locale,
+    citySlug,
+    sessions: sessionResults,
+    venues: cityVenues,
+    neighborhoods,
+    instructors: catalog.instructors.filter((instructor) => instructor.citySlug === citySlug),
+    styles: allStyles,
+    bookingTargets: catalog.bookingTargets
+  });
+  const selectedVenueSlug = mapVenueSummaries.some((venue) => venue.venueSlug === requestedVenueSlug) ? requestedVenueSlug : undefined;
   const timeFormatter = new Intl.DateTimeFormat('en-GB', {
     hour: '2-digit',
     minute: '2-digit',
@@ -223,17 +237,19 @@ export default async function ClassesPage({
         </div>
       </section>
 
-      <FilterBar
-        locale={locale}
-        citySlug={citySlug}
-        filters={filters}
-        categories={categories.map((item) => ({ slug: item.slug, name: item.name[locale] }))}
-        neighborhoods={neighborhoods.map((item) => ({ slug: item.slug, name: item.name[locale] }))}
-        styles={allStyles
-          .filter((style) => cityStyleSlugs.has(style.slug))
-          .map((style) => ({ slug: style.slug, name: style.name[locale] }))}
-        activeFilters={activeFilters}
-      />
+      <div id="class-filters">
+        <FilterBar
+          locale={locale}
+          citySlug={citySlug}
+          filters={filters}
+          categories={categories.map((item) => ({ slug: item.slug, name: item.name[locale] }))}
+          neighborhoods={neighborhoods.map((item) => ({ slug: item.slug, name: item.name[locale] }))}
+          styles={allStyles
+            .filter((style) => cityStyleSlugs.has(style.slug))
+            .map((style) => ({ slug: style.slug, name: style.name[locale] }))}
+          activeFilters={activeFilters}
+        />
+      </div>
 
       <ClassesResultsClient
         locale={locale}
@@ -244,8 +260,10 @@ export default async function ClassesPage({
         visibleCount={sessionResults.length}
         pagedSessions={pagedSessions}
         resolvedSessionCards={resolvedSessionCards}
-        visibleVenues={visibleVenues}
         calendarEntries={calendarEntries}
+        mapVenueSummaries={mapVenueSummaries}
+        initialSelectedVenueSlug={selectedVenueSlug}
+        mapRenderMode={getMapRenderMode()}
         signedInEmail={user?.email}
         scheduleLabel={locale === 'it' ? 'Aggiungi in agenda' : 'Add to schedule'}
         runtimeCapabilities={runtimeCapabilities}

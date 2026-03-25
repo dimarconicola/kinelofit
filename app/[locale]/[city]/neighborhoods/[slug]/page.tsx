@@ -9,6 +9,7 @@ import { getNeighborhoodSessions, getNeighborhoods, getVenue } from '@/lib/catal
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
 import { getRuntimeCapabilities } from '@/lib/runtime/capabilities';
+import { getMapRenderMode } from '@/lib/map/runtime';
 
 export default async function NeighborhoodPage({ params }: { params: Promise<{ locale: string; city: string; slug: string }> }) {
   const { locale: rawLocale, city: citySlug, slug } = await params;
@@ -55,7 +56,7 @@ export default async function NeighborhoodPage({ params }: { params: Promise<{ l
             />
           ))}
         </div>
-        <MapPanel locale={locale} cityName={city.name[locale]} venues={venues} bounds={city.bounds} />
+        <MapPanel locale={locale} cityName={city.name[locale]} venues={venues} bounds={city.bounds} renderMode={getMapRenderMode()} />
       </section>
     </div>
   );

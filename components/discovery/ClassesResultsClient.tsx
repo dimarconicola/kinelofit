@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 import type { ResolvedSessionCardData } from '@/lib/catalog/session-card-data';
-import type { ClassView, Locale, Session, Venue } from '@/lib/catalog/types';
-import type { CalendarEntry } from '@/components/discovery/classes-results.types';
+import type { ClassView, Locale, Session } from '@/lib/catalog/types';
+import type { CalendarEntry, MapRenderMode, MapVenueSummary } from '@/components/discovery/classes-results.types';
 import type { RuntimeCapabilities } from '@/lib/runtime/capabilities';
 
 const ListResultsView = dynamic(() => import('@/components/discovery/ListResultsView').then((module) => module.ListResultsView));
@@ -28,8 +28,10 @@ interface ClassesResultsClientProps {
   visibleCount: number;
   pagedSessions: Session[];
   resolvedSessionCards: Record<string, ResolvedSessionCardData>;
-  visibleVenues: Venue[];
   calendarEntries: CalendarEntry[];
+  mapVenueSummaries: MapVenueSummary[];
+  initialSelectedVenueSlug?: string;
+  mapRenderMode: MapRenderMode;
   signedInEmail?: string;
   scheduleLabel: string;
   runtimeCapabilities: RuntimeCapabilities;
@@ -50,8 +52,10 @@ export function ClassesResultsClient({
   visibleCount,
   pagedSessions,
   resolvedSessionCards,
-  visibleVenues,
   calendarEntries,
+  mapVenueSummaries,
+  initialSelectedVenueSlug,
+  mapRenderMode,
   signedInEmail,
   scheduleLabel,
   runtimeCapabilities,
@@ -64,6 +68,7 @@ export function ClassesResultsClient({
   const pathname = usePathname();
   const [view, setView] = useState<ClassView>(initialView);
   const [weekOffset, setWeekOffset] = useState(initialWeekOffset);
+  const [selectedVenueSlug, setSelectedVenueSlug] = useState<string | undefined>(initialSelectedVenueSlug);
 
   const labels =
     locale === 'it'
@@ -111,11 +116,22 @@ export function ClassesResultsClient({
     } else {
       next.delete('week_offset');
     }
+    if (selectedVenueSlug) {
+      next.set('venue', selectedVenueSlug);
+    } else {
+      next.delete('venue');
+    }
     next.delete('page');
     const query = next.toString();
     const nextUrl = query ? `${pathname}?${query}` : pathname;
     window.history.replaceState(window.history.state, '', nextUrl);
-  }, [pathname, view, weekOffset]);
+  }, [pathname, selectedVenueSlug, view, weekOffset]);
+
+  useEffect(() => {
+    if (!selectedVenueSlug) return;
+    if (mapVenueSummaries.some((venue) => venue.venueSlug === selectedVenueSlug)) return;
+    setSelectedVenueSlug(undefined);
+  }, [mapVenueSummaries, selectedVenueSlug]);
 
   return (
     <div className="stack-list">
@@ -145,12 +161,11 @@ export function ClassesResultsClient({
           citySlug={citySlug}
           cityName={cityName}
           bounds={bounds}
-          visibleVenues={visibleVenues}
-          pagedSessions={pagedSessions}
-          resolvedSessionCards={resolvedSessionCards}
-          signedInEmail={signedInEmail}
-          scheduleLabel={scheduleLabel}
-          runtimeCapabilities={runtimeCapabilities}
+          visibleCount={visibleCount}
+          mapVenueSummaries={mapVenueSummaries}
+          selectedVenueSlug={selectedVenueSlug}
+          onSelectVenue={setSelectedVenueSlug}
+          mapRenderMode={mapRenderMode}
           noResultsLabel={noResultsLabel}
         />
       ) : null}

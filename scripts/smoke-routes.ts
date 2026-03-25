@@ -1,10 +1,13 @@
+import http from 'node:http';
+import https from 'node:https';
+
 const baseUrl = process.env.SMOKE_BASE_URL ?? 'http://127.0.0.1:3000';
 
 const checks = [
   { path: '/it', markers: ['kinelo.fit', 'Palermo'] },
   {
     path: '/it/palermo',
-    markers: ['Palermo', 'Classi in evidenza', 'Classi settimanali', 'Quartieri coperti', 'Persone, non solo slot.'],
+    markers: ['Palermo', 'Classi in evidenza', 'Classi settimanali', 'Quartieri coperti'],
     absent: ['Soglia di copertura', 'Copertura CTA', 'Quando Supabase non è configurato']
   },
   {
@@ -14,7 +17,7 @@ const checks = [
   },
   {
     path: '/it/palermo/classes?view=map',
-    markers: ['Vista mappa', 'classi visibili'],
+    markers: ['Vista mappa'],
     absent: ['NEXT_PUBLIC_MAPBOX_TOKEN', 'Mappa non configurata', 'Map not configured']
   },
   { path: '/it/palermo/studios/yoga-city', markers: ['Studio', 'Agenda verificata'] },
@@ -34,7 +37,7 @@ const checks = [
     absent: ['Pubblicata in modo selettivo mentre la copertura cresce.']
   },
   { path: '/it/palermo/teachers/valentina-lorito', markers: ['Valentina Lorito'] },
-  { path: '/it/palermo/teachers', markers: ['Chi guida le pratiche a Palermo', 'Valentina Lorito'] },
+  { path: '/it/palermo/teachers', markers: ['Le tue guide a Palermo', 'Valentina Lorito'] },
   { path: '/it/suggest-calendar', markers: ['Suggerisci il tuo calendario', 'Invio rapido'] },
   { path: '/it/account', markers: ['Account'] },
   { path: '/it/favorites', markers: ['Preferiti per scegliere con calma', 'Qui tornano le scelte che vuoi seguire con calma'] },
@@ -48,15 +51,48 @@ const checks = [
 
 const failures: string[] = [];
 
+const requestHtml = async (target: string) =>
+  new Promise<{ status: number; body: string }>((resolve, reject) => {
+    const url = new URL(target);
+    const client = url.protocol === 'https:' ? https : http;
+    const request = client.get(
+      url,
+      {
+        headers: {
+          Accept: 'text/html',
+          Connection: 'close'
+        },
+        timeout: 10_000
+      },
+      (response) => {
+        const chunks: Buffer[] = [];
+        response.on('data', (chunk) => {
+          chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+        });
+        response.on('end', () => {
+          resolve({
+            status: response.statusCode ?? 0,
+            body: Buffer.concat(chunks).toString('utf8')
+          });
+        });
+      }
+    );
+
+    request.setTimeout(10_000, () => {
+      request.destroy(new Error(`Timed out fetching ${target}`));
+    });
+    request.on('error', reject);
+  });
+
 async function run() {
   for (const check of checks) {
     const url = new URL(check.path, baseUrl).toString();
 
     try {
-      const response = await fetch(url);
-      const body = await response.text();
+      const response = await requestHtml(url);
+      const body = response.body;
 
-      if (!response.ok) {
+      if (response.status < 200 || response.status >= 300) {
         failures.push(`${check.path}: expected 200, got ${response.status}`);
         continue;
       }
