@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 
 import { DigestForm } from '@/components/forms/DigestForm';
 import { SessionCard } from '@/components/discovery/SessionCard';
+import { LoopVideo } from '@/components/media/LoopVideo';
 import { StatCard } from '@/components/admin/StatCard';
 import { ServerButtonLink, ServerCardLink, ServerLink } from '@/components/ui/server';
 import { getSessionUser } from '@/lib/auth/session';
@@ -11,6 +12,7 @@ import { resolveSessionCardDataFromSnapshot } from '@/lib/catalog/session-card-d
 import { getLocaleLabel } from '@/lib/catalog/server-data';
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
+import { pexelsVideos } from '@/lib/media/pexels-videos';
 import { getRuntimeCapabilities } from '@/lib/runtime/capabilities';
 
 export default async function CityPage({ params }: { params: Promise<{ locale: string; city: string }> }) {
@@ -64,7 +66,10 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
           teachers: 'Insegnanti',
           teachersTitle: 'Le Persone dietro lo studio.',
           teachersLead: 'Profili alfabetici per capire chi guida le pratiche prima di scegliere una lezione.',
-          openTeachers: 'Apri elenco completo'
+          openTeachers: 'Apri elenco completo',
+          movementTitle: 'Una città che si muove in tanti registri',
+          movementBody: 'Stretching dolce, discipline aeree e pratiche che cambiano tono senza perdere chiarezza.',
+          movementCta: 'Apri tutte le classi'
         }
       : {
           weeklyClasses: 'Weekly classes',
@@ -82,7 +87,10 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
           teachers: 'Teachers',
           teachersTitle: 'People, not just slots.',
           teachersLead: 'Alphabetical profiles to understand who leads each practice before choosing a class.',
-          openTeachers: 'Open full directory'
+          openTeachers: 'Open full directory',
+          movementTitle: 'One city, many tempos',
+          movementBody: 'Gentle stretching, aerial work, and sharper practices all live in the same clear discovery flow.',
+          movementCta: 'Open all classes'
         };
 
   return (
@@ -136,6 +144,24 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
           </div>
         </div>
         <div className="stack-list">
+          <div className="panel city-motion-panel">
+            <div className="city-motion-copy">
+              <p className="eyebrow">{getLocaleLabel(locale, city.name)}</p>
+              <h2>{copy.movementTitle}</h2>
+              <p className="muted">{copy.movementBody}</p>
+              <ServerLink href={`/${locale}/${citySlug}/classes`} className="inline-link">
+                {copy.movementCta}
+              </ServerLink>
+            </div>
+            <div className="city-motion-grid" aria-hidden="true">
+              <div className="city-motion-media city-motion-media-tall">
+                <LoopVideo src={pexelsVideos.stretching} label="Stretching class" poster="/home-hero.jpg" className="city-motion-video" />
+              </div>
+              <div className="city-motion-media">
+                <LoopVideo src={pexelsVideos.aerial} label="Aerial practice" poster="/home-hero.jpg" className="city-motion-video" />
+              </div>
+            </div>
+          </div>
           <div className="panel">
             <p className="eyebrow">{copy.categories}</p>
             <div className="card-grid">

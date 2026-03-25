@@ -1,10 +1,11 @@
-import Image from 'next/image';
 import { DateTime } from 'luxon';
 
 import { DigestForm } from '@/components/forms/DigestForm';
+import { LoopVideo } from '@/components/media/LoopVideo';
 import { ServerButtonLink, ServerCard, ServerCardLink, ServerChip } from '@/components/ui/server';
 import { getCityMetrics, getFeaturedSessions, getStyle, getVenue } from '@/lib/catalog/server-data';
 import { resolveLocale } from '@/lib/i18n/routing';
+import { pexelsVideos } from '@/lib/media/pexels-videos';
 
 type IconName = 'map' | 'calendar' | 'mail' | 'leaf' | 'heart' | 'sun';
 
@@ -99,6 +100,10 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
             'Aggiornamenti mirati: lezioni verificate, variazioni orarie, nuove aperture e selezioni curate per Palermo.',
           newsletterOne: 'Aggiornamenti utili, zero rumore',
           newsletterTwo: 'Niente spam',
+          motionEyebrow: 'Dal tappetino alla città',
+          motionTitle: 'Una guida che si muove come la pratica.',
+          motionBody:
+            'Non solo liste e orari: respiro, forza, precisione e calma entrano nell’esperienza senza disturbare l’utilità.',
           weeklyArticles: 'Aggiornamenti settimanali',
           weeklyArticlesBody: 'Novità, nuove attività e variazioni di calendario in un unico digest.',
           noSpam: 'Solo contenuti rilevanti',
@@ -128,6 +133,10 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
             'Get only useful updates: verified classes, timetable changes, new openings, and curated picks for Palermo.',
           newsletterOne: 'Useful updates only',
           newsletterTwo: 'No spam',
+          motionEyebrow: 'From mat to city',
+          motionTitle: 'A guide that moves like the practice.',
+          motionBody:
+            'Not just lists and schedules: breath, strength, precision, and calm shape the interface without getting in the way.',
           weeklyArticles: 'Weekly articles',
           weeklyArticlesBody: 'Insights on wellness, new studio openings, and instructor spotlights.',
           noSpam: 'No spam',
@@ -185,6 +194,33 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
     }
   ];
 
+  const motionClips = [
+    {
+      title: locale === 'it' ? 'Yoga in volo' : 'Aerial focus',
+      body:
+        locale === 'it'
+          ? 'Una clip più libera e verticale per raccontare la parte esplorativa del catalogo.'
+          : 'A freer, more vertical movement study for the exploratory side of the catalog.',
+      src: pexelsVideos.aerial
+    },
+    {
+      title: locale === 'it' ? 'Meditazione sul respiro' : 'Meditation stillness',
+      body:
+        locale === 'it'
+          ? 'Silenzio, ritmo e presenza: il lato più raccolto del mind-body a Palermo.'
+          : 'Silence, rhythm, and presence: the quieter side of mind-body discovery in Palermo.',
+      src: pexelsVideos.meditation
+    },
+    {
+      title: locale === 'it' ? 'Pratica avanzata' : 'Advanced practice',
+      body:
+        locale === 'it'
+          ? 'Forza e controllo per dare spazio anche alle pratiche più intense.'
+          : 'Strength and control, making room for higher-intensity practices too.',
+      src: pexelsVideos.advanced
+    }
+  ];
+
   return (
     <div className="home-v2">
       <section className="home-v2-hero">
@@ -211,12 +247,12 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
             </div>
             <div className="home-v2-hero-visual">
               <div className="home-v2-photo-wrap">
-                <Image
-                  src="/home-hero.jpg"
-                  alt="Yoga class in Palermo"
-                  fill
-                  sizes="(max-width: 960px) 100vw, 44vw"
+                <LoopVideo
+                  src={pexelsVideos.heroFlow}
+                  label={locale === 'it' ? 'Video hero di pratica yoga' : 'Hero yoga practice video'}
+                  poster="/home-hero.jpg"
                   priority
+                  className="home-v2-photo-video"
                 />
                 <div className="home-v2-photo-ring" aria-hidden />
               </div>
@@ -245,6 +281,29 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
                   <p>{feature.description}</p>
                 </div>
               </ServerCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="home-v2-motion">
+        <div className="home-v2-shell">
+          <div className="home-v2-motion-head">
+            <p>{copy.motionEyebrow}</p>
+            <h2>{copy.motionTitle}</h2>
+            <p>{copy.motionBody}</p>
+          </div>
+          <div className="home-v2-motion-grid">
+            {motionClips.map((clip) => (
+              <article key={clip.title} className="home-v2-motion-card">
+                <div className="home-v2-motion-media">
+                  <LoopVideo src={clip.src} label={clip.title} poster="/home-hero.jpg" className="home-v2-motion-video" />
+                </div>
+                <div className="home-v2-motion-copy">
+                  <h3>{clip.title}</h3>
+                  <p>{clip.body}</p>
+                </div>
+              </article>
             ))}
           </div>
         </div>
@@ -320,6 +379,14 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
               </div>
             </div>
             <div className="home-v2-newsletter-form">
+              <div className="home-v2-newsletter-media-stack" aria-hidden="true">
+                <div className="home-v2-newsletter-media home-v2-newsletter-media-tall">
+                  <LoopVideo src={pexelsVideos.rollingMat} label="Rolling the mat" poster="/home-hero.jpg" className="home-v2-newsletter-video" />
+                </div>
+                <div className="home-v2-newsletter-media home-v2-newsletter-media-wide">
+                  <LoopVideo src={pexelsVideos.seaPanorama} label="Panorama by the sea" poster="/home-hero.jpg" className="home-v2-newsletter-video" />
+                </div>
+              </div>
               <DigestForm citySlug="palermo" locale={locale} showIntro={false} compact className="newsletter-inline-digest" surface="plain" />
               <div className="home-v2-newsletter-notes">
                 <article>
