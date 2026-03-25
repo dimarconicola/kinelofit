@@ -23,7 +23,23 @@ test.describe('critical public exploration', () => {
     await page.getByRole('button', { name: 'Vista mappa' }).click();
     await expect(page).toHaveURL(/view=map/);
     await expect(page).toHaveURL(/weekday=mon/);
-    await expect(page.getByText('Tutti gli studi visibili')).toBeVisible();
+    await expect(page.getByText('studi in mappa')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Sfoglia tutte le sedi' })).toBeVisible();
+
+    const fallbackMarkers = page.locator('.fallback-map-marker');
+    if ((await fallbackMarkers.count()) > 0) {
+      await fallbackMarkers.first().click();
+    } else {
+      await page.locator('.classes-map-venue-item').first().click();
+    }
+
+    await expect(page).toHaveURL(/venue=/);
+    await expect(page.getByText('Dettaglio sede')).toBeVisible();
+
+    await page.reload();
+    await expect(page).toHaveURL(/view=map/);
+    await expect(page).toHaveURL(/venue=/);
+    await expect(page.getByText('Dettaglio sede')).toBeVisible();
 
     await page.getByRole('button', { name: 'Calendario' }).click();
     await expect(page).toHaveURL(/view=calendar/);
@@ -31,6 +47,17 @@ test.describe('critical public exploration', () => {
     await expect(page.getByRole('button', { name: 'Settimana successiva' })).toBeVisible();
     await page.getByRole('button', { name: 'Settimana successiva' }).click();
     await expect(page).toHaveURL(/week_offset=1/);
+  });
+
+  test('mobile map view stays map-first with a bottom sheet', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/it/palermo/classes?view=map');
+
+    await expect(page.locator('.classes-map-layout')).toBeVisible();
+    await expect(page.locator('.classes-map-stage-canvas')).toBeVisible();
+    await expect(page.locator('.classes-map-sheet')).toBeVisible();
+    await expect(page.locator('.map-overview-panel')).toHaveCount(0);
+    await expectNoTechnicalCopy(page);
   });
 
   test('studio details keep Italian pricing and expose direct links', async ({ page }) => {
@@ -48,7 +75,7 @@ test.describe('critical public exploration', () => {
   test('teachers directory is public and alphabetical', async ({ page }) => {
     await page.goto('/it/palermo/teachers');
 
-    await expect(page.getByRole('heading', { name: 'Chi guida le pratiche a Palermo' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Le tue guide a Palermo' })).toBeVisible();
     await expect(page.getByText('Valentina Lorito')).toBeVisible();
     await expect(page.getByText('Marta Sto')).toBeVisible();
     await expect(page.getByRole('link', { name: /Apri profilo/i }).first()).toBeVisible();
