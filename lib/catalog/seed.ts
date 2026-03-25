@@ -191,7 +191,157 @@ const withVenueCoverImage = (venue: Venue): Venue => {
   return coverImage ? { ...venue, coverImage } : venue;
 };
 
-const instructorMediaVerifiedAt = '2026-03-24T12:00:00+01:00';
+const instructorMediaVerifiedAt = '2026-03-25T15:20:00+01:00';
+
+const palermoPilatesInstructorLinks = [
+  buildInstructorSocialLink(
+    'instagram',
+    'https://www.instagram.com/palermo_pilates/',
+    'https://www.palermopilates.it/en/team-eng/',
+    instructorMediaVerifiedAt
+  ),
+  buildInstructorSocialLink(
+    'facebook',
+    'https://www.facebook.com/palermopilatesstudio/',
+    'https://www.palermopilates.it/en/team-eng/',
+    instructorMediaVerifiedAt
+  ),
+  buildInstructorSocialLink(
+    'website',
+    'https://www.palermopilates.it/en/team-eng/',
+    'https://www.palermopilates.it/en/team-eng/',
+    instructorMediaVerifiedAt
+  )
+];
+
+const rishiInstructorLinks = [
+  buildInstructorSocialLink(
+    'instagram',
+    'https://www.instagram.com/centrorishi/',
+    'https://www.centroculturarishi.it/corsi/',
+    instructorMediaVerifiedAt
+  ),
+  buildInstructorSocialLink(
+    'facebook',
+    'https://www.facebook.com/centrodiculturarishi',
+    'https://www.centroculturarishi.it/corsi/',
+    instructorMediaVerifiedAt
+  ),
+  buildInstructorSocialLink(
+    'website',
+    'https://www.centroculturarishi.it/corsi/',
+    'https://www.centroculturarishi.it/corsi/',
+    instructorMediaVerifiedAt
+  )
+];
+
+const ashtangaInstructorLinks = [
+  buildInstructorSocialLink(
+    'instagram',
+    'https://www.instagram.com/ashtanga_shala_sicilia/',
+    'https://www.ashtangashalasicilia.com/copy-of-chi-siamo',
+    instructorMediaVerifiedAt
+  ),
+  buildInstructorSocialLink(
+    'facebook',
+    'https://www.facebook.com/ashtangayogapalermo',
+    'https://www.ashtangashalasicilia.com/chi-siamo',
+    instructorMediaVerifiedAt
+  ),
+  buildInstructorSocialLink(
+    'website',
+    'https://www.ashtangashalasicilia.com/copy-of-chi-siamo',
+    'https://www.ashtangashalasicilia.com/copy-of-chi-siamo',
+    instructorMediaVerifiedAt
+  )
+];
+
+const diariaInstructorLinks = [
+  buildInstructorSocialLink(
+    'instagram',
+    'https://www.instagram.com/diariapalermo/',
+    'https://www.diariapalermo.org/',
+    instructorMediaVerifiedAt
+  ),
+  buildInstructorSocialLink(
+    'facebook',
+    'https://www.facebook.com/diariapalermo/',
+    'https://www.diariapalermo.org/',
+    instructorMediaVerifiedAt
+  ),
+  buildInstructorSocialLink(
+    'website',
+    'https://www.diariapalermo.org/',
+    'https://www.diariapalermo.org/',
+    instructorMediaVerifiedAt
+  )
+];
+
+const yogaYourLifeInstructorLinks = [
+  buildInstructorSocialLink(
+    'website',
+    'https://www.barbarafaludiyoga.com/',
+    'https://www.barbarafaludiyoga.com/',
+    instructorMediaVerifiedAt
+  )
+];
+
+const yogaAnandaInstructorLinks = [
+  buildInstructorSocialLink(
+    'instagram',
+    'https://www.instagram.com/yogananda_palermo/',
+    'https://www.yoganandapalermo.it/i-maestri/',
+    instructorMediaVerifiedAt
+  ),
+  buildInstructorSocialLink(
+    'facebook',
+    'https://www.facebook.com/yoganandapalermo/',
+    'https://www.yoganandapalermo.it/i-maestri/',
+    instructorMediaVerifiedAt
+  ),
+  buildInstructorSocialLink(
+    'website',
+    'https://www.yoganandapalermo.it/i-maestri/',
+    'https://www.yoganandapalermo.it/i-maestri/',
+    instructorMediaVerifiedAt
+  )
+];
+
+const taijiInstructorLinks = [
+  buildInstructorSocialLink(
+    'website',
+    'https://www.taijistudiopalermo.it/',
+    'https://www.taijistudiopalermo.it/',
+    instructorMediaVerifiedAt
+  )
+];
+
+const sahajaInstructorLinks = [
+  buildInstructorSocialLink(
+    'website',
+    'https://sahajayoga.it/',
+    'https://sahajayoga.it/',
+    instructorMediaVerifiedAt
+  )
+];
+
+const circopificioInstructorLinks = [
+  buildInstructorSocialLink(
+    'website',
+    'https://www.circopificio.it/circomotricita/',
+    'https://www.circopificio.it/circomotricita/',
+    instructorMediaVerifiedAt
+  )
+];
+
+const spazioTerraInstructorLinks = [
+  buildInstructorSocialLink(
+    'facebook',
+    'https://www.facebook.com/spazioterrapalermo',
+    'https://www.facebook.com/spazioterrapalermo',
+    instructorMediaVerifiedAt
+  )
+];
 
 const instructorMedia: Partial<Record<string, Pick<Instructor, 'headshot' | 'socialLinks'>>> = {
   'valentina-lorito': {
@@ -261,14 +411,7 @@ const instructorMedia: Partial<Record<string, Pick<Instructor, 'headshot' | 'soc
       'https://www.palermopilates.it/team/',
       instructorMediaVerifiedAt
     ),
-    socialLinks: [
-      buildInstructorSocialLink(
-        'instagram',
-        'https://www.instagram.com/palermo_pilates/',
-        'https://www.palermopilates.it/team/',
-        instructorMediaVerifiedAt
-      )
-    ]
+    socialLinks: palermoPilatesInstructorLinks
   },
   'silvia-riccobono': {
     headshot: buildInstructorImage(
@@ -276,7 +419,8 @@ const instructorMedia: Partial<Record<string, Pick<Instructor, 'headshot' | 'soc
       'https://www.palermopilates.it/wp-content/uploads/2024/04/TEAM-Silvia-414x414.png',
       'https://www.palermopilates.it/team/',
       instructorMediaVerifiedAt
-    )
+    ),
+    socialLinks: palermoPilatesInstructorLinks
   },
   'ekaterina-kaptur': {
     headshot: buildInstructorImage(
@@ -284,7 +428,8 @@ const instructorMedia: Partial<Record<string, Pick<Instructor, 'headshot' | 'soc
       'https://www.palermopilates.it/wp-content/uploads/2024/09/TEAM-Katie-1-414x414.png',
       'https://www.palermopilates.it/team/',
       instructorMediaVerifiedAt
-    )
+    ),
+    socialLinks: palermoPilatesInstructorLinks
   },
   'aldo-pace': {
     headshot: buildInstructorImage(
@@ -292,7 +437,146 @@ const instructorMedia: Partial<Record<string, Pick<Instructor, 'headshot' | 'soc
       'https://www.palermopilates.it/wp-content/uploads/2025/10/TEAM-Aldo-414x414.png',
       'https://www.palermopilates.it/team/',
       instructorMediaVerifiedAt
-    )
+    ),
+    socialLinks: palermoPilatesInstructorLinks
+  },
+  'aruna-nath-giri': {
+    headshot: buildInstructorImage(
+      'Aruna Nath Giri',
+      'https://www.centroculturarishi.it/wp-content/uploads/2024/09/DSCF5641-200x300.jpg',
+      'https://www.centroculturarishi.it/corsi/',
+      instructorMediaVerifiedAt
+    ),
+    socialLinks: rishiInstructorLinks
+  },
+  'antonio-rishi': {
+    socialLinks: rishiInstructorLinks
+  },
+  'dino-coglitore': {
+    socialLinks: rishiInstructorLinks
+  },
+  'loredana-rishi': {
+    socialLinks: rishiInstructorLinks
+  },
+  'tanya-rishi': {
+    socialLinks: rishiInstructorLinks
+  },
+  'centro-cultura-rishi-team': {
+    headshot: buildInstructorImage(
+      'Rishi teaching team',
+      'https://www.centroculturarishi.it/wp-content/uploads/2024/05/DSCF5536-scaled.jpg',
+      'https://www.centroculturarishi.it/corsi/',
+      instructorMediaVerifiedAt
+    ),
+    socialLinks: rishiInstructorLinks
+  },
+  'sangeeta-laura-biagi': {
+    socialLinks: rishiInstructorLinks
+  },
+  'barbara-faludi': {
+    headshot: buildInstructorImage(
+      'Barbara Faludi',
+      'https://static.wixstatic.com/media/9b23dd_f121cd03034e46d9bb0c527fac2fdb29~mv2.jpg/v1/fill/w_330,h_330,enc_auto/file.jpeg',
+      'https://www.barbarafaludiyoga.com/',
+      instructorMediaVerifiedAt
+    ),
+    socialLinks: yogaYourLifeInstructorLinks
+  },
+  'claudia-santamarina': {
+    socialLinks: yogaYourLifeInstructorLinks
+  },
+  'dario-pastore': {
+    socialLinks: yogaYourLifeInstructorLinks
+  },
+  'delia-de-santes': {
+    socialLinks: yogaYourLifeInstructorLinks
+  },
+  'domenico-di-chiara': {
+    socialLinks: yogaYourLifeInstructorLinks
+  },
+  'giorgia-schillaci': {
+    socialLinks: yogaYourLifeInstructorLinks
+  },
+  'massimiliano-provenzano': {
+    socialLinks: yogaYourLifeInstructorLinks
+  },
+  'veronica-zarbo': {
+    socialLinks: yogaYourLifeInstructorLinks
+  },
+  'cristina-chiummo': {
+    socialLinks: ashtangaInstructorLinks
+  },
+  'asia-mattaliano': {
+    socialLinks: ashtangaInstructorLinks
+  },
+  'matthew-phippen': {
+    socialLinks: yogaAnandaInstructorLinks
+  },
+  'sujesh-valerio-costa': {
+    socialLinks: yogaAnandaInstructorLinks
+  },
+  'giulia-pace': {
+    socialLinks: taijiInstructorLinks
+  },
+  'ceren-dogou': {
+    socialLinks: taijiInstructorLinks
+  },
+  'paola-cassara': {
+    socialLinks: taijiInstructorLinks
+  },
+  'taiji-studio-palermo-team': {
+    headshot: buildInstructorImage(
+      'Taiji Studio Palermo team',
+      'https://www.taijistudiopalermo.it/wp-content/uploads/2025/11/a34ae1b5-5d87-4c5b-ae04-cb1de38a1afd-1.jpg',
+      'https://www.taijistudiopalermo.it/',
+      instructorMediaVerifiedAt
+    ),
+    socialLinks: taijiInstructorLinks
+  },
+  'sahaja-yoga-sicilia-team': {
+    headshot: buildInstructorImage(
+      'Sahaja Yoga Palermo team',
+      'https://sahajayoga.it/wp-content/uploads/2023/03/foto-sy.jpg',
+      'https://sahajayoga.it/',
+      instructorMediaVerifiedAt
+    ),
+    socialLinks: sahajaInstructorLinks
+  },
+  'circopificio-team': {
+    headshot: buildInstructorImage(
+      'Circo Pificio team',
+      'https://www.circopificio.it/wp-content/uploads/2023/08/bimbi-cover.png',
+      'https://www.circopificio.it/circomotricita/',
+      instructorMediaVerifiedAt
+    ),
+    socialLinks: circopificioInstructorLinks
+  },
+  'spazio-terra-team': {
+    socialLinks: spazioTerraInstructorLinks
+  },
+  'diaria-federica': {
+    socialLinks: diariaInstructorLinks
+  },
+  'diaria-maja': {
+    socialLinks: diariaInstructorLinks
+  },
+  'diaria-emilia': {
+    socialLinks: diariaInstructorLinks
+  },
+  'diaria-ceren': {
+    socialLinks: diariaInstructorLinks
+  },
+  'diaria-maria-laura': {
+    socialLinks: diariaInstructorLinks
+  },
+  'diaria-dario': {
+    socialLinks: diariaInstructorLinks
+  },
+  'diaria-carlotta': {
+    socialLinks: diariaInstructorLinks
+  },
+  'diaria-ceroda': {
+    socialLinks: diariaInstructorLinks
   }
 };
 
