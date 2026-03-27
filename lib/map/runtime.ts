@@ -1,15 +1,18 @@
 import type { MapRenderMode } from '@/components/discovery/classes-results.types';
-import { env } from '@/lib/env';
+import { getMapTileConfig, isMapTileConfigValid } from '@/lib/map/config';
 
-const isPreviewDeployment = env.vercelEnv === 'preview';
-const isLocalDevelopment = env.nodeEnv === 'development' && !env.vercelEnv;
-const isProductionDeployment = env.vercelEnv === 'production' || (env.nodeEnv === 'production' && !isPreviewDeployment);
-
-export const getMapRenderMode = (): MapRenderMode => {
-  if (env.mapboxToken) return 'interactive';
-  if (isLocalDevelopment || isPreviewDeployment) return 'fallback';
-  if (isProductionDeployment) return 'unavailable';
-  return 'fallback';
-};
+export const getMapRenderMode = (): MapRenderMode => (isMapTileConfigValid() ? 'interactive' : 'unavailable');
 
 export const isInteractiveMapEnabled = () => getMapRenderMode() === 'interactive';
+
+export const getMapRuntimeDetail = () => {
+  const config = getMapTileConfig();
+
+  return {
+    renderMode: getMapRenderMode(),
+    engine: config.engine,
+    tileUrl: config.tileUrl,
+    usingDefaultProvider: !process.env.NEXT_PUBLIC_MAP_TILE_URL,
+    hasCustomAttribution: Boolean(process.env.NEXT_PUBLIC_MAP_TILE_ATTRIBUTION)
+  };
+};

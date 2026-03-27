@@ -14,17 +14,6 @@ vi.mock('next/image', () => ({
     React.createElement('img', { src, alt, ...props })
 }));
 
-// Mock mapbox-gl (heavy dependency, not needed for component tests)
-vi.mock('mapbox-gl', () => ({
-  Map: vi.fn(),
-  Popup: vi.fn(),
-  Marker: vi.fn(),
-  LngLatBounds: vi.fn(),
-  GeolocateControl: vi.fn(),
-  NavigationControl: vi.fn(),
-  ScaleControl: vi.fn()
-}));
-
 // Suppress console errors during tests (optional - remove if you want to see them)
 const originalError = console.error;
 beforeAll(() => {

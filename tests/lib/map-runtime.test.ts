@@ -6,30 +6,36 @@ describe('map runtime policy', () => {
     vi.unstubAllEnvs();
   });
 
-  it('keeps fallback map enabled on preview without token', async () => {
-    vi.stubEnv('NODE_ENV', 'production');
-    vi.stubEnv('VERCEL_ENV', 'preview');
-    vi.stubEnv('NEXT_PUBLIC_MAPBOX_TOKEN', '');
+  it('uses default Carto tiles when no env override exists', async () => {
+    vi.stubEnv('NEXT_PUBLIC_MAP_TILE_URL', '');
+    vi.stubEnv('NEXT_PUBLIC_MAP_TILE_ATTRIBUTION', '');
+    vi.stubEnv('NEXT_PUBLIC_MAP_TILE_SUBDOMAINS', '');
 
+    const { getMapTileConfig } = await import('@/lib/map/config');
     const { getMapRenderMode } = await import('@/lib/map/runtime');
-    expect(getMapRenderMode()).toBe('fallback');
+
+    expect(getMapTileConfig().tileUrl).toContain('cartocdn.com/light_all');
+    expect(getMapRenderMode()).toBe('interactive');
   });
 
-  it('fails map availability in production when token is missing', async () => {
-    vi.stubEnv('NODE_ENV', 'production');
-    vi.stubEnv('VERCEL_ENV', 'production');
-    vi.stubEnv('NEXT_PUBLIC_MAPBOX_TOKEN', '');
+  it('accepts a valid custom tile override', async () => {
+    vi.stubEnv('NEXT_PUBLIC_MAP_TILE_URL', 'https://tiles.example.com/{z}/{x}/{y}.png');
+    vi.stubEnv('NEXT_PUBLIC_MAP_TILE_ATTRIBUTION', 'Example');
+    vi.stubEnv('NEXT_PUBLIC_MAP_TILE_SUBDOMAINS', 'a,b');
+
+    const { getMapTileConfig } = await import('@/lib/map/config');
+    const { getMapRuntimeDetail } = await import('@/lib/map/runtime');
+
+    expect(getMapTileConfig().tileUrl).toBe('https://tiles.example.com/{z}/{x}/{y}.png');
+    expect(getMapTileConfig().subdomains).toEqual(['a', 'b']);
+    expect(getMapRuntimeDetail().usingDefaultProvider).toBe(false);
+    expect(getMapRuntimeDetail().renderMode).toBe('interactive');
+  });
+
+  it('marks map unavailable when the custom tile url is malformed', async () => {
+    vi.stubEnv('NEXT_PUBLIC_MAP_TILE_URL', 'https://tiles.example.com/static.png');
 
     const { getMapRenderMode } = await import('@/lib/map/runtime');
     expect(getMapRenderMode()).toBe('unavailable');
-  });
-
-  it('enables interactive mode when token exists', async () => {
-    vi.stubEnv('NODE_ENV', 'production');
-    vi.stubEnv('VERCEL_ENV', 'production');
-    vi.stubEnv('NEXT_PUBLIC_MAPBOX_TOKEN', 'pk.test-token');
-
-    const { getMapRenderMode } = await import('@/lib/map/runtime');
-    expect(getMapRenderMode()).toBe('interactive');
   });
 });

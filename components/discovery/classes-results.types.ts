@@ -34,5 +34,5 @@ export type MapVenueSummary = {
   primaryCtaLabel?: string;
 };
 
-export type MapRenderMode = 'interactive' | 'fallback' | 'unavailable';
+export type MapRenderMode = 'interactive' | 'unavailable';
 export type MapUserLocationState = 'idle' | 'locating' | 'granted' | 'denied' | 'unavailable';

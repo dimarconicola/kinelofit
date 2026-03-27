@@ -21,7 +21,7 @@ A Palermo-seeded, bilingual, yoga-led discovery app for local mind-body classes.
 - TypeScript
 - Drizzle ORM schema for PostgreSQL
 - Supabase-ready auth/data environment contract
-- Mapbox-enhanced map with a graceful fallback map layer when no token is configured
+- Leaflet-based public map with Carto/OSM tiles by default and optional tile-provider overrides
 - Luxon for time handling
 
 ## Run locally
@@ -54,7 +54,9 @@ See `.env.example`.
 
 Important values:
 
-- `NEXT_PUBLIC_MAPBOX_TOKEN`: enables the real Mapbox map instead of the fallback map.
+- `NEXT_PUBLIC_MAP_TILE_URL`: optional tile template override for the public Leaflet map.
+- `NEXT_PUBLIC_MAP_TILE_ATTRIBUTION`: optional attribution override for the public map provider.
+- `NEXT_PUBLIC_MAP_TILE_SUBDOMAINS`: optional comma-separated subdomains for the tile provider.
 - `APP_SESSION_SECRET`: signs the local demo auth cookie.
 - `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`: enable Supabase Auth in the app.
 - `DATABASE_URL`: enables Drizzle/Postgres persistence for operator and user state.

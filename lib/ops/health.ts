@@ -2,7 +2,7 @@ import { getCatalogSourceMode } from '@/lib/catalog/server-data';
 import { getDb, isDatabaseConfigured } from '@/lib/data/db';
 import { env } from '@/lib/env';
 import { getLatestFreshnessSnapshot } from '@/lib/freshness/service';
-import { getMapRenderMode } from '@/lib/map/runtime';
+import { getMapRuntimeDetail } from '@/lib/map/runtime';
 import { isPersistentStoreConfigured } from '@/lib/runtime/store';
 
 export type HealthStatus = 'ok' | 'warn' | 'fail';
@@ -17,7 +17,7 @@ export const getRuntimeHealth = async (citySlug = 'palermo') => {
   const latestFreshness = await getLatestFreshnessSnapshot(citySlug);
   const catalogSource = await getCatalogSourceMode();
   const db = getDb();
-  const mapRenderMode = getMapRenderMode();
+  const mapRuntime = getMapRuntimeDetail();
 
   const checks: HealthCheck[] = [
     {
@@ -40,14 +40,12 @@ export const getRuntimeHealth = async (citySlug = 'palermo') => {
           : 'Local fallback is allowed in this environment.'
     },
     {
-      label: 'Mapbox token',
-      status: mapRenderMode === 'interactive' ? 'ok' : mapRenderMode === 'fallback' ? 'warn' : 'fail',
+      label: 'Public map engine',
+      status: mapRuntime.renderMode === 'interactive' ? 'ok' : 'fail',
       detail:
-        mapRenderMode === 'interactive'
-          ? 'Interactive map rendering enabled.'
-          : mapRenderMode === 'fallback'
-            ? 'Interactive token missing; internal fallback map active in this environment.'
-            : 'Interactive map is unavailable in production without NEXT_PUBLIC_MAPBOX_TOKEN.'
+        mapRuntime.renderMode === 'interactive'
+          ? `Leaflet map active with ${mapRuntime.usingDefaultProvider ? 'default Carto tiles' : 'custom tile provider'}.`
+          : 'Tile provider configuration is malformed, so the public map cannot initialize cleanly.'
     },
     {
       label: 'Supabase public auth',

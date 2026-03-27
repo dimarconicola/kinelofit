@@ -22,7 +22,7 @@ The product has two classes of flows:
 - Failure path:
   - no global error boundary
   - no technical/dev copy on public pages
-  - map fallback remains understandable if Mapbox is missing
+  - map remains usable without vendor-token setup
 - Automated by:
   - smoke routes
   - Playwright critical E2E
