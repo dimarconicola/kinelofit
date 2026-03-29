@@ -21,6 +21,7 @@ export function SiteHeader({ locale, dict, signedInEmail }: SiteHeaderProps) {
 
   const navItems = [
     { href: `/${locale}/palermo/classes`, label: dict.classes },
+    { href: `/${locale}/palermo/studios`, label: dict.studios },
     { href: `/${locale}/palermo/teachers`, label: dict.teachers },
     { href: `/${locale}/favorites`, label: dict.favorites },
     { href: `/${locale}/schedule`, label: dict.schedule }

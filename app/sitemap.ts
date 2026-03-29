@@ -13,6 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const city of cities) {
       entries.push({ url: `http://localhost:3000/${locale}/${city.slug}` });
       entries.push({ url: `http://localhost:3000/${locale}/${city.slug}/classes` });
+      entries.push({ url: `http://localhost:3000/${locale}/${city.slug}/studios` });
       entries.push({ url: `http://localhost:3000/${locale}/${city.slug}/teachers` });
       const collections = await getCollections(city.slug);
       collections.forEach((collection) => {

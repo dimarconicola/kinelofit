@@ -44,6 +44,14 @@ const buildDivIcon = (className: string, label: string, size: [number, number], 
     iconAnchor: anchor
   });
 
+const buildPointIcon = (selected: boolean): DivIcon =>
+  L.divIcon({
+    className: `classes-map-point-icon${selected ? ' is-selected' : ''}`,
+    html: '<span aria-hidden="true"></span>',
+    iconSize: [24, 24],
+    iconAnchor: [12, 12]
+  });
+
 function MapViewportController({
   bounds,
   venues,
@@ -95,7 +103,7 @@ function MapViewportController({
       return;
     }
 
-    map.fitBounds(L.latLngBounds(points), { padding: [32, 32], maxZoom: points.length === 1 ? 15 : 13 });
+    map.fitBounds(L.latLngBounds(points), { padding: [32, 32], maxZoom: points.length === 1 ? 15 : 14 });
   }, [bounds, map, selectedVenueSlug, userLocation, venues]);
 
   useEffect(() => {
@@ -120,8 +128,6 @@ function ClusterLayer({
 
   const clusterIconFor = (count: number) =>
     buildDivIcon('classes-map-cluster-icon', String(count), count >= 10 ? [52, 52] : [46, 46], count >= 10 ? [26, 26] : [23, 23]);
-  const pointIconFor = (count: number, selected: boolean) =>
-    buildDivIcon(`classes-map-point-icon${selected ? ' is-selected' : ''}`, String(count), [40, 40], [20, 20]);
 
   return (
     <>
@@ -138,6 +144,15 @@ function ClusterLayer({
               icon={clusterIconFor(count)}
               eventHandlers={{
                 click: () => {
+                  const leaves = clusterIndex.getLeaves(props.cluster_id!, count);
+                  if (leaves.length > 1) {
+                    const leafBounds = L.latLngBounds(
+                      leaves.map((leaf) => [leaf.geometry.coordinates[1], leaf.geometry.coordinates[0]] as [number, number])
+                    );
+                    map.fitBounds(leafBounds, { padding: [56, 56], maxZoom: 16 });
+                    return;
+                  }
+
                   const nextZoom = clusterIndex.getClusterExpansionZoom(props.cluster_id!);
                   map.flyTo([lat, lng], nextZoom, { duration: 0.35 });
                 }
@@ -154,7 +169,7 @@ function ClusterLayer({
           <Marker
             key={venueSlug}
             position={[lat, lng]}
-            icon={pointIconFor(props.sessionCount ?? 1, isSelected)}
+            icon={buildPointIcon(isSelected)}
             eventHandlers={{
               click: () => onSelectVenue?.(venueSlug)
             }}

@@ -81,4 +81,21 @@ test.describe('critical public exploration', () => {
     await expect(page.getByRole('link', { name: /Apri profilo/i }).first()).toBeVisible();
     await expectNoTechnicalCopy(page);
   });
+
+  test('studios directory supports list and map browsing', async ({ page }) => {
+    await page.goto('/it/palermo/studios');
+
+    await expect(page.getByRole('heading', { name: 'Dove praticare a Palermo' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Studi in ordine alfabetico' })).toBeVisible();
+    await expect(page.getByText('Ashtanga Shala Sicilia')).toBeVisible();
+
+    await page.getByRole('button', { name: 'Vista mappa' }).click();
+    await expect(page).toHaveURL(/view=map/);
+    await expect(page.getByRole('heading', { name: 'Tutte le sedi sulla mappa' })).toBeVisible();
+
+    await page.locator('.studios-map-list-item').first().click();
+    await expect(page).toHaveURL(/venue=/);
+    await expect(page.getByRole('link', { name: 'Apri studio' })).toBeVisible();
+    await expectNoTechnicalCopy(page);
+  });
 });
