@@ -38,6 +38,7 @@ const checks = [
   },
   { path: '/it/palermo/teachers/valentina-lorito', markers: ['Valentina Lorito'] },
   { path: '/it/palermo/teachers', markers: ['Le tue guide a Palermo', 'Valentina Lorito'] },
+  { path: '/it/palermo/studios', markers: ['Dove praticare a Palermo', 'Studi in ordine alfabetico', 'Ashtanga Shala Sicilia'] },
   { path: '/it/suggest-calendar', markers: ['Suggerisci il tuo calendario', 'Invio rapido'] },
   { path: '/it/account', markers: ['Account'] },
   { path: '/it/favorites', markers: ['Preferiti per scegliere con calma', 'Qui tornano le scelte che vuoi seguire con calma'] },

@@ -63,6 +63,10 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
           categories: 'Categorie',
           neighborhoodsSection: 'Quartieri',
           collections: 'Collezioni',
+          studiosSection: 'Studi',
+          studiosTitle: 'Luoghi da scegliere prima ancora dell’orario.',
+          studiosLead: 'Una directory studio-centrica con lista, mappa e ritmo settimanale per capire dove tornare davvero.',
+          openStudios: 'Apri elenco completo',
           teachers: 'Insegnanti',
           teachersTitle: 'Le Persone dietro lo studio.',
           teachersLead: 'Profili alfabetici per capire chi guida le pratiche prima di scegliere una lezione.',
@@ -84,6 +88,10 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
           categories: 'Categories',
           neighborhoodsSection: 'Neighborhoods',
           collections: 'Collections',
+          studiosSection: 'Studios',
+          studiosTitle: 'Places worth choosing before the slot.',
+          studiosLead: 'A studio-first directory with list, map, and weekly rhythm so you can decide where you want to come back.',
+          openStudios: 'Open full directory',
           teachers: 'Teachers',
           teachersTitle: 'People, not just slots.',
           teachersLead: 'Alphabetical profiles to understand who leads each practice before choosing a class.',
@@ -180,6 +188,26 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
                 <ServerCardLink key={item.slug} href={`/${locale}/${citySlug}/neighborhoods/${item.slug}`} className="collection-card">
                   <strong>{getLocaleLabel(locale, item.name)}</strong>
                   <span className="muted">{getLocaleLabel(locale, item.description)}</span>
+                </ServerCardLink>
+              ))}
+            </div>
+          </div>
+          <div className="panel">
+            <div className="detail-header">
+              <div>
+                <p className="eyebrow">{copy.studiosSection}</p>
+                <h2>{copy.studiosTitle}</h2>
+                <p className="muted">{copy.studiosLead}</p>
+              </div>
+              <ServerLink href={`/${locale}/${citySlug}/studios`} className="inline-link">
+                {copy.openStudios}
+              </ServerLink>
+            </div>
+            <div className="card-grid">
+              {cityVenues.slice(0, 4).map((venue) => (
+                <ServerCardLink key={venue.slug} href={`/${locale}/${citySlug}/studios/${venue.slug}`} className="collection-card">
+                  <strong>{venue.name}</strong>
+                  <span className="muted">{venue.tagline[locale]}</span>
                 </ServerCardLink>
               ))}
             </div>
