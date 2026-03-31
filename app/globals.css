@@ -2180,6 +2180,13 @@ h4 {
   display: block;
 }
 
+.loop-video-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 .home-v2-photo-ring {
   position: absolute;
   inset: 0;

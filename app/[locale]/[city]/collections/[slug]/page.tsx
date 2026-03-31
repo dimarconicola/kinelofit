@@ -2,14 +2,12 @@ import { notFound } from 'next/navigation';
 import { TodayNearbyLocationHint } from '@/components/discovery/TodayNearbyLocationHint';
 import { SessionCard } from '@/components/discovery/SessionCard';
 import { ServerButtonLink } from '@/components/ui/server';
-import { getSessionUser } from '@/lib/auth/session';
 import { resolveSessionCardData } from '@/lib/catalog/session-card-data';
 import { getCollectionSessions, getCollections, getVenue } from '@/lib/catalog/server-data';
 import { requirePublicCityServer } from '@/lib/catalog/guards';
 import { getEditorialComponent } from '@/lib/content/registry';
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
-import { getRuntimeCapabilities } from '@/lib/runtime/capabilities';
 
 const toCoordinate = (value?: string) => {
   if (!value) return undefined;
@@ -69,11 +67,7 @@ export default async function CollectionPage({
           .map((item) => item.session)
       : collectionSessions;
   const Component = getEditorialComponent(citySlug, slug, locale);
-  const [user, resolvedSessions, runtimeCapabilities] = await Promise.all([
-    getSessionUser(),
-    resolveSessionCardData(sessions),
-    getRuntimeCapabilities()
-  ]);
+  const resolvedSessions = await resolveSessionCardData(sessions);
   const statusCopy =
     locale === 'it'
       ? {
@@ -121,15 +115,7 @@ export default async function CollectionPage({
       <section className="panel">
         <div className="stack-list">
           {sessions.map((session) => (
-            <SessionCard
-              key={session.id}
-              session={session}
-              locale={locale}
-              resolved={resolvedSessions.get(session.id)!}
-              signedInEmail={user?.email}
-              scheduleLabel={dict.saveSchedule}
-              runtimeCapabilities={runtimeCapabilities}
-            />
+            <SessionCard key={session.id} session={session} locale={locale} resolved={resolvedSessions.get(session.id)!} scheduleLabel={dict.saveSchedule} />
           ))}
         </div>
       </section>

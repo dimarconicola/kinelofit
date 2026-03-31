@@ -3,21 +3,20 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAuthStatus } from '@/components/providers/AuthStatusProvider';
 import { readStoredSchedule, syncStoredSchedule, toggleStoredSchedule } from '@/components/state/storage';
 import { readApiErrorCode } from '@/lib/errors/api-client';
-import type { RuntimeCapabilities } from '@/lib/runtime/capabilities';
 
 interface ScheduleButtonProps {
   sessionId: string;
   locale: string;
-  signedInEmail?: string;
   label: string;
   savedLabel?: string;
-  runtimeCapabilities?: RuntimeCapabilities;
 }
 
-export function ScheduleButton({ sessionId, locale, signedInEmail, label, savedLabel, runtimeCapabilities }: ScheduleButtonProps) {
+export function ScheduleButton({ sessionId, locale, label, savedLabel }: ScheduleButtonProps) {
   const router = useRouter();
+  const { signedInEmail, runtimeCapabilities, loading } = useAuthStatus();
   const [saved, setSaved] = useState(false);
   const [pending, setPending] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -56,6 +55,10 @@ export function ScheduleButton({ sessionId, locale, signedInEmail, label, savedL
 
   const toggle = async () => {
     setNotice(null);
+
+    if (loading) {
+      return;
+    }
 
     if (runtimeCapabilities?.storeMode === 'unavailable' || runtimeCapabilities?.authMode === 'unavailable') {
       setNotice(copy.unavailable);

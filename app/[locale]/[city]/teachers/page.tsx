@@ -3,28 +3,17 @@ import { DateTime } from 'luxon';
 import { notFound } from 'next/navigation';
 
 import { ServerCardLink, ServerChip, ServerLink } from '@/components/ui/server';
-import { getCatalogSnapshot } from '@/lib/catalog/repository';
+import { getPublicCitySnapshot } from '@/lib/catalog/public-read-models';
 import { resolveLocale } from '@/lib/i18n/routing';
 
 export default async function TeachersIndexPage({ params }: { params: Promise<{ locale: string; city: string }> }) {
   const { locale: rawLocale, city: citySlug } = await params;
   const locale = resolveLocale(rawLocale);
-  const catalog = await getCatalogSnapshot();
-  const city = catalog.cities.find((item) => item.slug === citySlug);
-  if (!city || city.status !== 'public') notFound();
+  const snapshot = await getPublicCitySnapshot(citySlug);
+  if (!snapshot) notFound();
 
-  const instructors = catalog.instructors
-    .filter((instructor) => instructor.citySlug === citySlug)
-    .sort((left, right) => left.name.localeCompare(right.name, 'it', { sensitivity: 'base' }));
-
-  const sessionsByInstructor = new Map(
-    instructors.map((instructor) => [
-      instructor.slug,
-      catalog.sessions
-        .filter((session) => session.instructorSlug === instructor.slug && session.verificationStatus !== 'hidden')
-        .sort((left, right) => left.startAt.localeCompare(right.startAt))
-    ])
-  );
+  const instructors = snapshot.instructors;
+  const teacherSummaryBySlug = new Map(snapshot.teacherSummaries.map((summary) => [summary.instructorSlug, summary] as const));
 
   const copy =
     locale === 'it'
@@ -61,10 +50,9 @@ export default async function TeachersIndexPage({ params }: { params: Promise<{ 
 
       <section className="teachers-directory-grid">
         {instructors.map((instructor) => {
-          const sessions = sessionsByInstructor.get(instructor.slug) ?? [];
-          const nextSession = sessions[0];
-          const nextLabel = nextSession
-            ? DateTime.fromISO(nextSession.startAt).setZone('Europe/Rome').toFormat(locale === 'it' ? 'ccc d LLL · HH:mm' : 'ccc d LLL · HH:mm')
+          const summary = teacherSummaryBySlug.get(instructor.slug);
+          const nextLabel = summary?.nextSessionStartAt
+            ? DateTime.fromISO(summary.nextSessionStartAt).setZone('Europe/Rome').toFormat(locale === 'it' ? 'ccc d LLL · HH:mm' : 'ccc d LLL · HH:mm')
             : null;
           const socialLink = instructor.socialLinks?.[0];
 
@@ -101,7 +89,7 @@ export default async function TeachersIndexPage({ params }: { params: Promise<{ 
                       </ServerChip>
                     ))}
                     <ServerChip tone="meta">
-                      {sessions.length} {copy.sessions}
+                      {summary?.sessionCount ?? 0} {copy.sessions}
                     </ServerChip>
                   </div>
                 </div>

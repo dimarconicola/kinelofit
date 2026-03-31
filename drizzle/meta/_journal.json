@@ -22,6 +22,20 @@
       "when": 1774010437971,
       "tag": "0002_short_scarlet_spider",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1774950000000,
+      "tag": "0003_steady_profile",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1774953600000,
+      "tag": "0004_public_city_read_models",
+      "breakpoints": true
     }
   ]
 }

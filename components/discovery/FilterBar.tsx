@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import type { DiscoveryFilters, Locale } from '@/lib/catalog/types';
@@ -16,6 +16,8 @@ interface FilterBarProps {
   neighborhoods: Array<{ slug: string; name: string }>;
   styles: Array<{ slug: string; name: string }>;
   activeFilters: string[];
+  onUpdateFilters?: (filters: DiscoveryFilters) => void;
+  onResetFilters?: () => void;
 }
 
 const copy = {
@@ -100,7 +102,9 @@ export function FilterBar({
   categories,
   neighborhoods,
   styles,
-  activeFilters
+  activeFilters,
+  onUpdateFilters,
+  onResetFilters
 }: FilterBarProps) {
   const labels = copy[locale];
   const router = useRouter();
@@ -126,6 +130,24 @@ export function FilterBar({
     )
   );
 
+  useEffect(() => {
+    setDayFilter(filters.weekday ?? filters.date ?? '');
+    setTimeBuckets(new Set(filters.time_buckets?.length ? filters.time_buckets : filters.time_bucket ? [filters.time_bucket] : []));
+    setCategory(filters.category ?? '');
+    setStyle(filters.style ?? '');
+    setLevel(filters.level ?? '');
+    setLanguage(filters.language ?? '');
+    setNeighborhood(filters.neighborhood ?? '');
+    setFormat(filters.format ?? '');
+    setAvailability(
+      new Set(
+        [filters.open_now === 'true' ? 'open_now' : null, filters.drop_in === 'true' ? 'drop_in' : null].filter(
+          (item): item is string => Boolean(item)
+        )
+      )
+    );
+  }, [filters]);
+
   const activePreview = useMemo(() => {
     const labelsSet: string[] = [];
     if (dayFilter) labelsSet.push(dayFilter);
@@ -141,6 +163,26 @@ export function FilterBar({
   }, [availability, category, dayFilter, format, language, level, neighborhood, style, timeBuckets]);
 
   const applyFilters = () => {
+    const nextFilters: DiscoveryFilters = {
+      date: dayFilter && !['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].includes(dayFilter) ? (dayFilter as DiscoveryFilters['date']) : undefined,
+      weekday: dayFilter && ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].includes(dayFilter) ? (dayFilter as DiscoveryFilters['weekday']) : undefined,
+      time_bucket: timeBuckets.size > 0 ? (Array.from(timeBuckets)[0] as DiscoveryFilters['time_bucket']) : undefined,
+      time_buckets: timeBuckets.size > 0 ? (Array.from(timeBuckets) as NonNullable<DiscoveryFilters['time_buckets']>) : undefined,
+      category: category || undefined,
+      style: style || undefined,
+      level: (level as DiscoveryFilters['level']) || undefined,
+      language: language || undefined,
+      neighborhood: neighborhood || undefined,
+      format: (format as DiscoveryFilters['format']) || undefined,
+      open_now: availability.has('open_now') ? 'true' : undefined,
+      drop_in: availability.has('drop_in') ? 'true' : undefined
+    };
+
+    if (onUpdateFilters) {
+      onUpdateFilters(nextFilters);
+      return;
+    }
+
     const source = typeof window === 'undefined' ? searchParams.toString() : window.location.search;
     const next = new URLSearchParams(source);
     const setOrDelete = (key: string, value: string | undefined) => {
@@ -170,6 +212,11 @@ export function FilterBar({
   };
 
   const resetFilters = () => {
+    if (onResetFilters) {
+      onResetFilters();
+      return;
+    }
+
     const source = typeof window === 'undefined' ? searchParams.toString() : window.location.search;
     const next = new URLSearchParams(source);
     ['date', 'weekday', 'time_bucket', 'category', 'style', 'level', 'language', 'neighborhood', 'format', 'open_now', 'drop_in', 'page'].forEach((key) =>

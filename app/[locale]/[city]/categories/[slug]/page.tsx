@@ -1,13 +1,11 @@
 import { notFound } from 'next/navigation';
 import { SessionCard } from '@/components/discovery/SessionCard';
 import { ServerButtonLink } from '@/components/ui/server';
-import { getSessionUser } from '@/lib/auth/session';
 import { resolveSessionCardData } from '@/lib/catalog/session-card-data';
 import { getCategory, getCategorySessions } from '@/lib/catalog/server-data';
 import { requirePublicCityServer } from '@/lib/catalog/guards';
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
-import { getRuntimeCapabilities } from '@/lib/runtime/capabilities';
 
 export default async function CategoryPage({ params }: { params: Promise<{ locale: string; city: string; slug: string }> }) {
   const { locale: rawLocale, city: citySlug, slug } = await params;
@@ -16,7 +14,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ local
   await requirePublicCityServer(citySlug);
   const [category, sessions] = await Promise.all([getCategory(slug), getCategorySessions(citySlug, slug)]);
   if (!category || category.visibility === 'hidden') notFound();
-  const [user, resolvedSessions, runtimeCapabilities] = await Promise.all([getSessionUser(), resolveSessionCardData(sessions), getRuntimeCapabilities()]);
+  const resolvedSessions = await resolveSessionCardData(sessions);
   const labels = locale === 'it' ? { category: 'Categoria' } : { category: 'Category' };
 
   return (
@@ -35,15 +33,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ local
       <section className="panel">
         <div className="stack-list">
           {sessions.map((session) => (
-            <SessionCard
-              key={session.id}
-              session={session}
-              locale={locale}
-              resolved={resolvedSessions.get(session.id)!}
-              signedInEmail={user?.email}
-              scheduleLabel={dict.saveSchedule}
-              runtimeCapabilities={runtimeCapabilities}
-            />
+            <SessionCard key={session.id} session={session} locale={locale} resolved={resolvedSessions.get(session.id)!} scheduleLabel={dict.saveSchedule} />
           ))}
         </div>
       </section>

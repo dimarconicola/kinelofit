@@ -24,6 +24,7 @@
     "test:coverage": "vitest run --coverage",
     "catalog:bootstrap": "node --import tsx scripts/bootstrap-catalog.ts",
     "smoke:routes": "node --import tsx scripts/smoke-routes.ts",
+    "perf:check": "node --import tsx scripts/perf-check.ts",
     "readiness": "node --import tsx scripts/check-readiness.ts",
     "freshness:run": "node --import tsx scripts/run-freshness.ts",
     "freshness:report": "node --import tsx scripts/report-freshness-ops.ts",

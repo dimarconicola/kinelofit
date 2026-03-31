@@ -5,49 +5,35 @@ import { SessionCard } from '@/components/discovery/SessionCard';
 import { LoopVideo } from '@/components/media/LoopVideo';
 import { StatCard } from '@/components/admin/StatCard';
 import { ServerButtonLink, ServerCardLink, ServerLink } from '@/components/ui/server';
-import { getSessionUser } from '@/lib/auth/session';
-import { applySessionFilters } from '@/lib/catalog/filters';
-import { getCatalogSnapshot } from '@/lib/catalog/repository';
-import { resolveSessionCardDataFromSnapshot } from '@/lib/catalog/session-card-data';
+import { applyPublicCityFilters, publicSnapshotToCatalog } from '@/lib/catalog/public-models';
+import { getPublicCitySnapshot } from '@/lib/catalog/public-read-models';
+import { resolveSessionCardDataFromSnapshot } from '@/lib/catalog/session-card-data.shared';
 import { getLocaleLabel } from '@/lib/catalog/server-data';
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
-import { pexelsVideos } from '@/lib/media/pexels-videos';
-import { getRuntimeCapabilities } from '@/lib/runtime/capabilities';
+import { publicVideos } from '@/lib/media/public-videos';
 
 export default async function CityPage({ params }: { params: Promise<{ locale: string; city: string }> }) {
   const { locale: rawLocale, city: citySlug } = await params;
   const locale = resolveLocale(rawLocale);
   const dict = getDictionary(locale);
-  const catalog = await getCatalogSnapshot();
-  const city = catalog.cities.find((item) => item.slug === citySlug);
-  if (!city || city.status !== 'public') {
-    notFound();
-  }
-  const categories = catalog.categories.filter((item) => item.citySlug === citySlug && item.visibility !== 'hidden');
-  const neighborhoods = catalog.neighborhoods.filter((item) => item.citySlug === citySlug);
-  const collections = catalog.collections.filter((item) => item.citySlug === citySlug);
-  const instructors = catalog.instructors
-    .filter((item) => item.citySlug === citySlug)
-    .sort((left, right) => left.name.localeCompare(right.name, 'it', { sensitivity: 'base' }));
-  const visibleCategorySlugs = new Set(categories.map((item) => item.slug));
-  const visibleSessions = catalog.sessions.filter(
-    (session) => session.citySlug === citySlug && session.verificationStatus !== 'hidden' && visibleCategorySlugs.has(session.categorySlug)
-  );
-  const weekSessions = applySessionFilters(visibleSessions, { date: 'week' });
+  const snapshot = await getPublicCitySnapshot(citySlug);
+  if (!snapshot) notFound();
+  const city = snapshot.city;
+  const categories = snapshot.categories;
+  const neighborhoods = snapshot.neighborhoods;
+  const collections = snapshot.collections;
+  const instructors = snapshot.instructors;
+  const weekSessions = applyPublicCityFilters(snapshot, { date: 'week' });
   const featuredSessionPreview = weekSessions.slice(0, 4);
-  const cityVenues = catalog.venues.filter((venue) => venue.citySlug === citySlug);
+  const cityVenues = snapshot.venues;
   const metrics = {
-    venues: cityVenues.length,
-    sessions: weekSessions.length,
-    neighborhoods: new Set(cityVenues.map((venue) => venue.neighborhoodSlug)).size,
-    styles: new Set(weekSessions.map((session) => session.styleSlug)).size
+    venues: snapshot.metrics.venues,
+    sessions: snapshot.metrics.sessions,
+    neighborhoods: snapshot.metrics.neighborhoods,
+    styles: snapshot.metrics.styles
   };
-  const [user, resolvedFeaturedSessions, runtimeCapabilities] = await Promise.all([
-    getSessionUser(),
-    Promise.resolve(resolveSessionCardDataFromSnapshot(catalog, featuredSessionPreview)),
-    getRuntimeCapabilities()
-  ]);
+  const resolvedFeaturedSessions = resolveSessionCardDataFromSnapshot(publicSnapshotToCatalog(snapshot), featuredSessionPreview);
   const copy =
     locale === 'it'
       ? {
@@ -144,9 +130,7 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
                 session={session}
                 locale={locale}
                 resolved={resolvedFeaturedSessions.get(session.id)!}
-                signedInEmail={user?.email}
                 scheduleLabel={dict.saveSchedule}
-                runtimeCapabilities={runtimeCapabilities}
               />
             ))}
           </div>
@@ -163,10 +147,10 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
             </div>
             <div className="city-motion-grid" aria-hidden="true">
               <div className="city-motion-media city-motion-media-tall">
-                <LoopVideo src={pexelsVideos.stretching} label="Stretching class" poster="/home-hero.jpg" className="city-motion-video" />
+                <LoopVideo asset={publicVideos.stretching} label="Stretching class" className="city-motion-video" />
               </div>
               <div className="city-motion-media">
-                <LoopVideo src={pexelsVideos.aerial} label="Aerial practice" poster="/home-hero.jpg" className="city-motion-video" />
+                <LoopVideo asset={publicVideos.aerial} label="Aerial practice" className="city-motion-video" />
               </div>
             </div>
           </div>

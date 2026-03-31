@@ -3,36 +3,35 @@
 import NextLink from 'next/link';
 
 import { SessionCard } from '@/components/discovery/SessionCard';
-import type { ResolvedSessionCardData } from '@/lib/catalog/session-card-data';
+import type { ResolvedSessionCardData } from '@/lib/catalog/session-card-data.shared';
 import type { Locale, Session } from '@/lib/catalog/types';
-import type { RuntimeCapabilities } from '@/lib/runtime/capabilities';
 
 interface ListResultsViewProps {
   locale: Locale;
   pagedSessions: Session[];
   resolvedSessionCards: Record<string, ResolvedSessionCardData>;
-  signedInEmail?: string;
   scheduleLabel: string;
-  runtimeCapabilities: RuntimeCapabilities;
   noResultsLabel: string;
   totalPages: number;
   currentPage: number;
   prevHref?: string;
   nextHref?: string;
+  onPrevPage?: () => void;
+  onNextPage?: () => void;
 }
 
 export function ListResultsView({
   locale,
   pagedSessions,
   resolvedSessionCards,
-  signedInEmail,
   scheduleLabel,
-  runtimeCapabilities,
   noResultsLabel,
   totalPages,
   currentPage,
   prevHref,
-  nextHref
+  nextHref,
+  onPrevPage,
+  onNextPage
 }: ListResultsViewProps) {
   const labels =
     locale === 'it'
@@ -49,9 +48,7 @@ export function ListResultsView({
               session={session}
               locale={locale}
               resolved={resolvedSessionCards[session.id]}
-              signedInEmail={signedInEmail}
               scheduleLabel={scheduleLabel}
-              runtimeCapabilities={runtimeCapabilities}
             />
           ))
         ) : (
@@ -71,11 +68,19 @@ export function ListResultsView({
               <NextLink href={prevHref} className="button button-ghost">
                 {labels.previous}
               </NextLink>
+            ) : onPrevPage ? (
+              <button type="button" className="button button-ghost" onClick={onPrevPage}>
+                {labels.previous}
+              </button>
             ) : null}
             {nextHref ? (
               <NextLink href={nextHref} className="button button-primary">
                 {labels.next}
               </NextLink>
+            ) : onNextPage ? (
+              <button type="button" className="button button-primary" onClick={onNextPage}>
+                {labels.next}
+              </button>
             ) : null}
           </div>
         </section>

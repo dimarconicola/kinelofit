@@ -3,22 +3,21 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAuthStatus } from '@/components/providers/AuthStatusProvider';
 import { readStoredFavorites, syncStoredFavorite, toFavoriteKey, toggleStoredFavorite } from '@/components/state/storage';
 import { readApiErrorCode } from '@/lib/errors/api-client';
-import type { RuntimeCapabilities } from '@/lib/runtime/capabilities';
 
 interface FavoriteButtonProps {
   entitySlug: string;
   entityType: 'venue' | 'session' | 'instructor';
   locale: string;
-  signedInEmail?: string;
   label: string;
   savedLabel: string;
-  runtimeCapabilities?: RuntimeCapabilities;
 }
 
-export function FavoriteButton({ entitySlug, entityType, locale, signedInEmail, label, savedLabel, runtimeCapabilities }: FavoriteButtonProps) {
+export function FavoriteButton({ entitySlug, entityType, locale, label, savedLabel }: FavoriteButtonProps) {
   const router = useRouter();
+  const { signedInEmail, runtimeCapabilities, loading } = useAuthStatus();
   const [saved, setSaved] = useState(false);
   const [pending, setPending] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -58,6 +57,10 @@ export function FavoriteButton({ entitySlug, entityType, locale, signedInEmail, 
 
   const toggle = async () => {
     setNotice(null);
+
+    if (loading) {
+      return;
+    }
 
     if (runtimeCapabilities?.storeMode === 'unavailable' || runtimeCapabilities?.authMode === 'unavailable') {
       setNotice(copy.unavailable);

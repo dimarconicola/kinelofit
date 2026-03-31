@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect } from 'react';
+
 import { ErrorBoundary } from '@/lib/errors/boundary';
 import { setupGlobalErrorHandlers } from '@/lib/errors/global-handlers';
+import { AuthStatusProvider } from '@/components/providers/AuthStatusProvider';
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -19,7 +21,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 
   return (
     <ErrorBoundary>
-      {children}
+      <AuthStatusProvider>{children}</AuthStatusProvider>
     </ErrorBoundary>
   );
 }

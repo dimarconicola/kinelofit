@@ -5,35 +5,25 @@ import { DateTime } from 'luxon';
 import { SessionCard } from '@/components/discovery/SessionCard';
 import { FavoriteButton } from '@/components/state/FavoriteButton';
 import { ServerChip, ServerLink } from '@/components/ui/server';
-import { getSessionUser } from '@/lib/auth/session';
-import { resolveSessionCardData } from '@/lib/catalog/session-card-data';
-import { requirePublicCityServer } from '@/lib/catalog/guards';
-import { getInstructor, getInstructorSessions, getVenue } from '@/lib/catalog/server-data';
+import { publicSnapshotToCatalog } from '@/lib/catalog/public-models';
+import { getPublicCitySnapshot } from '@/lib/catalog/public-read-models';
+import { resolveSessionCardDataFromSnapshot } from '@/lib/catalog/session-card-data.shared';
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
-import { getRuntimeCapabilities } from '@/lib/runtime/capabilities';
 
 export default async function TeacherPage({ params }: { params: Promise<{ locale: string; city: string; slug: string }> }) {
   const { locale: rawLocale, city: citySlug, slug } = await params;
   const locale = resolveLocale(rawLocale);
   const dict = getDictionary(locale);
-  await requirePublicCityServer(citySlug);
-  const [instructor, user, runtimeCapabilities] = await Promise.all([getInstructor(slug), getSessionUser(), getRuntimeCapabilities()]);
+  const snapshot = await getPublicCitySnapshot(citySlug);
+  if (!snapshot) notFound();
+
+  const instructor = snapshot.instructors.find((item) => item.slug === slug && item.citySlug === citySlug);
   if (!instructor) notFound();
-  const sessions = (await getInstructorSessions(slug))
-    .sort((left, right) => left.startAt.localeCompare(right.startAt))
-    .slice(0, 20);
-  const resolvedSessions = await resolveSessionCardData(sessions);
-  const venueNameBySlug = new Map(
-    (
-      await Promise.all(
-        [...new Set(sessions.map((session) => session.venueSlug))].map(async (venueSlug) => {
-          const venue = await getVenue(venueSlug);
-          return [venueSlug, venue?.name] as const;
-        })
-      )
-    ).filter((entry): entry is readonly [string, string] => Boolean(entry[1]))
-  );
+
+  const sessions = snapshot.sessions.filter((session) => session.instructorSlug === slug).sort((left, right) => left.startAt.localeCompare(right.startAt)).slice(0, 20);
+  const resolvedSessions = resolveSessionCardDataFromSnapshot(publicSnapshotToCatalog(snapshot), sessions);
+  const venueNameBySlug = new Map(snapshot.venues.map((venue) => [venue.slug, venue.name] as const));
   const sessionsByDay = Object.values(
     sessions.reduce<Record<string, typeof sessions>>((groups, session) => {
       const key = DateTime.fromISO(session.startAt).setZone('Europe/Rome').toISODate();
@@ -106,15 +96,7 @@ export default async function TeacherPage({ params }: { params: Promise<{ locale
                 ))}
               </div>
               <div className="site-actions profile-links">
-                <FavoriteButton
-                  entitySlug={instructor.slug}
-                  entityType="instructor"
-                  locale={locale}
-                  signedInEmail={user?.email}
-                  label={teacherCopy.saveTeacher}
-                  savedLabel={teacherCopy.savedTeacher}
-                  runtimeCapabilities={runtimeCapabilities}
-                />
+                <FavoriteButton entitySlug={instructor.slug} entityType="instructor" locale={locale} label={teacherCopy.saveTeacher} savedLabel={teacherCopy.savedTeacher} />
                 {instructor.socialLinks?.map((link) => (
                   <ServerLink key={link.href} href={link.href} target="_blank" rel="noreferrer" className="button button-ghost">
                     {link.label[locale]}
@@ -132,7 +114,7 @@ export default async function TeacherPage({ params }: { params: Promise<{ locale
               ? 'La fiducia locale nasce dalle persone: didattica, linguaggi, continuita e relazione con gli studi.'
               : 'Local trust is person-led: teaching style, language access, consistency, and venue relationships.'}
           </p>
-            <div className="classes-stat-grid profile-metrics">
+          <div className="classes-stat-grid profile-metrics">
             <div className="classes-stat-card">
               <strong>{sessions.length}</strong>
               <span>{teacherCopy.sessions}</span>
@@ -145,19 +127,19 @@ export default async function TeacherPage({ params }: { params: Promise<{ locale
               <strong>{instructor.languages.length}</strong>
               <span>{teacherCopy.languages}</span>
             </div>
-            </div>
-            {instructor.socialLinks?.length ? (
-              <div className="teacher-social-block">
-                <p className="eyebrow">{teacherCopy.social}</p>
-                <div className="teacher-social-links">
-                  {instructor.socialLinks.map((link) => (
-                    <ServerLink key={`${instructor.slug}-${link.href}`} href={link.href} target="_blank" rel="noreferrer" className="inline-link">
-                      {teacherCopy.openExternal}: {link.label[locale]}
-                    </ServerLink>
-                  ))}
-                </div>
+          </div>
+          {instructor.socialLinks?.length ? (
+            <div className="teacher-social-block">
+              <p className="eyebrow">{teacherCopy.social}</p>
+              <div className="teacher-social-links">
+                {instructor.socialLinks.map((link) => (
+                  <ServerLink key={`${instructor.slug}-${link.href}`} href={link.href} target="_blank" rel="noreferrer" className="inline-link">
+                    {teacherCopy.openExternal}: {link.label[locale]}
+                  </ServerLink>
+                ))}
               </div>
-            ) : null}
+            </div>
+          ) : null}
         </div>
       </section>
       <section className="panel">
@@ -184,15 +166,7 @@ export default async function TeacherPage({ params }: { params: Promise<{ locale
                 </div>
                 <div className="session-day-stack">
                   {daySessions.map((session) => (
-                    <SessionCard
-                      key={session.id}
-                      session={session}
-                      locale={locale}
-                      resolved={resolvedSessions.get(session.id)!}
-                      signedInEmail={user?.email}
-                      scheduleLabel={dict.saveSchedule}
-                      runtimeCapabilities={runtimeCapabilities}
-                    />
+                    <SessionCard key={session.id} session={session} locale={locale} resolved={resolvedSessions.get(session.id)!} scheduleLabel={dict.saveSchedule} />
                   ))}
                 </div>
               </section>

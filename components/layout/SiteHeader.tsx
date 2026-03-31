@@ -6,17 +6,18 @@ import { useState } from 'react';
 
 import { switchLocalePath } from '@/lib/i18n/routing';
 import type { Locale } from '@/lib/catalog/types';
+import { useAuthStatus } from '@/components/providers/AuthStatusProvider';
 
 interface SiteHeaderProps {
   locale: Locale;
   dict: Record<string, string>;
-  signedInEmail?: string;
 }
 
-export function SiteHeader({ locale, dict, signedInEmail }: SiteHeaderProps) {
+export function SiteHeader({ locale, dict }: SiteHeaderProps) {
   const pathname = usePathname();
   const alternate = locale === 'en' ? 'it' : 'en';
   const [menuOpen, setMenuOpen] = useState(false);
+  const { signedInEmail, loading } = useAuthStatus();
   const menuCopy = locale === 'it' ? { open: 'Menu', close: 'Chiudi' } : { open: 'Menu', close: 'Close' };
 
   const navItems = [
@@ -60,6 +61,10 @@ export function SiteHeader({ locale, dict, signedInEmail }: SiteHeaderProps) {
                 </button>
               </form>
             </div>
+          ) : loading ? (
+            <span className="button button-ghost button-signin" aria-hidden="true">
+              {dict.signIn}
+            </span>
           ) : (
             <NextLink href={`/${locale}/sign-in`} className="button button-signin">
               {dict.signIn}
@@ -97,7 +102,7 @@ export function SiteHeader({ locale, dict, signedInEmail }: SiteHeaderProps) {
                 </button>
               </form>
             </div>
-          ) : (
+          ) : loading ? null : (
             <NextLink href={`/${locale}/sign-in`} className="button button-signin mobile-nav-action" onClick={() => setMenuOpen(false)}>
               {dict.signIn}
             </NextLink>

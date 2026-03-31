@@ -2,25 +2,21 @@ import { notFound } from 'next/navigation';
 import { MapPanel } from '@/components/discovery/MapPanel';
 import { SessionCard } from '@/components/discovery/SessionCard';
 import { ServerButtonLink } from '@/components/ui/server';
-import { getSessionUser } from '@/lib/auth/session';
 import { resolveSessionCardData } from '@/lib/catalog/session-card-data';
 import { requirePublicCityServer } from '@/lib/catalog/guards';
 import { getNeighborhoodSessions, getNeighborhoods, getVenue } from '@/lib/catalog/server-data';
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
-import { getRuntimeCapabilities } from '@/lib/runtime/capabilities';
 import { getMapRenderMode } from '@/lib/map/runtime';
 
 export default async function NeighborhoodPage({ params }: { params: Promise<{ locale: string; city: string; slug: string }> }) {
   const { locale: rawLocale, city: citySlug, slug } = await params;
   const locale = resolveLocale(rawLocale);
   const dict = getDictionary(locale);
-  const [city, neighborhoods, sessions, user, runtimeCapabilities] = await Promise.all([
+  const [city, neighborhoods, sessions] = await Promise.all([
     requirePublicCityServer(citySlug),
     getNeighborhoods(citySlug),
-    getNeighborhoodSessions(citySlug, slug),
-    getSessionUser(),
-    getRuntimeCapabilities()
+    getNeighborhoodSessions(citySlug, slug)
   ]);
   const neighborhood = neighborhoods.find((item) => item.slug === slug);
   if (!neighborhood) notFound();
@@ -45,15 +41,7 @@ export default async function NeighborhoodPage({ params }: { params: Promise<{ l
       <section className="collection-layout">
         <div className="stack-list">
           {sessions.map((session) => (
-            <SessionCard
-              key={session.id}
-              session={session}
-              locale={locale}
-              resolved={resolvedSessions.get(session.id)!}
-              signedInEmail={user?.email}
-              scheduleLabel={dict.saveSchedule}
-              runtimeCapabilities={runtimeCapabilities}
-            />
+            <SessionCard key={session.id} session={session} locale={locale} resolved={resolvedSessions.get(session.id)!} scheduleLabel={dict.saveSchedule} />
           ))}
         </div>
         <MapPanel locale={locale} cityName={city.name[locale]} venues={venues} bounds={city.bounds} renderMode={getMapRenderMode()} />

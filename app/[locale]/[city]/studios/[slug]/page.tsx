@@ -6,35 +6,29 @@ import { ClaimFormDialog } from '@/components/forms/ClaimFormDialog';
 import { SessionCard } from '@/components/discovery/SessionCard';
 import { FavoriteButton } from '@/components/state/FavoriteButton';
 import { ServerButtonLink, ServerChip, ServerLink } from '@/components/ui/server';
-import { getSessionUser } from '@/lib/auth/session';
-import { getCatalogSnapshot } from '@/lib/catalog/repository';
-import { resolveSessionCardDataFromSnapshot } from '@/lib/catalog/session-card-data';
+import { getPublicCitySnapshot } from '@/lib/catalog/public-read-models';
+import { publicSnapshotToCatalog } from '@/lib/catalog/public-models';
+import { resolveSessionCardDataFromSnapshot } from '@/lib/catalog/session-card-data.shared';
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
-import { getRuntimeCapabilities } from '@/lib/runtime/capabilities';
 import { formatVerifiedAt } from '@/lib/ui/format';
 
 export default async function StudioPage({ params }: { params: Promise<{ locale: string; city: string; slug: string }> }) {
   const { locale: rawLocale, city: citySlug, slug } = await params;
   const locale = resolveLocale(rawLocale);
   const dict = getDictionary(locale);
-  const catalog = await getCatalogSnapshot();
-  const city = catalog.cities.find((item) => item.slug === citySlug);
-  if (!city || city.status !== 'public') notFound();
-  const venue = catalog.venues.find((item) => item.slug === slug && item.citySlug === citySlug);
+  const snapshot = await getPublicCitySnapshot(citySlug);
+  if (!snapshot) notFound();
+  const venue = snapshot.venues.find((item) => item.slug === slug && item.citySlug === citySlug);
   if (!venue) notFound();
 
-  const neighborhoods = catalog.neighborhoods.filter((item) => item.citySlug === citySlug);
-  const venueSessions = catalog.sessions.filter((session) => session.venueSlug === slug);
+  const neighborhoods = snapshot.neighborhoods;
+  const venueSessions = snapshot.sessions.filter((session) => session.venueSlug === slug);
   const neighborhood = neighborhoods.find((item) => item.slug === venue.neighborhoodSlug);
   const sessions = venueSessions
     .sort((left, right) => left.startAt.localeCompare(right.startAt))
     .slice(0, 20);
-  const [user, resolvedSessions, runtimeCapabilities] = await Promise.all([
-    getSessionUser(),
-    Promise.resolve(resolveSessionCardDataFromSnapshot(catalog, sessions)),
-    getRuntimeCapabilities()
-  ]);
+  const resolvedSessions = resolveSessionCardDataFromSnapshot(publicSnapshotToCatalog(snapshot), sessions);
   const groupedSessions = Object.values(
     sessions.reduce<Record<string, typeof sessions>>((groups, session) => {
       const key = DateTime.fromISO(session.startAt).setZone('Europe/Rome').toISODate();
@@ -100,10 +94,8 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
                   entitySlug={venue.slug}
                   entityType="venue"
                   locale={locale}
-                  signedInEmail={user?.email}
                   label={profileCopy.saveStudio}
                   savedLabel={profileCopy.savedStudio}
-                  runtimeCapabilities={runtimeCapabilities}
                 />
                 {hasWebsite ? (
                   <ServerButtonLink href={venue.sourceUrl} className="button-secondary" target="_blank" rel="noreferrer">
@@ -176,9 +168,7 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
                       session={session}
                       locale={locale}
                       resolved={resolvedSessions.get(session.id)!}
-                      signedInEmail={user?.email}
                       scheduleLabel={dict.saveSchedule}
-                      runtimeCapabilities={runtimeCapabilities}
                     />
                   ))}
                 </div>

@@ -4,9 +4,8 @@ import { notFound } from 'next/navigation';
 import { StudiosDirectoryClient, type StudioDirectoryCard } from '@/components/discovery/StudiosDirectoryClient';
 import { VenueCover } from '@/components/catalog/VenueCover';
 import { ServerButtonLink, ServerCardLink } from '@/components/ui/server';
-import { getCatalogSnapshot } from '@/lib/catalog/repository';
-import { applySessionFilters } from '@/lib/catalog/filters';
-import { buildMapVenueSummaries } from '@/lib/map/venue-summaries';
+import { applyPublicCityFilters, buildFilteredMapVenueSummaries } from '@/lib/catalog/public-models';
+import { getPublicCitySnapshot } from '@/lib/catalog/public-read-models';
 import { getMapRenderMode } from '@/lib/map/runtime';
 import { resolveLocale } from '@/lib/i18n/routing';
 
@@ -26,40 +25,24 @@ export default async function StudiosIndexPage({
   const requestedVenue = typeof rawSearch.venue === 'string' ? rawSearch.venue : undefined;
   const initialView = isStudiosView(requestedView) ? requestedView : 'list';
 
-  const catalog = await getCatalogSnapshot();
-  const city = catalog.cities.find((item) => item.slug === citySlug && item.status === 'public');
-  if (!city) notFound();
+  const snapshot = await getPublicCitySnapshot(citySlug);
+  if (!snapshot) notFound();
 
-  const venues = catalog.venues
-    .filter((venue) => venue.citySlug === citySlug)
-    .sort((left, right) => left.name.localeCompare(right.name, locale === 'it' ? 'it' : 'en', { sensitivity: 'base' }));
-  const neighborhoods = catalog.neighborhoods.filter((item) => item.citySlug === citySlug);
-  const styles = catalog.styles;
-  const bookingTargets = catalog.bookingTargets;
-  const visibleCategorySlugs = new Set(
-    catalog.categories.filter((category) => category.citySlug === citySlug && category.visibility !== 'hidden').map((category) => category.slug)
-  );
-  const visibleSessions = catalog.sessions.filter(
-    (session) => session.citySlug === citySlug && session.verificationStatus !== 'hidden' && visibleCategorySlugs.has(session.categorySlug)
-  );
-  const weekSessions = applySessionFilters(visibleSessions, { date: 'week' });
-  const mapVenueSummaries = buildMapVenueSummaries({
-    locale,
-    citySlug,
-    sessions: weekSessions,
-    venues,
-    neighborhoods,
-    instructors: catalog.instructors.filter((instructor) => instructor.citySlug === citySlug),
-    styles,
-    bookingTargets
-  });
+  const city = snapshot.city;
+  const venues = snapshot.venues;
+  const neighborhoods = snapshot.neighborhoods;
+  const styles = snapshot.styles;
+  const weekSessions = applyPublicCityFilters(snapshot, { date: 'week' });
+  const mapVenueSummaries = buildFilteredMapVenueSummaries({ snapshot, locale, sessions: weekSessions });
   const summaryBySlug = new Map(mapVenueSummaries.map((summary) => [summary.venueSlug, summary]));
+  const studioSummaryBySlug = new Map(snapshot.studioSummaries.map((summary) => [summary.venueSlug, summary] as const));
   const styleBySlug = new Map(styles.map((style) => [style.slug, style.name[locale]]));
 
   const cards: StudioDirectoryCard[] = venues.map((venue) => {
     const summary = summaryBySlug.get(venue.slug);
-    const nextSessionLabel = summary?.nextSession
-      ? DateTime.fromISO(summary.nextSession.startAt).setZone('Europe/Rome').toFormat(locale === 'it' ? 'ccc d LLL · HH:mm' : 'ccc d LLL · HH:mm')
+    const studioSummary = studioSummaryBySlug.get(venue.slug);
+    const nextSessionLabel = studioSummary?.nextSessionStartAt
+      ? DateTime.fromISO(studioSummary.nextSessionStartAt).setZone('Europe/Rome').toFormat(locale === 'it' ? 'ccc d LLL · HH:mm' : 'ccc d LLL · HH:mm')
       : undefined;
 
     return {
@@ -68,7 +51,7 @@ export default async function StudiosIndexPage({
       neighborhoodName: neighborhoods.find((item) => item.slug === venue.neighborhoodSlug)?.name[locale] ?? venue.address,
       address: venue.address,
       tagline: venue.tagline[locale],
-      sessionCount: summary?.matchingSessionCount ?? 0,
+      sessionCount: studioSummary?.sessionCount ?? 0,
       nextSessionLabel,
       styles: venue.styleSlugs.map((slug) => styleBySlug.get(slug)).filter((value): value is string => Boolean(value)).slice(0, 3),
       studioHref: `/${locale}/${citySlug}/studios/${venue.slug}`,

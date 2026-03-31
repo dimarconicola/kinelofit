@@ -130,7 +130,11 @@ export const sessions = pgTable('sessions', {
 }, (table) => ({
   cityIndex: index('sessions_city_idx').on(table.citySlug),
   venueIndex: index('sessions_venue_idx').on(table.venueSlug),
-  startIndex: index('sessions_start_idx').on(table.startAt)
+  startIndex: index('sessions_start_idx').on(table.startAt),
+  cityStatusStartIndex: index('sessions_city_status_start_idx').on(table.citySlug, table.verificationStatus, table.startAt),
+  instructorIndex: index('sessions_instructor_idx').on(table.instructorSlug),
+  categoryIndex: index('sessions_category_idx').on(table.categorySlug),
+  styleIndex: index('sessions_style_idx').on(table.styleSlug)
 }));
 
 export const editorialCollections = pgTable('editorial_collections', {
@@ -142,6 +146,32 @@ export const editorialCollections = pgTable('editorial_collections', {
   cta: jsonb('cta').$type<Record<'en' | 'it', string>>().notNull(),
   kind: varchar('kind', { length: 32 }).notNull()
 });
+
+export const publicCitySnapshots = pgTable('public_city_snapshots', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  citySlug: varchar('city_slug', { length: 80 }).notNull(),
+  version: integer('version').notNull(),
+  hash: varchar('hash', { length: 64 }).notNull(),
+  payloadJson: jsonb('payload_json').$type<Record<string, unknown>>().notNull(),
+  builtAt: timestamp('built_at', { withTimezone: true }).defaultNow().notNull()
+}, (table) => ({
+  cityIndex: index('public_city_snapshots_city_idx').on(table.citySlug),
+  cityBuiltIndex: index('public_city_snapshots_city_built_idx').on(table.citySlug, table.builtAt),
+  cityVersionUnique: uniqueIndex('public_city_snapshots_city_version_uidx').on(table.citySlug, table.version)
+}));
+
+export const publicCitySearchIndexes = pgTable('public_city_search_indexes', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  citySlug: varchar('city_slug', { length: 80 }).notNull(),
+  version: integer('version').notNull(),
+  hash: varchar('hash', { length: 64 }).notNull(),
+  payloadJson: jsonb('payload_json').$type<Record<string, unknown>>().notNull(),
+  builtAt: timestamp('built_at', { withTimezone: true }).defaultNow().notNull()
+}, (table) => ({
+  cityIndex: index('public_city_search_indexes_city_idx').on(table.citySlug),
+  cityBuiltIndex: index('public_city_search_indexes_city_built_idx').on(table.citySlug, table.builtAt),
+  cityVersionUnique: uniqueIndex('public_city_search_indexes_city_version_uidx').on(table.citySlug, table.version)
+}));
 
 export const favorites = pgTable('favorites', {
   id: uuid('id').defaultRandom().primaryKey(),
