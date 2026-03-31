@@ -32,28 +32,40 @@ const revalidatePublicCityTags = (citySlug: string) => {
   }
 };
 
+const withReadModelFallback = async <T>(action: () => Promise<T | null>, fallback: T | null = null) => {
+  try {
+    return await action();
+  } catch {
+    return fallback;
+  }
+};
+
 const loadLatestSnapshotRow = async (citySlug: string) => {
   const db = getDb();
   if (!db) return null;
-  const [row] = await db
-    .select({ payloadJson: publicCitySnapshots.payloadJson })
-    .from(publicCitySnapshots)
-    .where(eq(publicCitySnapshots.citySlug, citySlug))
-    .orderBy(desc(publicCitySnapshots.builtAt))
-    .limit(1);
-  return row ? (row.payloadJson as unknown as PublicCitySnapshot) : null;
+  return withReadModelFallback(async () => {
+    const [row] = await db
+      .select({ payloadJson: publicCitySnapshots.payloadJson })
+      .from(publicCitySnapshots)
+      .where(eq(publicCitySnapshots.citySlug, citySlug))
+      .orderBy(desc(publicCitySnapshots.builtAt))
+      .limit(1);
+    return row ? (row.payloadJson as unknown as PublicCitySnapshot) : null;
+  });
 };
 
 const loadLatestSearchIndexRow = async (citySlug: string) => {
   const db = getDb();
   if (!db) return null;
-  const [row] = await db
-    .select({ payloadJson: publicCitySearchIndexes.payloadJson })
-    .from(publicCitySearchIndexes)
-    .where(eq(publicCitySearchIndexes.citySlug, citySlug))
-    .orderBy(desc(publicCitySearchIndexes.builtAt))
-    .limit(1);
-  return row ? (row.payloadJson as unknown as PublicCitySearchIndex) : null;
+  return withReadModelFallback(async () => {
+    const [row] = await db
+      .select({ payloadJson: publicCitySearchIndexes.payloadJson })
+      .from(publicCitySearchIndexes)
+      .where(eq(publicCitySearchIndexes.citySlug, citySlug))
+      .orderBy(desc(publicCitySearchIndexes.builtAt))
+      .limit(1);
+    return row ? (row.payloadJson as unknown as PublicCitySearchIndex) : null;
+  });
 };
 
 const buildFallbackSnapshot = async (citySlug: string) => {
@@ -95,11 +107,14 @@ export const getPublicCitySearchIndex = async (citySlug: string) =>
 const getNextVersion = async (citySlug: string) => {
   const db = getDb();
   if (!db) return 1;
-  const [latest] = await db
-    .select({ version: max(publicCitySnapshots.version) })
-    .from(publicCitySnapshots)
-    .where(eq(publicCitySnapshots.citySlug, citySlug));
-  return (latest?.version ?? 0) + 1;
+  const latest = await withReadModelFallback(async () => {
+    const [row] = await db
+      .select({ version: max(publicCitySnapshots.version) })
+      .from(publicCitySnapshots)
+      .where(eq(publicCitySnapshots.citySlug, citySlug));
+    return row?.version ?? 0;
+  }, 0);
+  return (latest ?? 0) + 1;
 };
 
 export const rebuildPublicCityReadModels = async (citySlug: string) => {
@@ -121,19 +136,22 @@ export const rebuildPublicCityReadModels = async (citySlug: string) => {
 
   if (db) {
     const builtAt = new Date(nextSnapshot.builtAt);
-    await db.insert(publicCitySnapshots).values({
-      citySlug,
-      version: nextSnapshot.version,
-      hash: nextSnapshot.hash,
-      payloadJson: nextSnapshot as unknown as Record<string, unknown>,
-      builtAt
-    });
-    await db.insert(publicCitySearchIndexes).values({
-      citySlug,
-      version: searchIndex.version,
-      hash: searchIndex.hash,
-      payloadJson: searchIndex as unknown as Record<string, unknown>,
-      builtAt
+    await withReadModelFallback(async () => {
+      await db.insert(publicCitySnapshots).values({
+        citySlug,
+        version: nextSnapshot.version,
+        hash: nextSnapshot.hash,
+        payloadJson: nextSnapshot as unknown as Record<string, unknown>,
+        builtAt
+      });
+      await db.insert(publicCitySearchIndexes).values({
+        citySlug,
+        version: searchIndex.version,
+        hash: searchIndex.hash,
+        payloadJson: searchIndex as unknown as Record<string, unknown>,
+        builtAt
+      });
+      return true;
     });
   }
 
