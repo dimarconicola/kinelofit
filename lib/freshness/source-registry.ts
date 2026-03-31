@@ -30,6 +30,7 @@ const adapterForUrl = (sourceUrl: string) => {
   if (key.includes('centroculturarishi.it/corsi')) return 'rishi-corsi';
   if (key.includes('taijistudiopalermo.it')) return 'taiji-home';
   if (key.includes('barbarafaludiyoga.com/corsi-in-studio')) return 'barbara-wix';
+  if (key.includes('diariapalermo.org/corsi/calendario')) return 'diaria-calendar';
   return undefined;
 };
 

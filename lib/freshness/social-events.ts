@@ -140,6 +140,49 @@ const extractLines = (html: string) =>
     .map((line) => stripAccents(line).replace(/\s+/g, ' ').trim())
     .filter(Boolean);
 
+const collectJsonLdStrings = (value: unknown, output: string[]) => {
+  if (typeof value === 'string') {
+    const normalized = stripAccents(value).replace(/\s+/g, ' ').trim();
+    if (normalized) output.push(normalized);
+    return;
+  }
+
+  if (Array.isArray(value)) {
+    for (const item of value) collectJsonLdStrings(item, output);
+    return;
+  }
+
+  if (value && typeof value === 'object') {
+    for (const entry of Object.values(value as Record<string, unknown>)) {
+      collectJsonLdStrings(entry, output);
+    }
+  }
+};
+
+const extractMetaAndStructuredLines = (html: string) => {
+  const lines: string[] = [];
+  const metaPattern = /<meta[^>]+(?:property|name)=["'](?:og:title|og:description|description)["'][^>]+content=["']([^"']+)["'][^>]*>/gi;
+  let metaMatch: RegExpExecArray | null;
+
+  while ((metaMatch = metaPattern.exec(html)) !== null) {
+    const text = stripAccents(metaMatch[1]).replace(/\s+/g, ' ').trim();
+    if (text) lines.push(text);
+  }
+
+  const jsonLdPattern = /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  let jsonLdMatch: RegExpExecArray | null;
+  while ((jsonLdMatch = jsonLdPattern.exec(html)) !== null) {
+    try {
+      const payload = JSON.parse(jsonLdMatch[1]);
+      collectJsonLdStrings(payload, lines);
+    } catch {
+      continue;
+    }
+  }
+
+  return lines;
+};
+
 const normalizeTime = (raw: string) => {
   const match = raw.match(/([0-2]?\d)\s*[:.,h]\s*([0-5]\d)/i);
   if (!match) return null;
@@ -258,7 +301,7 @@ export const extractSourceEventCandidates = (sourceUrl: string, html: string, re
   if (!defaults) return [];
 
   const reference = DateTime.fromISO(referenceIso, { zone: 'Europe/Rome' });
-  const lines = extractLines(html);
+  const lines = [...extractLines(html), ...extractMetaAndStructuredLines(html)];
   const candidates = new Map<string, SourceEventCandidatePayload>();
 
   for (let index = 0; index < lines.length; index += 1) {

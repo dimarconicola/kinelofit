@@ -91,6 +91,7 @@ const generated = palermoCatalog as {
 };
 
 const diariaCalendarSource = 'https://www.diariapalermo.org/corsi/calendario/';
+const diariaVerifiedAt = '2026-03-31T12:00:00+02:00';
 const venueImagesVerifiedAt = '2026-03-14T12:00:00+01:00';
 
 const venueCoverImages: Partial<Record<string, VenueImage>> = {
@@ -577,6 +578,18 @@ const instructorMedia: Partial<Record<string, Pick<Instructor, 'headshot' | 'soc
   },
   'diaria-ceroda': {
     socialLinks: diariaInstructorLinks
+  },
+  'diaria-alessandra': {
+    socialLinks: diariaInstructorLinks
+  },
+  'diaria-laura': {
+    socialLinks: diariaInstructorLinks
+  },
+  'diaria-soad': {
+    socialLinks: diariaInstructorLinks
+  },
+  'diaria-giuseppe': {
+    socialLinks: diariaInstructorLinks
   }
 };
 
@@ -746,6 +759,78 @@ const extraStyles: Style[] = [
       'Capoeira classes for children blending rhythm, coordination, and play.',
       'Lezioni di capoeira per bambini tra ritmo, coordinazione e gioco.'
     )
+  },
+  {
+    slug: 'gyrokinesis',
+    categorySlug: 'movement',
+    name: buildLocalized('Gyrokinesis', 'Gyrokinesis'),
+    description: buildLocalized(
+      'Breath-led spinal mobility and circular movement work in a small-group format.',
+      'Lavoro di mobilita della colonna e movimento circolare guidato dal respiro, in piccolo gruppo.'
+    )
+  },
+  {
+    slug: 'feldenkrais',
+    categorySlug: 'movement',
+    name: buildLocalized('Feldenkrais', 'Feldenkrais'),
+    description: buildLocalized(
+      'Awareness-through-movement lessons focused on ease, coordination, and gentle re-patterning.',
+      'Lezioni di consapevolezza attraverso il movimento focalizzate su agio, coordinazione e riorganizzazione dolce.'
+    )
+  },
+  {
+    slug: 'soft-pilates-senior',
+    categorySlug: 'pilates',
+    name: buildLocalized('Soft Pilates Senior', 'Soft pilates senior'),
+    description: buildLocalized(
+      'Accessible pilates for older adults combining posture, mobility, and low-impact dance elements.',
+      'Pilates accessibile per adulti senior, tra postura, mobilita ed elementi di danza a basso impatto.'
+    )
+  },
+  {
+    slug: 'rumba-flamenca',
+    categorySlug: 'movement',
+    name: buildLocalized('Rumba Flamenca', 'Rumba flamenca'),
+    description: buildLocalized(
+      'Rhythm-led flamenco movement practice oriented to adults and improvers.',
+      'Pratica di movimento ispirata alla rumba flamenca, orientata ad adulti e livelli improver.'
+    )
+  },
+  {
+    slug: 'functional-training',
+    categorySlug: 'movement',
+    name: buildLocalized('Functional Training', 'Functional training'),
+    description: buildLocalized(
+      'Strength and mobility conditioning in a class-led studio format.',
+      'Condizionamento tra forza e mobilita in un formato studio guidato da insegnante.'
+    )
+  },
+  {
+    slug: 'adult-dance',
+    categorySlug: 'movement',
+    name: buildLocalized('Adult Dance', 'Danza adulti'),
+    description: buildLocalized(
+      'Adult dance classes focused on expression, rhythm, and embodied coordination.',
+      'Classi di danza per adulti focalizzate su espressione, ritmo e coordinazione incarnata.'
+    )
+  },
+  {
+    slug: 'adult-capoeira',
+    categorySlug: 'movement',
+    name: buildLocalized('Adult Capoeira', 'Capoeira adulti'),
+    description: buildLocalized(
+      'Adult capoeira classes blending rhythm, coordination, and martial movement.',
+      'Classi di capoeira per adulti tra ritmo, coordinazione e movimento marziale.'
+    )
+  },
+  {
+    slug: 'adult-theater',
+    categorySlug: 'movement',
+    name: buildLocalized('Adult Theater', 'Teatro adulti'),
+    description: buildLocalized(
+      'Adult expressive theater classes centered on voice, body, and stage presence.',
+      'Classi di teatro per adulti centrate su voce, corpo e presenza scenica.'
+    )
   }
 ];
 
@@ -802,7 +887,7 @@ const extraInstructors: Instructor[] = [
       'Instructor listed for Diaria pilates formats and children dance activities.',
       'Insegnante indicata per format pilates Diaria e attivita danza bambini.'
     ),
-    specialties: ['pilates-core', 'kids-contemporary-dance', 'kids-dance-pedagogy'],
+    specialties: ['pilates-core', 'soft-pilates-senior', 'kids-contemporary-dance', 'kids-dance-pedagogy'],
     languages: ['Italian']
   },
   {
@@ -821,10 +906,10 @@ const extraInstructors: Instructor[] = [
     citySlug: 'palermo',
     name: 'Maria Laura (Diaria)',
     shortBio: buildLocalized(
-      'Instructor listed in Diaria ashtanga yoga slots.',
-      'Insegnante indicata negli slot ashtanga yoga di Diaria.'
+      'Instructor listed in Diaria ashtanga yoga and adult theater slots.',
+      'Insegnante indicata negli slot Diaria di ashtanga yoga e teatro adulti.'
     ),
-    specialties: ['ashtanga'],
+    specialties: ['ashtanga', 'adult-theater'],
     languages: ['Italian']
   },
   {
@@ -843,10 +928,10 @@ const extraInstructors: Instructor[] = [
     citySlug: 'palermo',
     name: 'Carlotta (Diaria)',
     shortBio: buildLocalized(
-      'Instructor listed in Diaria dance classes for younger children.',
-      'Insegnante indicata nelle classi di danza Diaria per i piu piccoli.'
+      'Instructor listed in Diaria dance classes for both younger children and adults.',
+      'Insegnante indicata nelle classi di danza Diaria per bambini e adulti.'
     ),
-    specialties: ['kids-dance-foundations'],
+    specialties: ['kids-dance-foundations', 'adult-dance'],
     languages: ['Italian']
   },
   {
@@ -854,10 +939,54 @@ const extraInstructors: Instructor[] = [
     citySlug: 'palermo',
     name: 'Ceroda (Diaria)',
     shortBio: buildLocalized(
-      'Instructor listed in Diaria kids capoeira classes.',
-      'Insegnante indicato nelle classi capoeira bambini di Diaria.'
+      'Instructor listed in Diaria capoeira classes for kids and adults.',
+      'Insegnante indicato nelle classi Diaria di capoeira per bambini e adulti.'
     ),
-    specialties: ['kids-capoeira'],
+    specialties: ['kids-capoeira', 'adult-capoeira'],
+    languages: ['Italian']
+  },
+  {
+    slug: 'diaria-alessandra',
+    citySlug: 'palermo',
+    name: 'Alessandra (Diaria)',
+    shortBio: buildLocalized(
+      'Instructor listed in Diaria adult gyrokinesis and Feldenkrais classes.',
+      'Insegnante indicata nelle classi Diaria di gyrokinesis e Feldenkrais per adulti.'
+    ),
+    specialties: ['gyrokinesis', 'feldenkrais'],
+    languages: ['Italian']
+  },
+  {
+    slug: 'diaria-laura',
+    citySlug: 'palermo',
+    name: 'Laura (Diaria)',
+    shortBio: buildLocalized(
+      'Instructor listed in Diaria Tai Chi and Qi Gong classes.',
+      'Insegnante indicata nelle classi Diaria di Tai Chi e Qi Gong.'
+    ),
+    specialties: ['qi-gong'],
+    languages: ['Italian']
+  },
+  {
+    slug: 'diaria-soad',
+    citySlug: 'palermo',
+    name: 'Soad (Diaria)',
+    shortBio: buildLocalized(
+      'Instructor listed in Diaria rumba flamenca classes.',
+      'Insegnante indicata nelle classi Diaria di rumba flamenca.'
+    ),
+    specialties: ['rumba-flamenca'],
+    languages: ['Italian']
+  },
+  {
+    slug: 'diaria-giuseppe',
+    citySlug: 'palermo',
+    name: 'Giuseppe (Diaria)',
+    shortBio: buildLocalized(
+      'Instructor listed in Diaria functional training slots.',
+      'Insegnante indicato negli slot Diaria di functional training.'
+    ),
+    specialties: ['functional-training'],
     languages: ['Italian']
   }
 ];
@@ -951,8 +1080,8 @@ const extraVenues: Venue[] = [
     name: 'Diaria - Sala Venezia',
     tagline: buildLocalized('Adult and kids weekly classes near La Loggia.', 'Classi settimanali adulti e bambini in zona La Loggia.'),
     description: buildLocalized(
-      'Diaria publishes recurring yoga, pilates, and kids activities on its Palermo calendar.',
-      'Diaria pubblica sul calendario palermitano attivita ricorrenti di yoga, pilates e corsi per bambini.'
+      'Diaria publishes recurring yoga, pilates, movement, and kids activities on its Palermo calendar.',
+      'Diaria pubblica sul calendario palermitano attivita ricorrenti di yoga, pilates, movimento e corsi per bambini.'
     ),
     address: 'Via Venezia 61, Palermo',
     geo: { lat: 38.1173045, lng: 13.3618569 },
@@ -963,20 +1092,27 @@ const extraVenues: Venue[] = [
       'vinyasa',
       'ashtanga',
       'pilates-core',
+      'gyrokinesis',
+      'qi-gong',
+      'feldenkrais',
+      'soft-pilates-senior',
+      'rumba-flamenca',
+      'adult-capoeira',
+      'adult-theater',
       'kids-theater',
       'kids-contemporary-dance',
       'kids-dance-foundations',
       'kids-dance-pedagogy',
       'kids-capoeira'
     ],
-    categorySlugs: ['yoga', 'pilates', 'kids-activities'],
+    categorySlugs: ['yoga', 'pilates', 'kids-activities', 'movement'],
     bookingTargetOrder: ['diaria-iscrizione', 'diaria-whatsapp', 'diaria-calendario'],
     freshnessNote: buildLocalized(
-      'Timetable verified on 2026-03-12 from the official Diaria calendar.',
-      'Calendario verificato il 2026-03-12 dalla fonte ufficiale Diaria.'
+      'Timetable verified on 2026-03-31 from the official Diaria calendar.',
+      'Calendario verificato il 2026-03-31 dalla fonte ufficiale Diaria.'
     ),
     sourceUrl: diariaCalendarSource,
-    lastVerifiedAt: '2026-03-12T12:00:00+01:00'
+    lastVerifiedAt: diariaVerifiedAt
   },
   {
     slug: 'diaria-studio-gagini',
@@ -985,8 +1121,8 @@ const extraVenues: Venue[] = [
     name: 'Diaria - Studio Gagini',
     tagline: buildLocalized('Pilates, yoga, and kids classes in central Palermo.', 'Pilates, yoga e corsi bimbi nel centro di Palermo.'),
     description: buildLocalized(
-      'Second Diaria location with recurring morning and evening class slots across the week.',
-      'Seconda sede Diaria con slot ricorrenti mattina e sera durante la settimana.'
+      'Second Diaria location with recurring morning and evening class slots across yoga, pilates, and broader movement formats.',
+      'Seconda sede Diaria con slot ricorrenti mattina e sera tra yoga, pilates e altri format di movimento.'
     ),
     address: 'Via Antonio Gagini 31/59, Palermo',
     geo: { lat: 38.1202217, lng: 13.3621221 },
@@ -997,17 +1133,19 @@ const extraVenues: Venue[] = [
       'vinyasa',
       'ashtanga',
       'pilates-core',
+      'functional-training',
+      'adult-dance',
       'kids-theater',
       'kids-contemporary-dance'
     ],
-    categorySlugs: ['yoga', 'pilates', 'kids-activities'],
+    categorySlugs: ['yoga', 'pilates', 'kids-activities', 'movement'],
     bookingTargetOrder: ['diaria-iscrizione', 'diaria-whatsapp', 'diaria-calendario'],
     freshnessNote: buildLocalized(
-      'Timetable verified on 2026-03-12 from the official Diaria calendar.',
-      'Calendario verificato il 2026-03-12 dalla fonte ufficiale Diaria.'
+      'Timetable verified on 2026-03-31 from the official Diaria calendar.',
+      'Calendario verificato il 2026-03-31 dalla fonte ufficiale Diaria.'
     ),
     sourceUrl: diariaCalendarSource,
-    lastVerifiedAt: '2026-03-12T12:00:00+01:00'
+    lastVerifiedAt: diariaVerifiedAt
   }
 ];
 
@@ -1542,6 +1680,386 @@ const extraRecurringSessions: RecurringSessionTemplate[] = [
     bookingTargetSlug: 'diaria-iscrizione',
     sourceUrl: diariaCalendarSource,
     lastVerifiedAt: '2026-03-12T12:00:00+01:00',
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-wed-gyrokinesis-0900',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-sala-venezia',
+    instructorSlug: 'diaria-alessandra',
+    categorySlug: 'movement',
+    styleSlug: 'gyrokinesis',
+    title: buildLocalized('Gyrokinesis', 'Gyrokinesis'),
+    weekday: 'Wednesday',
+    startTime: '09:00',
+    endTime: '10:00',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-fri-gyrokinesis-0900',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-sala-venezia',
+    instructorSlug: 'diaria-alessandra',
+    categorySlug: 'movement',
+    styleSlug: 'gyrokinesis',
+    title: buildLocalized('Gyrokinesis', 'Gyrokinesis'),
+    weekday: 'Friday',
+    startTime: '09:00',
+    endTime: '10:00',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-tue-qi-gong-0930',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-sala-venezia',
+    instructorSlug: 'diaria-laura',
+    categorySlug: 'movement',
+    styleSlug: 'qi-gong',
+    title: buildLocalized('Tai Chi - Qi Gong', 'Tai Chi - Qi Gong'),
+    weekday: 'Tuesday',
+    startTime: '09:30',
+    endTime: '10:30',
+    level: 'beginner',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-thu-qi-gong-0930',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-sala-venezia',
+    instructorSlug: 'diaria-laura',
+    categorySlug: 'movement',
+    styleSlug: 'qi-gong',
+    title: buildLocalized('Tai Chi - Qi Gong', 'Tai Chi - Qi Gong'),
+    weekday: 'Thursday',
+    startTime: '09:30',
+    endTime: '10:30',
+    level: 'beginner',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-wed-feldenkrais-1000',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-sala-venezia',
+    instructorSlug: 'diaria-alessandra',
+    categorySlug: 'movement',
+    styleSlug: 'feldenkrais',
+    title: buildLocalized('Feldenkrais', 'Feldenkrais'),
+    weekday: 'Wednesday',
+    startTime: '10:00',
+    endTime: '11:00',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-fri-feldenkrais-1000',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-sala-venezia',
+    instructorSlug: 'diaria-alessandra',
+    categorySlug: 'movement',
+    styleSlug: 'feldenkrais',
+    title: buildLocalized('Feldenkrais', 'Feldenkrais'),
+    weekday: 'Friday',
+    startTime: '10:00',
+    endTime: '11:00',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-tue-soft-pilates-senior-1100',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-sala-venezia',
+    instructorSlug: 'diaria-emilia',
+    categorySlug: 'pilates',
+    styleSlug: 'soft-pilates-senior',
+    title: buildLocalized('Soft Pilates and Senior Dance', 'Soft pilates e danza senior'),
+    weekday: 'Tuesday',
+    startTime: '11:00',
+    endTime: '12:00',
+    level: 'beginner',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-fri-soft-pilates-senior-1100',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-sala-venezia',
+    instructorSlug: 'diaria-emilia',
+    categorySlug: 'pilates',
+    styleSlug: 'soft-pilates-senior',
+    title: buildLocalized('Soft Pilates and Senior Dance', 'Soft pilates e danza senior'),
+    weekday: 'Friday',
+    startTime: '11:00',
+    endTime: '12:00',
+    level: 'beginner',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-tue-feldenkrais-1800',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-sala-venezia',
+    instructorSlug: 'diaria-alessandra',
+    categorySlug: 'movement',
+    styleSlug: 'feldenkrais',
+    title: buildLocalized('Feldenkrais', 'Feldenkrais'),
+    weekday: 'Tuesday',
+    startTime: '18:00',
+    endTime: '19:00',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-wed-rumba-flamenca-1815',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-sala-venezia',
+    instructorSlug: 'diaria-soad',
+    categorySlug: 'movement',
+    styleSlug: 'rumba-flamenca',
+    title: buildLocalized('Rumba Flamenca', 'Rumba flamenca'),
+    weekday: 'Wednesday',
+    startTime: '18:15',
+    endTime: '19:30',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-thu-feldenkrais-1800',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-sala-venezia',
+    instructorSlug: 'diaria-alessandra',
+    categorySlug: 'movement',
+    styleSlug: 'feldenkrais',
+    title: buildLocalized('Feldenkrais', 'Feldenkrais'),
+    weekday: 'Thursday',
+    startTime: '18:00',
+    endTime: '19:00',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-tue-functional-training-1800',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-studio-gagini',
+    instructorSlug: 'diaria-giuseppe',
+    categorySlug: 'movement',
+    styleSlug: 'functional-training',
+    title: buildLocalized('Functional Training', 'Functional training'),
+    weekday: 'Tuesday',
+    startTime: '18:00',
+    endTime: '19:00',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-thu-functional-training-1800',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-studio-gagini',
+    instructorSlug: 'diaria-giuseppe',
+    categorySlug: 'movement',
+    styleSlug: 'functional-training',
+    title: buildLocalized('Functional Training', 'Functional training'),
+    weekday: 'Thursday',
+    startTime: '18:00',
+    endTime: '19:00',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-mon-adult-dance-1940',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-studio-gagini',
+    instructorSlug: 'diaria-carlotta',
+    categorySlug: 'movement',
+    styleSlug: 'adult-dance',
+    title: buildLocalized('Adult Dance', 'Danza adulti'),
+    weekday: 'Monday',
+    startTime: '19:40',
+    endTime: '21:10',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-wed-adult-dance-1940',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-studio-gagini',
+    instructorSlug: 'diaria-carlotta',
+    categorySlug: 'movement',
+    styleSlug: 'adult-dance',
+    title: buildLocalized('Adult Dance', 'Danza adulti'),
+    weekday: 'Wednesday',
+    startTime: '19:40',
+    endTime: '21:10',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-tue-adult-capoeira-1900',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-sala-venezia',
+    instructorSlug: 'diaria-ceroda',
+    categorySlug: 'movement',
+    styleSlug: 'adult-capoeira',
+    title: buildLocalized('Adult Capoeira', 'Capoeira adulti'),
+    weekday: 'Tuesday',
+    startTime: '19:00',
+    endTime: '20:00',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-thu-adult-capoeira-1900',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-sala-venezia',
+    instructorSlug: 'diaria-ceroda',
+    categorySlug: 'movement',
+    styleSlug: 'adult-capoeira',
+    title: buildLocalized('Adult Capoeira', 'Capoeira adulti'),
+    weekday: 'Thursday',
+    startTime: '19:00',
+    endTime: '20:00',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-mon-functional-training-1915',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-studio-gagini',
+    instructorSlug: 'diaria-giuseppe',
+    categorySlug: 'movement',
+    styleSlug: 'functional-training',
+    title: buildLocalized('Functional Training', 'Functional training'),
+    weekday: 'Monday',
+    startTime: '19:15',
+    endTime: '20:15',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-thu-functional-training-1915',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-studio-gagini',
+    instructorSlug: 'diaria-giuseppe',
+    categorySlug: 'movement',
+    styleSlug: 'functional-training',
+    title: buildLocalized('Functional Training', 'Functional training'),
+    weekday: 'Thursday',
+    startTime: '19:15',
+    endTime: '20:15',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
+    verificationStatus: 'verified'
+  },
+  {
+    templateId: 'diaria-wed-adult-theater-2030',
+    citySlug: 'palermo',
+    venueSlug: 'diaria-sala-venezia',
+    instructorSlug: 'diaria-maria-laura',
+    categorySlug: 'movement',
+    styleSlug: 'adult-theater',
+    title: buildLocalized('Adult Theater', 'Teatro adulti'),
+    weekday: 'Wednesday',
+    startTime: '20:30',
+    endTime: '22:00',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'diaria-iscrizione',
+    sourceUrl: diariaCalendarSource,
+    lastVerifiedAt: diariaVerifiedAt,
     verificationStatus: 'verified'
   },
   {
