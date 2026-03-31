@@ -40,6 +40,29 @@ test('social extractor tolerates punctuation-heavy text from posts', () => {
   assert.equal(candidates[0].title.it, 'Yoga bimbi in volo');
 });
 
+test('social extractor reads og:description and JSON-LD when body text is sparse', () => {
+  const html = `
+    <html>
+      <head>
+        <meta property="og:description" content="13 Aprile ore 10:30 - 11:30 Yoga bimbi in volo a Palermo" />
+        <script type="application/ld+json">
+          {"description":"Laboratorio yoga bimbi in volo, 13 Aprile 10:30-11:30"}
+        </script>
+      </head>
+      <body><div>Evento in arrivo</div></body>
+    </html>
+  `;
+
+  const candidates = extractSourceEventCandidates(
+    'https://www.facebook.com/spazioterrapalermo',
+    html,
+    '2026-04-10T09:00:00+02:00'
+  );
+
+  assert.equal(candidates.length, 1);
+  assert.equal(candidates[0].startAt, '2026-04-13T10:30:00.000+02:00');
+});
+
 test('candidate payload maps back into a public session shape', () => {
   const [candidate] = extractSourceEventCandidates(
     'https://www.facebook.com/spazioterrapalermo',

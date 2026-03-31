@@ -1,5 +1,7 @@
 import { createHash } from 'node:crypto';
 
+import { parseDiariaCalendarPage } from '@/lib/freshness/diaria-ocr';
+
 export type ParsedSessionSignal = {
   title: string;
   weekday: string;
@@ -27,7 +29,7 @@ export type AdapterAutoReverifyEvaluation = {
 type SourceAdapter = {
   id: string;
   matches: (sourceUrl: string) => boolean;
-  parse: (html: string) => ParsedSessionSignal[];
+  parse: (html: string) => ParsedSessionSignal[] | Promise<ParsedSessionSignal[]>;
   thresholds: AdapterAutoReverifyThresholds;
 };
 
@@ -469,13 +471,23 @@ const adapters: SourceAdapter[] = [
       minMatches: 8,
       minMatchRatio: 0.5
     }
+  },
+  {
+    id: 'diaria-calendar',
+    matches: (sourceUrl) => canonicalLower(sourceUrl).includes('diariapalermo.org/corsi/calendario'),
+    parse: parseDiariaCalendarPage,
+    thresholds: {
+      minSignals: 12,
+      minMatches: 8,
+      minMatchRatio: 0.45
+    }
   }
 ];
 
 export const getAdapterForSource = (sourceUrl: string) =>
   adapters.find((adapter) => adapter.matches(sourceUrl)) ?? null;
 
-export const parseSourceWithAdapter = (sourceUrl: string, html: string) => {
+export const parseSourceWithAdapter = async (sourceUrl: string, html: string) => {
   const adapter = getAdapterForSource(sourceUrl);
   if (!adapter) {
     return {
@@ -488,7 +500,7 @@ export const parseSourceWithAdapter = (sourceUrl: string, html: string) => {
   return {
     adapterId: adapter.id,
     thresholds: adapter.thresholds,
-    sessions: adapter.parse(html)
+    sessions: await adapter.parse(html)
   };
 };
 

@@ -742,7 +742,26 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
 
     for (const signal of checkedSignals) {
       if (!signal.reachable) continue;
-      if (!changedSourceSet.has(signal.sourceUrl)) continue;
+
+      const sourceCandidates = new Set([
+        normalizeForCompare(signal.sourceUrl),
+        normalizeForCompare(signal.finalUrl),
+        normalizeForCompare(`${signal.sourceUrl}/`)
+      ]);
+      const matchingRows = citySessions.filter((row) => sourceCandidates.has(normalizeForCompare(row.sourceUrl)));
+
+      if (!changedSourceSet.has(signal.sourceUrl)) {
+        if (matchingRows.length > 0) {
+          await db
+            .update(sessions)
+            .set({
+              verificationStatus: 'verified',
+              lastVerifiedAt: new Date(signal.checkedAt)
+            })
+            .where(inArray(sessions.id, matchingRows.map((row) => row.id)));
+        }
+        continue;
+      }
 
       let html = fetchedBodyByUrl.get(signal.sourceUrl);
       if (!html) {
@@ -766,19 +785,12 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
 
       const adapter = getAdapterForSource(signal.sourceUrl);
       if (adapter) {
-        const parsed = parseSourceWithAdapter(signal.sourceUrl, html);
+        const parsed = await parseSourceWithAdapter(signal.sourceUrl, html);
         if (parsed.adapterId && parsed.sessions.length > 0) {
           adapterSourcesChecked += 1;
           adapterSignals += parsed.sessions.length;
 
           const signatureSet = new Set(parsed.sessions.map((entry) => buildSessionTimeSignature(entry.weekday, entry.startTime)));
-          const sourceCandidates = new Set([
-            normalizeForCompare(signal.sourceUrl),
-            normalizeForCompare(signal.finalUrl),
-            normalizeForCompare(`${signal.sourceUrl}/`)
-          ]);
-
-          const matchingRows = citySessions.filter((row) => sourceCandidates.has(normalizeForCompare(row.sourceUrl)));
           const matchedSignatures = new Set<string>();
           const idsToReverify = matchingRows
             .filter((row) => {
