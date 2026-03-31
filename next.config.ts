@@ -14,10 +14,20 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: currentDir,
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**'
-      }
+      { protocol: 'https', hostname: 'static.wixstatic.com' },
+      { protocol: 'https', hostname: 'www.centroculturarishi.it' },
+      { protocol: 'https', hostname: 'lirp.cdn-website.com' },
+      { protocol: 'https', hostname: 'www.grandmaspilates.com' },
+      { protocol: 'https', hostname: 'www.palermopilates.it' },
+      { protocol: 'https', hostname: 'sahajayoga.it' },
+      { protocol: 'https', hostname: 'www.taijistudiopalermo.it' },
+      { protocol: 'https', hostname: 'www.yoganandapalermo.it' },
+      { protocol: 'https', hostname: 'www.yogacity.it' },
+      { protocol: 'https', hostname: 'primary.jwwb.nl' },
+      { protocol: 'https', hostname: 'youareyoga.it' },
+      { protocol: 'https', hostname: 'www.circopificio.it' },
+      { protocol: 'https', hostname: 'www.diariapalermo.org' },
+      { protocol: 'https', hostname: 'www.desireeburgio.it' }
     ]
   }
 };

@@ -22,6 +22,7 @@ import {
   styles,
   venues
 } from '@/lib/data/schema';
+import { rebuildPublicCityReadModels } from '@/lib/catalog/public-read-models';
 import { getSeedSourceRegistry } from '@/lib/freshness/source-registry';
 import { sql } from 'drizzle-orm';
 
@@ -335,6 +336,10 @@ const upsertCatalog = async () => {
         });
     }
   });
+
+  for (const city of seedCities) {
+    await rebuildPublicCityReadModels(city.slug);
+  }
 
   console.log(
     JSON.stringify(

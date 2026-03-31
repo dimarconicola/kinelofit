@@ -3,9 +3,10 @@ import { DateTime } from 'luxon';
 import { DigestForm } from '@/components/forms/DigestForm';
 import { LoopVideo } from '@/components/media/LoopVideo';
 import { ServerButtonLink, ServerCard, ServerCardLink, ServerChip } from '@/components/ui/server';
-import { getCityMetrics, getFeaturedSessions, getStyle, getVenue } from '@/lib/catalog/server-data';
+import { applyPublicCityFilters } from '@/lib/catalog/public-models';
+import { getPublicCitySnapshot } from '@/lib/catalog/public-read-models';
 import { resolveLocale } from '@/lib/i18n/routing';
-import { pexelsVideos } from '@/lib/media/pexels-videos';
+import { publicVideos } from '@/lib/media/public-videos';
 
 type IconName = 'map' | 'calendar' | 'mail' | 'leaf' | 'heart' | 'sun';
 
@@ -59,7 +60,14 @@ function InlineIcon({ name }: { name: IconName }) {
 
 export default async function LocaleHome({ params }: { params: Promise<{ locale: string }> }) {
   const locale = resolveLocale((await params).locale);
-  const [metrics, featured] = await Promise.all([getCityMetrics('palermo'), getFeaturedSessions('palermo')]);
+  const snapshot = await getPublicCitySnapshot('palermo');
+  if (!snapshot) {
+    throw new Error('Missing public Palermo snapshot');
+  }
+  const metrics = snapshot.metrics;
+  const featured = applyPublicCityFilters(snapshot, { date: 'week' }).slice(0, 8);
+  const venueBySlug = new Map(snapshot.venues.map((venue) => [venue.slug, venue] as const));
+  const styleBySlug = new Map(snapshot.styles.map((style) => [style.slug, style] as const));
 
   const levelLabel = (level: string) => {
     if (locale === 'it') {
@@ -201,7 +209,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
         locale === 'it'
           ? 'Una clip più libera e verticale per raccontare la parte esplorativa del catalogo.'
           : 'A freer, more vertical movement study for the exploratory side of the catalog.',
-      src: pexelsVideos.aerial
+      asset: publicVideos.aerial
     },
     {
       title: locale === 'it' ? 'Meditazione sul respiro' : 'Meditation stillness',
@@ -209,7 +217,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
         locale === 'it'
           ? 'Silenzio, ritmo e presenza: il lato più raccolto del mind-body a Palermo.'
           : 'Silence, rhythm, and presence: the quieter side of mind-body discovery in Palermo.',
-      src: pexelsVideos.meditation
+      asset: publicVideos.meditation
     },
     {
       title: locale === 'it' ? 'Pratica avanzata' : 'Advanced practice',
@@ -217,7 +225,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
         locale === 'it'
           ? 'Forza e controllo per dare spazio anche alle pratiche più intense.'
           : 'Strength and control, making room for higher-intensity practices too.',
-      src: pexelsVideos.advanced
+      asset: publicVideos.advanced
     }
   ];
 
@@ -248,9 +256,8 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
             <div className="home-v2-hero-visual">
               <div className="home-v2-photo-wrap">
                 <LoopVideo
-                  src={pexelsVideos.heroFlow}
-                  label={locale === 'it' ? 'Video hero di pratica yoga' : 'Hero yoga practice video'}
-                  poster="/home-hero.jpg"
+                  asset={publicVideos.heroFlow}
+                  label={locale === 'it' ? 'Pratica di yoga in flusso' : 'Flow yoga practice'}
                   priority
                   className="home-v2-photo-video"
                 />
@@ -297,7 +304,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
             {motionClips.map((clip) => (
               <article key={clip.title} className="home-v2-motion-card">
                 <div className="home-v2-motion-media">
-                  <LoopVideo src={clip.src} label={clip.title} poster="/home-hero.jpg" className="home-v2-motion-video" />
+                  <LoopVideo asset={clip.asset} label={clip.title} className="home-v2-motion-video" />
                 </div>
                 <div className="home-v2-motion-copy">
                   <h3>{clip.title}</h3>
@@ -330,9 +337,9 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
             </div>
           </div>
           <div className="home-v2-cards-grid">
-            {(await Promise.all(
-              featured.slice(0, 4).map(async (session) => {
-                const [venue, style] = await Promise.all([getVenue(session.venueSlug), getStyle(session.styleSlug)]);
+            {featured.slice(0, 4).map((session) => {
+              const venue = venueBySlug.get(session.venueSlug);
+              const style = styleBySlug.get(session.styleSlug);
               if (!venue || !style) return null;
               const start = DateTime.fromISO(session.startAt).setZone('Europe/Rome');
               const end = DateTime.fromISO(session.endAt).setZone('Europe/Rome');
@@ -356,8 +363,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
                   </ServerCardLink>
                 </ServerCard>
               );
-              })
-            ))}
+            })}
           </div>
           <div className="home-v2-cityhub-cta">
             <ServerButtonLink href={`/${locale}/palermo/classes`} className="home-v2-btn home-v2-btn-secondary">
@@ -381,10 +387,10 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
             <div className="home-v2-newsletter-form">
               <div className="home-v2-newsletter-media-stack" aria-hidden="true">
                 <div className="home-v2-newsletter-media home-v2-newsletter-media-tall">
-                  <LoopVideo src={pexelsVideos.rollingMat} label="Rolling the mat" poster="/home-hero.jpg" className="home-v2-newsletter-video" />
+                  <LoopVideo asset={publicVideos.rollingMat} label="Rolling the mat" className="home-v2-newsletter-video" />
                 </div>
                 <div className="home-v2-newsletter-media home-v2-newsletter-media-wide">
-                  <LoopVideo src={pexelsVideos.seaPanorama} label="Panorama by the sea" poster="/home-hero.jpg" className="home-v2-newsletter-video" />
+                  <LoopVideo asset={publicVideos.seaPanorama} label="Panorama by the sea" className="home-v2-newsletter-video" />
                 </div>
               </div>
               <DigestForm citySlug="palermo" locale={locale} showIntro={false} compact className="newsletter-inline-digest" surface="plain" />

@@ -1,7 +1,6 @@
 import { HtmlLangSync } from '@/components/layout/HtmlLangSync';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
-import { getSessionUser } from '@/lib/auth/session';
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
 
@@ -15,12 +14,11 @@ export default async function LocaleLayout({
   const { locale: rawLocale } = await params;
   const locale = resolveLocale(rawLocale);
   const dict = getDictionary(locale);
-  const user = await getSessionUser();
 
   return (
     <>
       <HtmlLangSync locale={locale} />
-      <SiteHeader locale={locale} dict={dict} signedInEmail={user?.email} />
+      <SiteHeader locale={locale} dict={dict} />
       <main className="site-shell site-main" lang={locale}>
         {children}
       </main>

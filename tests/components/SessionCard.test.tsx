@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { SessionCard } from '@/components/discovery/SessionCard';
-import type { ResolvedSessionCardData } from '@/lib/catalog/session-card-data';
+import type { ResolvedSessionCardData } from '@/lib/catalog/session-card-data.shared';
 import type { Session } from '@/lib/catalog/types';
 import { HeroUIProvider } from '@heroui/react';
 
@@ -11,6 +11,10 @@ vi.mock('@/components/discovery/BookingLink', () => ({
 
 vi.mock('@/components/state/ScheduleButton', () => ({
   ScheduleButton: ({ label }: { label: string }) => <button type="button">{label}</button>
+}));
+
+vi.mock('@/components/state/FavoriteButton', () => ({
+  FavoriteButton: ({ label }: { label: string }) => <button type="button">{label}</button>
 }));
 
 // Wrapper component to provide HeroUIProvider
@@ -244,14 +248,13 @@ describe('SessionCard', () => {
     expect(screen.getByText('Online')).toBeInTheDocument();
   });
 
-  it('should render without crashing when signedInEmail is provided', () => {
+  it('should render without crashing with action buttons mounted', () => {
     render(
       <TestWrapper>
         <SessionCard
           session={mockSession}
           locale="en"
           resolved={resolved}
-          signedInEmail="user@example.com"
           scheduleLabel="Save to schedule"
         />
       </TestWrapper>

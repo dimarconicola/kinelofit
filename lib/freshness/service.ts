@@ -6,6 +6,7 @@ import { and, desc, eq, inArray, isNull, lt, ne, or } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 
 import type { DiscoveryLead, FreshnessRunSourceCheck, SourceCadence, SourceRegistryEntry } from '@/lib/catalog/types';
+import { rebuildPublicCityReadModels } from '@/lib/catalog/public-read-models';
 import { getDb, isDatabaseConfigured } from '@/lib/data/db';
 import { discoveryLeads, freshnessRunSources, freshnessRuns, sessions, sourceRecords, sourceRegistry } from '@/lib/data/schema';
 import { buildSessionTimeSignature, evaluateAdapterAutoReverify, getAdapterForSource, parseSourceWithAdapter } from '@/lib/freshness/adapters';
@@ -964,6 +965,10 @@ export const runDailyFreshnessCheck = async (options: FreshnessRunOptions): Prom
       discoveryLeadsDiscovered = await runQuarterlyDiscoverySweep(citySlug, sourceEntries, timeoutMs, useDb, Boolean(options.dryRun));
     }
     runStored = true;
+  }
+
+  if (!options.dryRun && runStored) {
+    await rebuildPublicCityReadModels(citySlug);
   }
 
   return {
