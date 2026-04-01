@@ -93,6 +93,7 @@ const generated = palermoCatalog as {
 const diariaCalendarSource = 'https://www.diariapalermo.org/corsi/calendario/';
 const diariaVerifiedAt = '2026-03-31T12:00:00+02:00';
 const venueImagesVerifiedAt = '2026-03-14T12:00:00+01:00';
+const springDiscoveryVerifiedAt = '2026-04-01T18:30:00+02:00';
 
 const venueCoverImages: Partial<Record<string, VenueImage>> = {
   'yoga-your-life': buildVenueImage(
@@ -184,6 +185,18 @@ const venueCoverImages: Partial<Record<string, VenueImage>> = {
     'https://www.diariapalermo.org/new-site/wp-content/uploads/2024/09/Progetto-senza-titolo-2-819x1024.png',
     'https://www.diariapalermo.org/',
     venueImagesVerifiedAt
+  ),
+  'noe-santos-yoga-palermo': buildVenueImage(
+    'Noe Santos Yoga',
+    'https://instagram.fnap7-2.fna.fbcdn.net/v/t51.2885-19/480845560_2026336804535996_1300278781822771742_n.jpg?stp=dst-jpg_s320x320_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLmRqYW5nby4xMDgwLmMyIn0&_nc_ht=instagram.fnap7-2.fna.fbcdn.net&_nc_cat=108&_nc_oc=Q6cZ2gGVoXOKZRBHJKJ65B8VCMhI-saX73TRIgZufKvyNWo---RmmfVsyqkA6rso7-iK_Hg&_nc_ohc=uXcQ8gcU_3UQ7kNvwEKG1qo&_nc_gid=eHKi0KN1n5beC5l3dlUs6A&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_Af3mnLLnlbVl6-lEejtDXQIREbwj3NHybLmdZEWKd6k2uA&oe=69D2A003&_nc_sid=8b3546',
+    'https://www.instagram.com/noesantosyoga/',
+    springDiscoveryVerifiedAt
+  ),
+  'oria-dimensione-altra': buildVenueImage(
+    'ORIA - Dimensione Altra',
+    'https://instagram.fnap7-2.fna.fbcdn.net/v/t51.82787-19/656981037_17852602965688917_8774247302336901518_n.jpg?stp=dst-jpg_s320x320_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLmRqYW5nby4xMDgwLmV4cGVyaW1lbnRhbCJ9&_nc_ht=instagram.fnap7-2.fna.fbcdn.net&_nc_cat=109&_nc_oc=Q6cZ2gG0I7EoB9jUlk1H9aA8kRvn1AfDhQAlRnZd1sIfcoZybBREx-BnoH3IPGv5oNh68WU&_nc_ohc=xsYoQR0o7GwQ7kNvwEPp6q1&_nc_gid=Au_JHFjKg2Eex3Y7yhAaNg&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_Af2b-prYwA2EToY-0pJZ1v1VHk0kroyB3bsojkCz46O8iQ&oe=69D29BE2&_nc_sid=8b3546',
+    'https://www.instagram.com/oria_dimensionealtra/',
+    springDiscoveryVerifiedAt
   )
 };
 
@@ -341,6 +354,42 @@ const spazioTerraInstructorLinks = [
     'https://www.facebook.com/spazioterrapalermo',
     'https://www.facebook.com/spazioterrapalermo',
     instructorMediaVerifiedAt
+  )
+];
+
+const noeSantosInstructorLinks = [
+  buildInstructorSocialLink(
+    'instagram',
+    'https://www.instagram.com/noesantosyoga/',
+    'https://www.instagram.com/noesantosyoga/',
+    springDiscoveryVerifiedAt
+  ),
+  buildInstructorSocialLink(
+    'facebook',
+    'https://www.facebook.com/profile.php?id=100000980657314&ref=ig_profile_ac',
+    'https://www.instagram.com/noesantosyoga/',
+    springDiscoveryVerifiedAt
+  ),
+  buildInstructorSocialLink(
+    'website',
+    'https://linktr.ee/noesantosyoga',
+    'https://www.instagram.com/noesantosyoga/',
+    springDiscoveryVerifiedAt
+  )
+];
+
+const oriaInstructorLinks = [
+  buildInstructorSocialLink(
+    'instagram',
+    'https://www.instagram.com/oria_una/',
+    'https://www.instagram.com/oria_una/',
+    springDiscoveryVerifiedAt
+  ),
+  buildInstructorSocialLink(
+    'website',
+    'https://www.instagram.com/oria_dimensionealtra/',
+    'https://www.instagram.com/oria_dimensionealtra/',
+    springDiscoveryVerifiedAt
   )
 ];
 
@@ -554,6 +603,24 @@ const instructorMedia: Partial<Record<string, Pick<Instructor, 'headshot' | 'soc
   },
   'spazio-terra-team': {
     socialLinks: spazioTerraInstructorLinks
+  },
+  'noe-santos': {
+    headshot: buildInstructorImage(
+      'Noe Santos',
+      'https://instagram.fnap7-2.fna.fbcdn.net/v/t51.2885-19/480845560_2026336804535996_1300278781822771742_n.jpg?stp=dst-jpg_s320x320_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLmRqYW5nby4xMDgwLmMyIn0&_nc_ht=instagram.fnap7-2.fna.fbcdn.net&_nc_cat=108&_nc_oc=Q6cZ2gGVoXOKZRBHJKJ65B8VCMhI-saX73TRIgZufKvyNWo---RmmfVsyqkA6rso7-iK_Hg&_nc_ohc=uXcQ8gcU_3UQ7kNvwEKG1qo&_nc_gid=eHKi0KN1n5beC5l3dlUs6A&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_Af3mnLLnlbVl6-lEejtDXQIREbwj3NHybLmdZEWKd6k2uA&oe=69D2A003&_nc_sid=8b3546',
+      'https://www.instagram.com/noesantosyoga/',
+      springDiscoveryVerifiedAt
+    ),
+    socialLinks: noeSantosInstructorLinks
+  },
+  'oria-una': {
+    headshot: buildInstructorImage(
+      'Oria',
+      'https://instagram.fnap7-2.fna.fbcdn.net/v/t51.82787-19/571464537_18051918428651920_2347150054987538241_n.jpg?stp=dst-jpg_s320x320_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLmRqYW5nby4xMDgwLmMyIn0&_nc_ht=instagram.fnap7-2.fna.fbcdn.net&_nc_cat=104&_nc_oc=Q6cZ2gHWkIUJO07RJ0bIixIuMrg5_0RDeSHakxcSTt9LGD2OQHfEVD-YzA_ZPTrNxji4qcI&_nc_ohc=FGhYH5NF2-cQ7kNvwHbEa60&_nc_gid=U58GwY_0yZmIn42zjBBOiA&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_Af3lsA-5BxSpwDdxupnfWuhkfj4FvpxUxs0ke0ezAu8MBw&oe=69D27C3B&_nc_sid=8b3546',
+      'https://www.instagram.com/oria_una/',
+      springDiscoveryVerifiedAt
+    ),
+    socialLinks: oriaInstructorLinks
   },
   'diaria-federica': {
     socialLinks: diariaInstructorLinks
@@ -988,6 +1055,28 @@ const extraInstructors: Instructor[] = [
     ),
     specialties: ['functional-training'],
     languages: ['Italian']
+  },
+  {
+    slug: 'noe-santos',
+    citySlug: 'palermo',
+    name: 'Noe Santos',
+    shortBio: buildLocalized(
+      'Palermo-based teacher focused on hatha vinyasa, prenatal and post-partum practice, and meditation.',
+      'Insegnante attiva a Palermo tra hatha vinyasa, pratica in gravidanza e post-parto, e meditazione.'
+    ),
+    specialties: ['hatha', 'vinyasa', 'prenatal', 'meditation-practice'],
+    languages: ['Italian', 'Spanish']
+  },
+  {
+    slug: 'oria-una',
+    citySlug: 'palermo',
+    name: 'Oria',
+    shortBio: buildLocalized(
+      'Founder of ORIA - Dimensione Altra and pilates instructor for weekly classes and special workshops.',
+      'Fondatrice di ORIA - Dimensione Altra e istruttrice di pilates per classi settimanali e workshop speciali.'
+    ),
+    specialties: ['pilates-core', 'movement'],
+    languages: ['Italian']
   }
 ];
 
@@ -1021,6 +1110,24 @@ const extraBookingTargets: BookingTarget[] = [
     type: 'website',
     label: 'CalenDiaria',
     href: diariaCalendarSource
+  },
+  {
+    slug: 'noe-santos-linktree',
+    type: 'website',
+    label: 'Prenota / info',
+    href: 'https://linktr.ee/noesantosyoga'
+  },
+  {
+    slug: 'oria-whatsapp',
+    type: 'whatsapp',
+    label: 'WhatsApp',
+    href: 'https://wa.me/393899490343'
+  },
+  {
+    slug: 'oria-instagram',
+    type: 'website',
+    label: 'Instagram',
+    href: 'https://www.instagram.com/oria_dimensionealtra/'
   }
 ];
 
@@ -1146,6 +1253,60 @@ const extraVenues: Venue[] = [
     ),
     sourceUrl: diariaCalendarSource,
     lastVerifiedAt: diariaVerifiedAt
+  },
+  {
+    slug: 'noe-santos-yoga-palermo',
+    citySlug: 'palermo',
+    neighborhoodSlug: 'citywide',
+    name: 'Noe Santos Yoga',
+    tagline: buildLocalized(
+      'Hatha vinyasa, prenatal support, and meditation in central Palermo.',
+      'Hatha vinyasa, gravidanza e meditazione nel centro di Palermo.'
+    ),
+    description: buildLocalized(
+      'Independent teacher practice with recurring hatha vinyasa classes and a focus on pregnancy, post-partum support, and meditation.',
+      'Percorso di pratica indipendente con classi ricorrenti di hatha vinyasa e attenzione a gravidanza, post-parto e meditazione.'
+    ),
+    address: 'Via Vittorio Emanuele 64, Palermo',
+    geo: { lat: 38.11851, lng: 13.36856 },
+    amenities: ['Small-group practice', 'Meditation', 'Prenatal support'],
+    languages: ['Italian', 'Spanish'],
+    styleSlugs: ['hatha', 'vinyasa', 'prenatal', 'meditation-practice'],
+    categorySlugs: ['yoga', 'meditation'],
+    bookingTargetOrder: ['noe-santos-linktree'],
+    freshnessNote: buildLocalized(
+      'Instagram business profile and class post verified on 2026-04-01.',
+      'Profilo business Instagram e post orario verificati il 2026-04-01.'
+    ),
+    sourceUrl: 'https://www.instagram.com/noesantosyoga/',
+    lastVerifiedAt: springDiscoveryVerifiedAt
+  },
+  {
+    slug: 'oria-dimensione-altra',
+    citySlug: 'palermo',
+    neighborhoodSlug: 'politeama',
+    name: 'ORIA - Dimensione Altra',
+    tagline: buildLocalized(
+      'Holistic cultural center with pilates and workshop-led movement formats.',
+      'Centro olistico e culturale con pilates e workshop di movimento.'
+    ),
+    description: buildLocalized(
+      'ORIA hosts pilates-led classes and body-based workshops in central Palermo, with bookings managed through Instagram and WhatsApp.',
+      'ORIA ospita classi guidate di pilates e workshop corporei nel centro di Palermo, con prenotazioni via Instagram e WhatsApp.'
+    ),
+    address: 'Via Michele Miraglia 33/35, Palermo',
+    geo: { lat: 38.1262504, lng: 13.3619657 },
+    amenities: ['Workshops', 'WhatsApp booking', 'Central location'],
+    languages: ['Italian'],
+    styleSlugs: ['pilates-core'],
+    categorySlugs: ['pilates', 'movement'],
+    bookingTargetOrder: ['oria-whatsapp', 'oria-instagram'],
+    freshnessNote: buildLocalized(
+      'Instagram profile and current pilates post verified on 2026-04-01.',
+      'Profilo Instagram e post pilates corrente verificati il 2026-04-01.'
+    ),
+    sourceUrl: 'https://www.instagram.com/oria_dimensionealtra/',
+    lastVerifiedAt: springDiscoveryVerifiedAt
   }
 ];
 
@@ -2213,6 +2374,90 @@ const extraRecurringSessions: RecurringSessionTemplate[] = [
     sourceUrl: diariaCalendarSource,
     lastVerifiedAt: '2026-03-12T12:00:00+01:00',
     verificationStatus: 'verified'
+  },
+  {
+    templateId: 'noe-mon-hatha-vinyasa-0900',
+    citySlug: 'palermo',
+    venueSlug: 'noe-santos-yoga-palermo',
+    instructorSlug: 'noe-santos',
+    categorySlug: 'yoga',
+    styleSlug: 'vinyasa',
+    title: buildLocalized('Hatha Vinyasa', 'Hatha Vinyasa'),
+    weekday: 'Monday',
+    startTime: '09:00',
+    endTime: '10:00',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'noe-santos-linktree',
+    sourceUrl: 'https://www.instagram.com/p/DTbTlbejTEB/',
+    lastVerifiedAt: springDiscoveryVerifiedAt,
+    verificationStatus: 'verified',
+    audience: 'adults',
+    attendanceModel: 'drop_in'
+  },
+  {
+    templateId: 'noe-wed-hatha-vinyasa-0900',
+    citySlug: 'palermo',
+    venueSlug: 'noe-santos-yoga-palermo',
+    instructorSlug: 'noe-santos',
+    categorySlug: 'yoga',
+    styleSlug: 'vinyasa',
+    title: buildLocalized('Hatha Vinyasa', 'Hatha Vinyasa'),
+    weekday: 'Wednesday',
+    startTime: '09:00',
+    endTime: '10:00',
+    level: 'open',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'noe-santos-linktree',
+    sourceUrl: 'https://www.instagram.com/p/DTbTlbejTEB/',
+    lastVerifiedAt: springDiscoveryVerifiedAt,
+    verificationStatus: 'verified',
+    audience: 'adults',
+    attendanceModel: 'drop_in'
+  },
+  {
+    templateId: 'oria-tue-pilates-1100',
+    citySlug: 'palermo',
+    venueSlug: 'oria-dimensione-altra',
+    instructorSlug: 'oria-una',
+    categorySlug: 'pilates',
+    styleSlug: 'pilates-core',
+    title: buildLocalized('Motivational Pilates', 'Pilates motivazionale'),
+    weekday: 'Tuesday',
+    startTime: '11:00',
+    endTime: '12:00',
+    level: 'beginner',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'oria-whatsapp',
+    sourceUrl: 'https://www.instagram.com/p/DVcHQw8jJrb/',
+    lastVerifiedAt: springDiscoveryVerifiedAt,
+    verificationStatus: 'verified',
+    audience: 'adults',
+    attendanceModel: 'drop_in'
+  },
+  {
+    templateId: 'oria-thu-pilates-1100',
+    citySlug: 'palermo',
+    venueSlug: 'oria-dimensione-altra',
+    instructorSlug: 'oria-una',
+    categorySlug: 'pilates',
+    styleSlug: 'pilates-core',
+    title: buildLocalized('Motivational Pilates', 'Pilates motivazionale'),
+    weekday: 'Thursday',
+    startTime: '11:00',
+    endTime: '12:00',
+    level: 'beginner',
+    language: 'Italian',
+    format: 'in_person',
+    bookingTargetSlug: 'oria-whatsapp',
+    sourceUrl: 'https://www.instagram.com/p/DVcHQw8jJrb/',
+    lastVerifiedAt: springDiscoveryVerifiedAt,
+    verificationStatus: 'verified',
+    audience: 'adults',
+    attendanceModel: 'drop_in'
   }
 ];
 
