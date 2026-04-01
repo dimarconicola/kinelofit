@@ -94,6 +94,7 @@ const diariaCalendarSource = 'https://www.diariapalermo.org/corsi/calendario/';
 const diariaVerifiedAt = '2026-03-31T12:00:00+02:00';
 const venueImagesVerifiedAt = '2026-03-14T12:00:00+01:00';
 const springDiscoveryVerifiedAt = '2026-04-01T18:30:00+02:00';
+const recurringSessionWindowDays = 28;
 
 const venueCoverImages: Partial<Record<string, VenueImage>> = {
   'yoga-your-life': buildVenueImage(
@@ -2589,7 +2590,7 @@ const generateSessions = () => {
     const startClock = parseClock(template.startTime);
     const endClock = parseClock(template.endTime);
 
-    for (let offset = 0; offset < 14; offset += 1) {
+    for (let offset = 0; offset < recurringSessionWindowDays; offset += 1) {
       const day = start.plus({ days: offset });
       if (day.weekday !== targetWeekday) continue;
 
