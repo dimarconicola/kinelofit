@@ -150,6 +150,28 @@ const palermoDiscoverySources: SourceRegistryEntry[] = [
     purpose: 'catalog',
     tags: ['palermo', 'kids', 'yoga'],
     active: true
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://www.epycpalermo.it/',
+    sourceType: 'official_site',
+    cadence: 'weekly',
+    trustTier: 'tier_b',
+    purpose: 'discovery',
+    tags: ['palermo', 'youth-center', 'yoga', 'movement'],
+    active: true,
+    notes: 'Weekly discovery check for EPYC forms, classes, and movement-led programming.'
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://www.instagram.com/epyc_palermo/',
+    sourceType: 'social',
+    cadence: 'weekly',
+    trustTier: 'tier_c',
+    purpose: 'discovery',
+    tags: ['palermo', 'youth-center', 'events', 'yoga'],
+    active: true,
+    notes: 'Social fallback for EPYC events when the official site changes lag behind.'
   }
 ];
 
