@@ -31,7 +31,10 @@ export default async function SchedulePage({ params }: { params: Promise<{ local
             'Stesso calendario pubblico, ma con un tuo livello personale sopra.'
           ],
           gateChips: ['Solo orari', 'Settimana personale', 'Nessun rumore'],
-          scheduleCount: 'Lezioni in agenda'
+          scheduleCount: 'Lezioni in agenda',
+          shareLabel: 'Condividi',
+          copiedLabel: 'Copiato',
+          exportLabel: 'Calendario (.ics)'
         }
       : {
           signInNeeded: 'Sign in to keep only the time slots you actually want to attend together.',
@@ -51,7 +54,10 @@ export default async function SchedulePage({ params }: { params: Promise<{ local
             'The same public calendar, with a personal layer on top.'
           ],
           gateChips: ['Only time slots', 'Personal week', 'No noise'],
-          scheduleCount: 'Saved classes'
+          scheduleCount: 'Saved classes',
+          shareLabel: 'Share',
+          copiedLabel: 'Copied',
+          exportLabel: 'Calendar (.ics)'
         };
 
   if (capabilities.authMode === 'unavailable' || capabilities.storeMode !== 'database') {
@@ -133,12 +139,20 @@ export default async function SchedulePage({ params }: { params: Promise<{ local
     );
   }
   const catalog = await getCatalogSnapshot();
-  const sessionItems = catalog.sessions.map((session) => ({
-    id: session.id,
-    href: `/${locale}/${session.citySlug}/studios/${session.venueSlug}`,
-    title: session.title[locale],
-    meta: formatSessionTime(session.startAt, locale)
-  }));
+  const venuesBySlug = new Map(catalog.venues.map((venue) => [venue.slug, venue]));
+  const sessionItems = catalog.sessions.map((session) => {
+    const venue = venuesBySlug.get(session.venueSlug);
+    return {
+      id: session.id,
+      href: `/${locale}/${session.citySlug}/studios/${session.venueSlug}`,
+      title: session.title[locale],
+      meta: formatSessionTime(session.startAt, locale),
+      startAt: session.startAt,
+      endAt: session.endAt,
+      venueName: venue?.name ?? '',
+      address: venue?.address ?? ''
+    };
+  });
 
   return (
     <div className="stack-list">
@@ -156,7 +170,16 @@ export default async function SchedulePage({ params }: { params: Promise<{ local
       </section>
 
       <section className="panel">
-        <SavedScheduleClient signedInEmail={user.email} initialScheduleIds={scheduleRows} sessions={sessionItems} emptyLabel={copy.empty} />
+        <SavedScheduleClient
+          locale={locale}
+          signedInEmail={user.email}
+          initialScheduleIds={scheduleRows}
+          sessions={sessionItems}
+          emptyLabel={copy.empty}
+          shareLabel={copy.shareLabel}
+          copiedLabel={copy.copiedLabel}
+          exportLabel={copy.exportLabel}
+        />
       </section>
     </div>
   );

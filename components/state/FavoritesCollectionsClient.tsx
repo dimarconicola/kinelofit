@@ -3,9 +3,12 @@
 import NextLink from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 
+import { PersonalCollectionActions } from '@/components/state/PersonalCollectionActions';
 import { readStoredFavorites } from '@/components/state/storage';
+import type { Locale } from '@/lib/catalog/types';
 
 interface FavoritesCollectionsClientProps {
+  locale: Locale;
   signedInEmail: string;
   initialFavoriteKeys: string[];
   venues: Array<{ slug: string; title: string; href: string; meta: string }>;
@@ -16,10 +19,13 @@ interface FavoritesCollectionsClientProps {
     favoritesTeachers: string;
     favoritesClasses: string;
     noFavorites: string;
+    shareLabel: string;
+    copiedLabel: string;
   };
 }
 
 export function FavoritesCollectionsClient({
+  locale,
   signedInEmail,
   initialFavoriteKeys,
   venues,
@@ -59,8 +65,28 @@ export function FavoritesCollectionsClient({
         .filter((item): item is (typeof sessions)[number] => Boolean(item)),
     [favoriteKeys, sessions]
   );
+  const shareText = useMemo(() => {
+    const parts = [
+      venueFavorites.slice(0, 3).map((item) => item.title),
+      instructorFavorites.slice(0, 3).map((item) => item.title),
+      sessionFavorites.slice(0, 3).map((item) => item.title)
+    ].flat();
+    const preview = parts.slice(0, 6).map((item) => `• ${item}`).join('\n');
+    return `${locale === 'it' ? 'Sto seguendo questi preferiti su kinelo.fit:' : 'These are my kinelo.fit favorites:'}\n${preview}`.trim();
+  }, [instructorFavorites, locale, sessionFavorites, venueFavorites]);
+
   return (
     <section className="saved-grid">
+      {venueFavorites.length + instructorFavorites.length + sessionFavorites.length > 0 ? (
+        <section className="panel saved-section-panel saved-actions-panel">
+          <PersonalCollectionActions
+            shareTitle={locale === 'it' ? 'Preferiti kinelo.fit' : 'kinelo.fit favorites'}
+            shareText={shareText}
+            shareLabel={copy.shareLabel}
+            copiedLabel={copy.copiedLabel}
+          />
+        </section>
+      ) : null}
       <section className="panel saved-section-panel">
         <div className="saved-section-header">
           <p className="eyebrow">{copy.favoritesStudios}</p>

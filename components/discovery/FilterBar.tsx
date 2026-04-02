@@ -244,9 +244,16 @@ export function FilterBar({
           <p className="eyebrow">{labels.title}</p>
           <p className="muted">{labels.subtitle}</p>
         </div>
-        <button type="button" className="button button-ghost" onClick={() => setExpanded((value) => !value)}>
-          {expanded ? labels.hide : labels.show}
-        </button>
+        <div className="filter-panel-head-actions">
+          {activeFilters.length > 0 ? (
+            <button type="button" className="button button-ghost" onClick={resetFilters}>
+              {labels.reset}
+            </button>
+          ) : null}
+          <button type="button" className="button button-ghost" onClick={() => setExpanded((value) => !value)}>
+            {expanded ? labels.hide : labels.show}
+          </button>
+        </div>
       </div>
 
       {activeFilters.length > 0 ? (
