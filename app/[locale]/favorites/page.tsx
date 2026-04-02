@@ -40,7 +40,9 @@ export default async function FavoritesPage({ params }: { params: Promise<{ loca
           schedulePanelEyebrow: 'Agenda',
           schedulePanelTitle: 'L’orario resta dall’altra parte',
           schedulePanelLead: 'Quando una lezione passa da idea a intenzione, salvala in agenda. Lì restano solo slot con giorno e ora.',
-          openSchedule: 'Apri agenda salvata'
+          openSchedule: 'Apri agenda salvata',
+          shareLabel: 'Condividi',
+          copiedLabel: 'Copiato'
         }
       : {
           signInNeeded: 'Sign in to revisit the studios, teachers, and classes you decided to keep track of.',
@@ -69,7 +71,9 @@ export default async function FavoritesPage({ params }: { params: Promise<{ loca
           schedulePanelEyebrow: 'Schedule',
           schedulePanelTitle: 'Time stays on the other side',
           schedulePanelLead: 'When a class moves from idea to intent, save it to schedule. That page keeps only dated time slots.',
-          openSchedule: 'Open saved schedule'
+          openSchedule: 'Open saved schedule',
+          shareLabel: 'Share',
+          copiedLabel: 'Copied'
         };
 
   if (capabilities.authMode === 'unavailable' || capabilities.storeMode !== 'database') {
@@ -192,6 +196,7 @@ export default async function FavoritesPage({ params }: { params: Promise<{ loca
         </div>
       </section>
       <FavoritesCollectionsClient
+        locale={locale}
         signedInEmail={user.email}
         initialFavoriteKeys={favoriteRows.map((row) => `${row.entityType}:${row.entitySlug}`)}
         venues={venueItems}
