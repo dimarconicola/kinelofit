@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 
 import { VenueCover } from '@/components/catalog/VenueCover';
 import { ClaimFormDialog } from '@/components/forms/ClaimFormDialog';
+import { MapPanel } from '@/components/discovery/MapPanel';
 import { SessionCard } from '@/components/discovery/SessionCard';
 import { FavoriteButton } from '@/components/state/FavoriteButton';
 import { ServerButtonLink, ServerChip, ServerLink } from '@/components/ui/server';
@@ -11,7 +12,9 @@ import { publicSnapshotToCatalog } from '@/lib/catalog/public-models';
 import { resolveSessionCardDataFromSnapshot } from '@/lib/catalog/session-card-data.shared';
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
+import { getMapRenderMode } from '@/lib/map/runtime';
 import { formatVerifiedAt } from '@/lib/ui/format';
+import { buildOpenStreetMapHref } from '@/lib/ui/maps';
 
 export default async function StudioPage({ params }: { params: Promise<{ locale: string; city: string; slug: string }> }) {
   const { locale: rawLocale, city: citySlug, slug } = await params;
@@ -52,6 +55,7 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
           source: 'Info verificate da:',
           upcoming: 'Prossime sessioni',
           website: 'Sito ufficiale',
+          map: 'Apri mappa',
           saveStudio: 'Salva studio',
           savedStudio: 'Studio salvato'
         }
@@ -65,9 +69,11 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
           source: 'Primary source',
           upcoming: 'Upcoming sessions',
           website: 'Official website',
+          map: 'Open map',
           saveStudio: 'Save studio',
           savedStudio: 'Studio saved'
         };
+  const mapHref = buildOpenStreetMapHref({ address: venue.address, geo: venue.geo });
 
   return (
     <div className="stack-list">
@@ -102,6 +108,9 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
                     {profileCopy.website}
                   </ServerButtonLink>
                 ) : null}
+                <ServerButtonLink href={mapHref} className="button-secondary" target="_blank" rel="noreferrer">
+                  {profileCopy.map}
+                </ServerButtonLink>
               </div>
             </div>
             <VenueCover venue={venue} locale={locale} className="profile-venue-cover" />
@@ -135,6 +144,7 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
               <ClaimFormDialog studioSlug={venue.slug} locale={locale} />
             </div>
           </div>
+          <MapPanel locale={locale} cityName={snapshot.city.name[locale]} venues={[venue]} bounds={snapshot.city.bounds} renderMode={getMapRenderMode()} />
         </div>
       </section>
 

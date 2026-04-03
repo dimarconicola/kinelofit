@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { TodayNearbyLocationHint } from '@/components/discovery/TodayNearbyLocationHint';
 import { SessionCard } from '@/components/discovery/SessionCard';
+import { PersonalCollectionActions } from '@/components/state/PersonalCollectionActions';
 import { ServerButtonLink } from '@/components/ui/server';
 import { resolveSessionCardData } from '@/lib/catalog/session-card-data';
 import { getCollectionSessions, getCollections, getVenue } from '@/lib/catalog/server-data';
@@ -73,11 +74,13 @@ export default async function CollectionPage({
       ? {
           collection: 'Lista',
           eyebrow: 'Ordine risultati',
-          title: slug === 'today-nearby' ? 'Vicino a te oggi' : 'Lista aggiornata',
-          body:
-            slug === 'today-nearby'
+        title: slug === 'today-nearby' ? 'Vicino a te oggi' : 'Lista aggiornata',
+        body:
+          slug === 'today-nearby'
               ? 'Se la geolocalizzazione non è disponibile, ordiniamo dal centro città.'
-              : 'Questa selezione resta aggiornata con fonti locali verificate.'
+              : 'Questa selezione resta aggiornata con fonti locali verificate.',
+          shareLabel: 'Condividi',
+          copiedLabel: 'Copiato'
         }
       : {
           collection: 'Collection',
@@ -86,8 +89,16 @@ export default async function CollectionPage({
           body:
             slug === 'today-nearby'
               ? 'If location is unavailable, results are ordered from the city center.'
-              : 'This selection stays current with verified local sources.'
+              : 'This selection stays current with verified local sources.',
+          shareLabel: 'Share',
+          copiedLabel: 'Copied'
         };
+  const shareText = [
+    collection.title[locale],
+    sessions.slice(0, 6).map((session) => `• ${session.title[locale]}`).join('\n')
+  ]
+    .filter(Boolean)
+    .join('\n');
 
   return (
     <div className="stack-list">
@@ -101,6 +112,12 @@ export default async function CollectionPage({
               {dict.exploreClasses}
             </ServerButtonLink>
           </div>
+          <PersonalCollectionActions
+            shareTitle={collection.title[locale]}
+            shareText={shareText}
+            shareLabel={statusCopy.shareLabel}
+            copiedLabel={statusCopy.copiedLabel}
+          />
           {Component ? <Component /> : null}
         </div>
         <div className="panel collection-order-panel">

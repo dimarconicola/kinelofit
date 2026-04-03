@@ -172,6 +172,166 @@ const palermoDiscoverySources: SourceRegistryEntry[] = [
     tags: ['palermo', 'youth-center', 'events', 'yoga'],
     active: true,
     notes: 'Social fallback for EPYC events when the official site changes lag behind.'
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://www.ivanorsports.it/calisthenics',
+    sourceType: 'official_site',
+    cadence: 'weekly',
+    trustTier: 'tier_a',
+    purpose: 'catalog',
+    tags: ['palermo', 'movement', 'calisthenics'],
+    active: true,
+    notes: 'Official timetable check for Ivanor calisthenics expansion.'
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://palestre.fitness/it/i/14126-calisthenics-palermo-ksw-studio/',
+    sourceType: 'directory',
+    cadence: 'weekly',
+    trustTier: 'tier_b',
+    purpose: 'catalog',
+    tags: ['palermo', 'movement', 'calisthenics'],
+    active: true,
+    notes: 'Structured calisthenics listing used while the studio schedule remains social-led.'
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://www.instagram.com/dc_ksw/',
+    sourceType: 'social',
+    cadence: 'weekly',
+    trustTier: 'tier_c',
+    purpose: 'discovery',
+    tags: ['palermo', 'movement', 'calisthenics'],
+    active: true
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://www.facebook.com/KSWCalisthenicsPalermo/',
+    sourceType: 'social',
+    cadence: 'weekly',
+    trustTier: 'tier_c',
+    purpose: 'discovery',
+    tags: ['palermo', 'movement', 'calisthenics'],
+    active: true
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://www.orangogo.it/corsi/corso-di-fit-boxing-per-bambini-k2-0-a-s-d-kick-and-fitness-palermo',
+    sourceType: 'directory',
+    cadence: 'weekly',
+    trustTier: 'tier_b',
+    purpose: 'catalog',
+    tags: ['palermo', 'movement', 'boxing'],
+    active: true,
+    notes: 'Structured recurring cross boxe listing for Palermo.'
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://freeclimbingpalermo.wordpress.com/dove-siamo/',
+    sourceType: 'official_site',
+    cadence: 'weekly',
+    trustTier: 'tier_a',
+    purpose: 'catalog',
+    tags: ['palermo', 'movement', 'climbing'],
+    active: true,
+    notes: 'Official opening-hours source for Free Climbing Palermo.'
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://www.orangogo.it/corsi/corso-di-danza-sportiva-per-bambini-emotions-of-the-dance-palermo-2',
+    sourceType: 'directory',
+    cadence: 'weekly',
+    trustTier: 'tier_b',
+    purpose: 'catalog',
+    tags: ['palermo', 'movement', 'dance'],
+    active: true,
+    notes: 'Structured partner-dance listing maintained by the venue through Orangogo.'
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://www.orangogo.it/corsi/corso-di-ginnastica-per-bambini-emotions-of-the-dance-palermo-1',
+    sourceType: 'directory',
+    cadence: 'weekly',
+    trustTier: 'tier_b',
+    purpose: 'catalog',
+    tags: ['palermo', 'movement', 'dance'],
+    active: true,
+    notes: 'Structured group-dance listing maintained by the venue through Orangogo.'
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://www.cubaboxing.it/contatti',
+    sourceType: 'official_site',
+    cadence: 'weekly',
+    trustTier: 'tier_a',
+    purpose: 'discovery',
+    tags: ['palermo', 'movement', 'boxing'],
+    active: true,
+    notes: 'Official contact and opening-hours page for Cuba Boxing.'
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://www.facebook.com/palestrapopolarepa/',
+    sourceType: 'social',
+    cadence: 'weekly',
+    trustTier: 'tier_c',
+    purpose: 'catalog',
+    tags: ['palermo', 'movement', 'boxing', 'muay-thai', 'strength'],
+    active: true,
+    notes: 'Public timetable source for Palestra Popolare 2025/26.'
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://www.capoeirazumbi.org/',
+    sourceType: 'official_site',
+    cadence: 'weekly',
+    trustTier: 'tier_b',
+    purpose: 'discovery',
+    tags: ['palermo', 'movement', 'capoeira'],
+    active: true,
+    notes: 'Official Capoeira Zumbi entry point for Palermo practice.'
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://www.lalaue.com/city/palermo/',
+    sourceType: 'directory',
+    cadence: 'weekly',
+    trustTier: 'tier_b',
+    purpose: 'catalog',
+    tags: ['palermo', 'movement', 'capoeira'],
+    active: true,
+    notes: 'Structured capoeira city directory used for recurring Palermo class slots.'
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://www.facebook.com/capoeirazumbi/',
+    sourceType: 'social',
+    cadence: 'weekly',
+    trustTier: 'tier_c',
+    purpose: 'discovery',
+    tags: ['palermo', 'movement', 'capoeira'],
+    active: true
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://www.facebook.com/profile.php?id=100063661510276',
+    sourceType: 'social',
+    cadence: 'weekly',
+    trustTier: 'tier_c',
+    purpose: 'discovery',
+    tags: ['palermo', 'movement', 'boxing'],
+    active: true
+  },
+  {
+    citySlug: 'palermo',
+    sourceUrl: 'https://www.instagram.com/cuba_boxing_palermo/',
+    sourceType: 'social',
+    cadence: 'weekly',
+    trustTier: 'tier_c',
+    purpose: 'discovery',
+    tags: ['palermo', 'movement', 'boxing'],
+    active: true
   }
 ];
 
