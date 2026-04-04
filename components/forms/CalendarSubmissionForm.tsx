@@ -11,6 +11,8 @@ interface CalendarSubmissionFormProps {
 
 export function CalendarSubmissionForm({ locale, citySlug }: CalendarSubmissionFormProps) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<'organizationName' | 'contactName' | 'email' | 'sourceUrls' | 'scheduleText' | 'consent', string>>>({});
 
   const labels = useMemo(
     () =>
@@ -30,7 +32,8 @@ export function CalendarSubmissionForm({ locale, citySlug }: CalendarSubmissionF
             submit: 'Invia calendario',
             submitting: 'Invio in corso...',
             done: 'Ricevuto. Il team verifica e inserisce il calendario nella coda editoriale.',
-            error: 'Invio non riuscito. Controlla i campi e riprova.'
+            error: 'Invio non riuscito.',
+            genericFieldError: 'Controlla i campi evidenziati e riprova.'
           }
         : {
             title: 'Suggest your calendar',
@@ -47,7 +50,8 @@ export function CalendarSubmissionForm({ locale, citySlug }: CalendarSubmissionF
             submit: 'Submit calendar',
             submitting: 'Submitting...',
             done: 'Received. The team will verify and queue your calendar.',
-            error: 'Submission failed. Check fields and try again.'
+            error: 'Submission failed.',
+            genericFieldError: 'Check the highlighted fields and try again.'
           },
     [locale]
   );
@@ -58,6 +62,8 @@ export function CalendarSubmissionForm({ locale, citySlug }: CalendarSubmissionF
       onSubmit={async (event) => {
         event.preventDefault();
         setStatus('loading');
+        setErrorMessage(null);
+        setFieldErrors({});
 
         const formData = new FormData(event.currentTarget);
         const sourceUrlsRaw = String(formData.get('sourceUrls') ?? '');
@@ -74,21 +80,42 @@ export function CalendarSubmissionForm({ locale, citySlug }: CalendarSubmissionF
               locale,
               citySlug,
               submitterType: String(formData.get('submitterType') ?? ''),
-              organizationName: String(formData.get('organizationName') ?? ''),
-              contactName: String(formData.get('contactName') ?? ''),
-              email: String(formData.get('email') ?? ''),
-              phone: String(formData.get('phone') ?? ''),
+              organizationName: String(formData.get('organizationName') ?? '').trim(),
+              contactName: String(formData.get('contactName') ?? '').trim(),
+              email: String(formData.get('email') ?? '').trim(),
+              phone: String(formData.get('phone') ?? '').trim(),
               sourceUrls,
-              scheduleText: String(formData.get('scheduleText') ?? ''),
+              scheduleText: String(formData.get('scheduleText') ?? '').trim(),
               consent: formData.get('consent') === 'true'
             })
           });
 
-          if (!response.ok) throw new Error('request_failed');
+          const payload = (await response.json().catch(() => null)) as
+            | { error?: { message?: string; fieldErrors?: Record<string, string[] | undefined> } }
+            | null;
+
+          if (!response.ok) {
+            const nextFieldErrors: Partial<Record<'organizationName' | 'contactName' | 'email' | 'sourceUrls' | 'scheduleText' | 'consent', string>> = {};
+
+            if (payload?.error?.fieldErrors) {
+              for (const key of ['organizationName', 'contactName', 'email', 'sourceUrls', 'scheduleText', 'consent'] as const) {
+                const value = payload.error.fieldErrors[key];
+                if (value?.[0]) nextFieldErrors[key] = value[0];
+              }
+            }
+
+            setFieldErrors(nextFieldErrors);
+            setErrorMessage(payload?.error?.message ?? labels.genericFieldError);
+            setStatus('error');
+            return;
+          }
 
           setStatus('done');
+          setErrorMessage(null);
+          setFieldErrors({});
           event.currentTarget.reset();
         } catch {
+          setErrorMessage(labels.genericFieldError);
           setStatus('error');
         }
       }}
@@ -106,16 +133,19 @@ export function CalendarSubmissionForm({ locale, citySlug }: CalendarSubmissionF
       <label>
         <span>{labels.org}</span>
         <input name="organizationName" required />
+        {fieldErrors.organizationName ? <small className="form-error">{fieldErrors.organizationName}</small> : null}
       </label>
 
       <label>
         <span>{labels.contact}</span>
         <input name="contactName" required />
+        {fieldErrors.contactName ? <small className="form-error">{fieldErrors.contactName}</small> : null}
       </label>
 
       <label>
         <span>{labels.email}</span>
         <input name="email" type="email" required />
+        {fieldErrors.email ? <small className="form-error">{fieldErrors.email}</small> : null}
       </label>
 
       <label>
@@ -126,24 +156,27 @@ export function CalendarSubmissionForm({ locale, citySlug }: CalendarSubmissionF
       <label>
         <span>{labels.urls}</span>
         <textarea name="sourceUrls" rows={4} required placeholder="https://example.com/schedule" />
+        {fieldErrors.sourceUrls ? <small className="form-error">{fieldErrors.sourceUrls}</small> : null}
       </label>
 
       <label>
         <span>{labels.schedule}</span>
         <textarea name="scheduleText" rows={5} required />
+        {fieldErrors.scheduleText ? <small className="form-error">{fieldErrors.scheduleText}</small> : null}
       </label>
 
       <label className="checkbox-field calendar-consent">
         <input name="consent" type="checkbox" value="true" required />
         <span>{labels.consent}</span>
       </label>
+      {fieldErrors.consent ? <small className="form-error">{fieldErrors.consent}</small> : null}
 
       <button className="button button-primary" type="submit" disabled={status === 'loading'}>
         {status === 'loading' ? labels.submitting : labels.submit}
       </button>
       <div aria-live="polite">
         {status === 'done' ? <p className="muted">{labels.done}</p> : null}
-        {status === 'error' ? <p className="muted">{labels.error}</p> : null}
+        {status === 'error' ? <p className="muted">{`${labels.error} ${errorMessage ?? labels.genericFieldError}`.trim()}</p> : null}
       </div>
     </form>
   );

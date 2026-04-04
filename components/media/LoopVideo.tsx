@@ -12,8 +12,6 @@ type LoopVideoProps = {
   priority?: boolean;
 };
 
-const canUseControlledSourceInProduction = (asset: PublicVideoAsset) => Boolean(asset.muxPlaybackId);
-
 export function LoopVideo({ asset, label, className, priority = false }: LoopVideoProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(priority);
@@ -76,9 +74,8 @@ export function LoopVideo({ asset, label, className, priority = false }: LoopVid
     return null;
   }, [asset.fallbackMp4, asset.muxPlaybackId]);
 
-  const isProduction = process.env.NODE_ENV === 'production';
   const shouldAutoplay = Boolean(source) && isVisible && !prefersReducedMotion && !saveDataEnabled;
-  const canRenderVideo = Boolean(source) && (!isProduction || canUseControlledSourceInProduction(asset));
+  const canRenderVideo = Boolean(source);
 
   return (
     <div ref={containerRef} className="loop-video-shell" aria-label={label}>

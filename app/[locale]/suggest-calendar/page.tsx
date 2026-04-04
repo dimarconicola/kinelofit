@@ -1,5 +1,4 @@
 import { CalendarSubmissionForm } from '@/components/forms/CalendarSubmissionForm';
-import { ServerButtonLink } from '@/components/ui/server';
 import { resolveLocale } from '@/lib/i18n/routing';
 
 export default async function SuggestCalendarPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -30,12 +29,9 @@ export default async function SuggestCalendarPage({ params }: { params: Promise<
         <h1>{copy.title}</h1>
         <p className="lead">{copy.lead}</p>
         <div className="site-actions">
-          <ServerButtonLink href="mailto:hello@kinelo.fit" className="button-primary">
+          <a href="mailto:hello@kinelo.fit" className="button button-primary">
             {copy.cta}
-          </ServerButtonLink>
-          <ServerButtonLink href={`/${locale}/palermo/classes`} className="button-ghost">
-            {locale === 'it' ? 'Vedi classi Palermo' : 'See Palermo classes'}
-          </ServerButtonLink>
+          </a>
         </div>
       </section>
       <section className="panel stack-list">

@@ -1675,6 +1675,7 @@ body {
   background: rgba(255, 255, 255, 0.9);
 }
 
+.form-stack label.checkbox-field,
 .checkbox-field {
   display: flex;
   align-items: flex-start;
@@ -1688,8 +1689,20 @@ body {
 }
 
 .checkbox-field input {
+  flex: 0 0 auto;
   margin-top: 0.18rem;
   accent-color: var(--brand);
+}
+
+.checkbox-field span {
+  display: block;
+  min-width: 0;
+}
+
+.form-error {
+  color: #9d3d2f;
+  font-size: 0.88rem;
+  line-height: 1.35;
 }
 
 .filter-checkbox {
