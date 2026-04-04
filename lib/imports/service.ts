@@ -47,31 +47,35 @@ export const listImportBatches = async (citySlug: string, limit = 40): Promise<I
   const db = getDb();
   if (!db) return [];
 
-  const rows = await db
-    .select()
-    .from(importBatches)
-    .where(eq(importBatches.citySlug, citySlug))
-    .orderBy(desc(importBatches.createdAt))
-    .limit(limit);
+  try {
+    const rows = await db
+      .select()
+      .from(importBatches)
+      .where(eq(importBatches.citySlug, citySlug))
+      .orderBy(desc(importBatches.createdAt))
+      .limit(limit);
 
-  return rows.map((row) => ({
-    id: row.id,
-    citySlug: row.citySlug,
-    locale: row.locale as 'en' | 'it',
-    fileName: row.fileName,
-    sourceLabel: row.sourceLabel ?? undefined,
-    csvContent: row.csvContent,
-    rowsCount: row.rowsCount,
-    errorsCount: row.errorsCount,
-    warningsCount: row.warningsCount,
-    validationSummary: row.validationSummary,
-    reviewStatus: row.reviewStatus as ReviewStatus,
-    assignedTo: row.assignedTo ?? undefined,
-    reviewNotes: row.reviewNotes ?? undefined,
-    reviewedAt: toIso(row.reviewedAt),
-    importedAt: toIso(row.importedAt),
-    createdAt: new Date(row.createdAt).toISOString()
-  }));
+    return rows.map((row) => ({
+      id: row.id,
+      citySlug: row.citySlug,
+      locale: row.locale as 'en' | 'it',
+      fileName: row.fileName,
+      sourceLabel: row.sourceLabel ?? undefined,
+      csvContent: row.csvContent,
+      rowsCount: row.rowsCount,
+      errorsCount: row.errorsCount,
+      warningsCount: row.warningsCount,
+      validationSummary: row.validationSummary,
+      reviewStatus: row.reviewStatus as ReviewStatus,
+      assignedTo: row.assignedTo ?? undefined,
+      reviewNotes: row.reviewNotes ?? undefined,
+      reviewedAt: toIso(row.reviewedAt),
+      importedAt: toIso(row.importedAt),
+      createdAt: new Date(row.createdAt).toISOString()
+    }));
+  } catch {
+    return [];
+  }
 };
 
 export const updateImportBatchReview = async (

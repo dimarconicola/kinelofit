@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon';
 
 import { ReviewStatusForm } from '@/components/admin/ReviewStatusForm';
+import { safeAdminRead } from '@/lib/admin/safe';
 import { listDiscoveryLeadSummaries } from '@/lib/freshness/service';
 import { isPersistentStoreConfigured, listCalendarSubmissions, listClaims, listDigestSubscriptions, listOutboundEvents } from '@/lib/runtime/store';
 
@@ -9,11 +10,11 @@ const discoveryStatuses = ['new', 'reviewed', 'imported', 'rejected'] as const;
 
 export async function AdminInbox({ redirectPath }: { redirectPath: string }) {
   const [claims, submissions, leads, digests, outbound] = await Promise.all([
-    listClaims(),
-    listCalendarSubmissions(),
-    listDiscoveryLeadSummaries('palermo', 40),
-    listDigestSubscriptions(),
-    listOutboundEvents()
+    safeAdminRead('claims', () => listClaims(), []),
+    safeAdminRead('calendar submissions', () => listCalendarSubmissions(), []),
+    safeAdminRead('discovery leads', () => listDiscoveryLeadSummaries('palermo', 40), []),
+    safeAdminRead('digest subscriptions', () => listDigestSubscriptions(), []),
+    safeAdminRead('outbound events', () => listOutboundEvents(), [])
   ]);
 
   return (
@@ -78,15 +79,17 @@ export async function AdminInbox({ redirectPath }: { redirectPath: string }) {
                 <span className="muted">{submission.contactName} · {submission.email}</span>
                 <span className="muted">{submission.sourceUrls.join(' · ')}</span>
                 <span className="muted">{submission.scheduleText}</span>
-                <ReviewStatusForm
-                  entityType="calendar_submission"
-                  entityId={submission.id ?? submission.createdAt}
-                  currentStatus={submission.reviewStatus ?? 'new'}
-                  assignedTo={submission.assignedTo}
-                  reviewNotes={submission.reviewNotes}
-                  redirectTo={redirectPath}
-                  statusOptions={reviewStatuses}
-                />
+                {submission.reviewNotes ? <span className="muted">Note review: {submission.reviewNotes}</span> : null}
+                <span className="muted">Creato {DateTime.fromISO(submission.createdAt).toFormat('dd LLL yyyy HH:mm')}</span>
+                  <ReviewStatusForm
+                    entityType="calendar_submission"
+                    entityId={submission.id ?? submission.createdAt}
+                    currentStatus={submission.reviewStatus ?? 'new'}
+                    assignedTo={submission.assignedTo}
+                    reviewNotes={submission.reviewNotes}
+                    redirectTo={redirectPath}
+                    statusOptions={reviewStatuses}
+                  />
               </article>
             )) : <p className="muted">Nessun calendario in moderazione.</p>}
           </div>

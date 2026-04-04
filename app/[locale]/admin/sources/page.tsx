@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon';
 
 import { ReviewStatusForm } from '@/components/admin/ReviewStatusForm';
+import { safeAdminRead } from '@/lib/admin/safe';
 import { getSourceRegistrySnapshot, listDiscoveryLeadSummaries } from '@/lib/freshness/service';
 import { resolveLocale } from '@/lib/i18n/routing';
 
@@ -9,8 +10,17 @@ export default async function AdminSourcesPage({ params }: { params: Promise<{ l
   const citySlug = 'palermo';
 
   const [registry, leads] = await Promise.all([
-    getSourceRegistrySnapshot(citySlug),
-    listDiscoveryLeadSummaries(citySlug)
+    safeAdminRead('source registry', () => getSourceRegistrySnapshot(citySlug), {
+      citySlug,
+      totalSources: 0,
+      byCadence: { daily: 0, weekly: 0, quarterly: 0 },
+      byPurpose: { catalog: 0, discovery: 0 },
+      entries: [],
+      mode: 'seed' as const,
+      dueNow: 0,
+      overdueByCadence: { daily: 0, weekly: 0, quarterly: 0 }
+    }),
+    safeAdminRead('discovery leads', () => listDiscoveryLeadSummaries(citySlug), [])
   ]);
 
   const copy =
