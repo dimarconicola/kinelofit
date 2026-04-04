@@ -2,6 +2,7 @@ import { DateTime } from 'luxon';
 import { and, desc, eq, isNull, or } from 'drizzle-orm';
 
 import { sessions, venues } from '@/lib/catalog/seed';
+import { safeAdminRead } from '@/lib/admin/safe';
 import { getCatalogSourceMode } from '@/lib/catalog/server-data';
 import { getDb } from '@/lib/data/db';
 import { sessions as sessionTable } from '@/lib/data/schema';
@@ -14,10 +15,19 @@ export default async function AdminFreshnessPage({ params }: { params: Promise<{
   const db = getDb();
 
   const [latestSnapshot, sourceMode, recentSourceChecks, registry] = await Promise.all([
-    getLatestFreshnessSnapshot(citySlug),
-    getCatalogSourceMode(),
-    listRecentFreshnessRunSources(citySlug, 40),
-    getSourceRegistrySnapshot(citySlug)
+    safeAdminRead('latest freshness snapshot', () => getLatestFreshnessSnapshot(citySlug), null),
+    safeAdminRead('catalog source mode', () => getCatalogSourceMode(), 'seed'),
+    safeAdminRead('recent source checks', () => listRecentFreshnessRunSources(citySlug, 40), []),
+    safeAdminRead('source registry', () => getSourceRegistrySnapshot(citySlug), {
+      citySlug,
+      totalSources: 0,
+      byCadence: { daily: 0, weekly: 0, quarterly: 0 },
+      byPurpose: { catalog: 0, discovery: 0 },
+      entries: [],
+      mode: 'seed' as const,
+      dueNow: 0,
+      overdueByCadence: { daily: 0, weekly: 0, quarterly: 0 }
+    })
   ]);
 
   let staleSessions = sessions

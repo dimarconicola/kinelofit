@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { StatCard } from '@/components/admin/StatCard';
+import { safeAdminRead } from '@/lib/admin/safe';
 import { getRuntimeHealth } from '@/lib/ops/health';
 import { getCatalogSourceMode, getCollections, getPublicCities, getSeedCities } from '@/lib/catalog/server-data';
 import { getCityReadinessServer } from '@/lib/catalog/readiness';
@@ -11,17 +12,25 @@ import { resolveLocale } from '@/lib/i18n/routing';
 export default async function AdminPage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = resolveLocale((await params).locale);
   const [claims, submissions, leads, digests, outbound, readiness, sourceMode, publicCities, seedCities, collections, health] = await Promise.all([
-    listClaims(),
-    listCalendarSubmissions(),
-    listDiscoveryLeadSummaries('palermo', 60),
-    listDigestSubscriptions(),
-    listOutboundEvents(),
-    getCityReadinessServer('palermo'),
-    getCatalogSourceMode(),
-    getPublicCities(),
-    getSeedCities(),
-    getCollections('palermo'),
-    getRuntimeHealth('palermo')
+    safeAdminRead('claims', () => listClaims(), []),
+    safeAdminRead('calendar submissions', () => listCalendarSubmissions(), []),
+    safeAdminRead('discovery leads', () => listDiscoveryLeadSummaries('palermo', 60), []),
+    safeAdminRead('digest subscriptions', () => listDigestSubscriptions(), []),
+    safeAdminRead('outbound clicks', () => listOutboundEvents(), []),
+    safeAdminRead('city readiness', () => getCityReadinessServer('palermo'), {
+      citySlug: 'palermo',
+      venues: 0,
+      upcomingSessions: 0,
+      neighborhoods: 0,
+      styles: 0,
+      ctaCoverage: 0,
+      passesGate: false
+    }),
+    safeAdminRead('catalog source mode', () => getCatalogSourceMode(), 'seed'),
+    safeAdminRead('public cities', () => getPublicCities(), []),
+    safeAdminRead('seed cities', () => getSeedCities(), []),
+    safeAdminRead('collections', () => getCollections('palermo'), []),
+    safeAdminRead('runtime health', () => getRuntimeHealth('palermo'), { checks: [], hasFailures: true, hasWarnings: true })
   ]);
 
   return (

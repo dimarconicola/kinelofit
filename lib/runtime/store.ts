@@ -103,21 +103,25 @@ export const listClaims = async (): Promise<ClaimSubmission[]> => {
     return readCollection<ClaimSubmission>('claims');
   }
 
-  const rows = await db.select().from(claims).orderBy(desc(claims.createdAt)).limit(300);
-  return rows.map((row) => ({
-    id: row.id,
-    studioSlug: row.studioSlug,
-    locale: row.locale as 'en' | 'it',
-    name: row.name,
-    email: row.email,
-    role: row.role,
-    notes: row.notes,
-    reviewStatus: normalizeReviewStatus(row.reviewStatus),
-    assignedTo: row.assignedTo ?? undefined,
-    reviewNotes: row.reviewNotes ?? undefined,
-    reviewedAt: row.reviewedAt ? toIso(row.reviewedAt) : undefined,
-    createdAt: toIso(row.createdAt)
-  }));
+  try {
+    const rows = await db.select().from(claims).orderBy(desc(claims.createdAt)).limit(300);
+    return rows.map((row) => ({
+      id: row.id,
+      studioSlug: row.studioSlug,
+      locale: row.locale as 'en' | 'it',
+      name: row.name,
+      email: row.email,
+      role: row.role,
+      notes: row.notes,
+      reviewStatus: normalizeReviewStatus(row.reviewStatus),
+      assignedTo: row.assignedTo ?? undefined,
+      reviewNotes: row.reviewNotes ?? undefined,
+      reviewedAt: row.reviewedAt ? toIso(row.reviewedAt) : undefined,
+      createdAt: toIso(row.createdAt)
+    }));
+  } catch {
+    return readCollection<ClaimSubmission>('claims');
+  }
 };
 
 export const updateClaimReview = async (id: string, payload: { reviewStatus: ReviewStatus; assignedTo?: string; reviewNotes?: string }) => {
@@ -148,7 +152,6 @@ export const updateClaimReview = async (id: string, payload: { reviewStatus: Rev
 export const appendCalendarSubmission = async (payload: CalendarSubmission) => {
   const db = getDb();
   if (!db) {
-    assertPersistentStoreAvailable();
     const items = await readCollection<CalendarSubmission>('calendar-submissions');
     items.unshift({ ...payload, reviewStatus: payload.reviewStatus ?? 'new' });
     await writeCollection('calendar-submissions', items);
@@ -173,8 +176,7 @@ export const appendCalendarSubmission = async (payload: CalendarSubmission) => {
       reviewedAt: payload.reviewedAt ? new Date(payload.reviewedAt) : null,
       createdAt: new Date(payload.createdAt)
     });
-  } catch (error) {
-    if (!canFallbackToLocalRuntimeStore()) throw error;
+  } catch {
     const items = await readCollection<CalendarSubmission>('calendar-submissions');
     items.unshift({ ...payload, reviewStatus: payload.reviewStatus ?? 'new' });
     await writeCollection('calendar-submissions', items);
@@ -184,29 +186,32 @@ export const appendCalendarSubmission = async (payload: CalendarSubmission) => {
 export const listCalendarSubmissions = async (): Promise<CalendarSubmission[]> => {
   const db = getDb();
   if (!db) {
-    assertPersistentStoreAvailable();
     return readCollection<CalendarSubmission>('calendar-submissions');
   }
 
-  const rows = await db.select().from(calendarSubmissions).orderBy(desc(calendarSubmissions.createdAt)).limit(500);
-  return rows.map((row) => ({
-    id: row.id,
-    locale: row.locale as 'en' | 'it',
-    citySlug: row.citySlug,
-    submitterType: row.submitterType as 'studio' | 'teacher',
-    organizationName: row.organizationName,
-    contactName: row.contactName,
-    email: row.email,
-    phone: row.phone ?? undefined,
-    sourceUrls: row.sourceUrls,
-    scheduleText: row.scheduleText,
-    consent: row.consent,
-    reviewStatus: normalizeReviewStatus(row.reviewStatus),
-    assignedTo: row.assignedTo ?? undefined,
-    reviewNotes: row.reviewNotes ?? undefined,
-    reviewedAt: row.reviewedAt ? toIso(row.reviewedAt) : undefined,
-    createdAt: toIso(row.createdAt)
-  }));
+  try {
+    const rows = await db.select().from(calendarSubmissions).orderBy(desc(calendarSubmissions.createdAt)).limit(500);
+    return rows.map((row) => ({
+      id: row.id,
+      locale: row.locale as 'en' | 'it',
+      citySlug: row.citySlug,
+      submitterType: row.submitterType as 'studio' | 'teacher',
+      organizationName: row.organizationName,
+      contactName: row.contactName,
+      email: row.email,
+      phone: row.phone ?? undefined,
+      sourceUrls: row.sourceUrls,
+      scheduleText: row.scheduleText,
+      consent: row.consent,
+      reviewStatus: normalizeReviewStatus(row.reviewStatus),
+      assignedTo: row.assignedTo ?? undefined,
+      reviewNotes: row.reviewNotes ?? undefined,
+      reviewedAt: row.reviewedAt ? toIso(row.reviewedAt) : undefined,
+      createdAt: toIso(row.createdAt)
+    }));
+  } catch {
+    return readCollection<CalendarSubmission>('calendar-submissions');
+  }
 };
 
 export const updateCalendarSubmissionReview = async (
@@ -215,11 +220,16 @@ export const updateCalendarSubmissionReview = async (
 ) => {
   const db = getDb();
   if (!db) {
-    assertPersistentStoreAvailable();
     const items = await readCollection<CalendarSubmission & { id?: string }>('calendar-submissions');
     const next = items.map((item) =>
       item.createdAt === id || item.email === id
-        ? { ...item, reviewStatus: payload.reviewStatus, assignedTo: payload.assignedTo, reviewNotes: payload.reviewNotes, reviewedAt: new Date().toISOString() }
+        ? {
+            ...item,
+            reviewStatus: payload.reviewStatus,
+            assignedTo: payload.assignedTo,
+            reviewNotes: payload.reviewNotes,
+            reviewedAt: new Date().toISOString()
+          }
         : item
     );
     await writeCollection('calendar-submissions', next);
@@ -372,14 +382,18 @@ export const listDigestSubscriptions = async (): Promise<DigestSubscription[]> =
     return readCollection<DigestSubscription>('digests');
   }
 
-  const rows = await db.select().from(digestSubscriptions).orderBy(desc(digestSubscriptions.createdAt)).limit(500);
-  return rows.map((row) => ({
-    email: row.email,
-    locale: row.locale as 'en' | 'it',
-    citySlug: row.citySlug,
-    preferences: row.preferences,
-    createdAt: toIso(row.createdAt)
-  }));
+  try {
+    const rows = await db.select().from(digestSubscriptions).orderBy(desc(digestSubscriptions.createdAt)).limit(500);
+    return rows.map((row) => ({
+      email: row.email,
+      locale: row.locale as 'en' | 'it',
+      citySlug: row.citySlug,
+      preferences: row.preferences,
+      createdAt: toIso(row.createdAt)
+    }));
+  } catch {
+    return readCollection<DigestSubscription>('digests');
+  }
 };
 
 export const appendOutboundEvent = async (payload: OutboundEvent) => {
@@ -410,16 +424,20 @@ export const listOutboundEvents = async (): Promise<OutboundEvent[]> => {
     return readCollection<OutboundEvent>('outbound-events');
   }
 
-  const rows = await db.select().from(outboundClicks).orderBy(desc(outboundClicks.createdAt)).limit(1000);
-  return rows.map((row) => ({
-    sessionId: row.sessionId ?? undefined,
-    venueSlug: row.venueSlug,
-    citySlug: row.citySlug,
-    categorySlug: row.categorySlug,
-    targetType: row.targetType,
-    href: row.href,
-    createdAt: toIso(row.createdAt)
-  }));
+  try {
+    const rows = await db.select().from(outboundClicks).orderBy(desc(outboundClicks.createdAt)).limit(1000);
+    return rows.map((row) => ({
+      sessionId: row.sessionId ?? undefined,
+      venueSlug: row.venueSlug,
+      citySlug: row.citySlug,
+      categorySlug: row.categorySlug,
+      targetType: row.targetType,
+      href: row.href,
+      createdAt: toIso(row.createdAt)
+    }));
+  } catch {
+    return readCollection<OutboundEvent>('outbound-events');
+  }
 };
 
 const listStoredEntities = () => readCollection<StoredEntityRow>('user-entities');

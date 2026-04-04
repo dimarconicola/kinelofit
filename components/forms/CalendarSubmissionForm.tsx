@@ -27,6 +27,7 @@ export function CalendarSubmissionForm({ locale, citySlug }: CalendarSubmissionF
             email: 'Email',
             phone: 'Telefono (opzionale)',
             urls: 'URL fonti calendario (una per riga)',
+            urlsHelp: 'Serve almeno una fonte pubblica perché kinelo.fit verifica orari e pagine prima di pubblicare il calendario.',
             schedule: 'Dettagli orari e note',
             consent: 'Confermo che i dati inviati sono pubblici o autorizzati alla verifica.',
             submit: 'Invia calendario',
@@ -45,6 +46,7 @@ export function CalendarSubmissionForm({ locale, citySlug }: CalendarSubmissionF
             email: 'Email',
             phone: 'Phone (optional)',
             urls: 'Calendar source URLs (one per line)',
+            urlsHelp: 'At least one public source is required because kinelo.fit verifies schedules before publishing them.',
             schedule: 'Schedule details and notes',
             consent: 'I confirm the submitted data is public or authorized for verification.',
             submit: 'Submit calendar',
@@ -156,6 +158,7 @@ export function CalendarSubmissionForm({ locale, citySlug }: CalendarSubmissionF
       <label>
         <span>{labels.urls}</span>
         <textarea name="sourceUrls" rows={4} required placeholder="https://example.com/schedule" />
+        <small className="muted">{labels.urlsHelp}</small>
         {fieldErrors.sourceUrls ? <small className="form-error">{fieldErrors.sourceUrls}</small> : null}
       </label>
 
@@ -166,8 +169,10 @@ export function CalendarSubmissionForm({ locale, citySlug }: CalendarSubmissionF
       </label>
 
       <label className="checkbox-field calendar-consent">
-        <input name="consent" type="checkbox" value="true" required />
-        <span>{labels.consent}</span>
+        <span className="checkbox-control">
+          <input name="consent" type="checkbox" value="true" required />
+        </span>
+        <span className="checkbox-copy">{labels.consent}</span>
       </label>
       {fieldErrors.consent ? <small className="form-error">{fieldErrors.consent}</small> : null}
 

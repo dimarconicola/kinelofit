@@ -1059,39 +1059,48 @@ export const listRecentFreshnessRunSources = async (citySlug: string, limit = 12
   const db = getDb();
   if (!db) return [];
 
-  const rows = await db
-    .select()
-    .from(freshnessRunSources)
-    .where(eq(freshnessRunSources.citySlug, normalizedCity))
-    .orderBy(desc(freshnessRunSources.checkedAt))
-    .limit(limit);
+  try {
+    const rows = await db
+      .select()
+      .from(freshnessRunSources)
+      .where(eq(freshnessRunSources.citySlug, normalizedCity))
+      .orderBy(desc(freshnessRunSources.checkedAt))
+      .limit(limit);
 
-  return rows.map((row) => ({
-    runId: row.runId,
-    citySlug: row.citySlug,
-    sourceUrl: row.sourceUrl,
-    reachable: row.reachable,
-    changed: row.changed,
-    impacted: row.impacted,
-    status: row.status,
-    finalUrl: row.finalUrl,
-    error: row.error ?? undefined,
-    parserSignals: row.parserSignals,
-    autoReverified: row.autoReverified,
-    checkedAt: row.checkedAt.toISOString()
-  }));
+    return rows.map((row) => ({
+      runId: row.runId,
+      citySlug: row.citySlug,
+      sourceUrl: row.sourceUrl,
+      reachable: row.reachable,
+      changed: row.changed,
+      impacted: row.impacted,
+      status: row.status,
+      finalUrl: row.finalUrl,
+      error: row.error ?? undefined,
+      parserSignals: row.parserSignals,
+      autoReverified: row.autoReverified,
+      checkedAt: row.checkedAt.toISOString()
+    }));
+  } catch {
+    return [];
+  }
 };
 
 export const getLatestFreshnessSnapshot = async (citySlug: string): Promise<FreshnessRunSnapshot | null> => {
   const db = getDb();
   if (!db) return null;
 
-  const rows = await db
-    .select()
-    .from(freshnessRuns)
-    .where(eq(freshnessRuns.citySlug, citySlug))
-    .orderBy(desc(freshnessRuns.createdAt))
-    .limit(1);
+  let rows;
+  try {
+    rows = await db
+      .select()
+      .from(freshnessRuns)
+      .where(eq(freshnessRuns.citySlug, citySlug))
+      .orderBy(desc(freshnessRuns.createdAt))
+      .limit(1);
+  } catch {
+    return null;
+  }
 
   const row = rows[0];
   if (!row) return null;
@@ -1186,34 +1195,38 @@ export const getSourceRegistrySnapshot = async (citySlug: string): Promise<Sourc
   const referenceIso = new Date().toISOString();
 
   if (db) {
-    await ensureSourceRegistrySeed(normalizedCity);
-    const rows = await db
-      .select()
-      .from(sourceRegistry)
-      .where(and(eq(sourceRegistry.citySlug, normalizedCity), eq(sourceRegistry.active, true)))
-      .orderBy(sourceRegistry.cadence, sourceRegistry.sourceUrl);
+    try {
+      await ensureSourceRegistrySeed(normalizedCity);
+      const rows = await db
+        .select()
+        .from(sourceRegistry)
+        .where(and(eq(sourceRegistry.citySlug, normalizedCity), eq(sourceRegistry.active, true)))
+        .orderBy(sourceRegistry.cadence, sourceRegistry.sourceUrl);
 
-    const entries = rows.map(toSourceRegistryEntry);
-    const summary = summarizeRegistry(entries);
-    const overdueByCadence: Record<SourceCadence, number> = { daily: 0, weekly: 0, quarterly: 0 };
-    let dueNow = 0;
-    for (const entry of entries) {
-      if (isSourceDueAt(entry.nextCheckAt, referenceIso)) {
-        dueNow += 1;
-        overdueByCadence[entry.cadence] += 1;
+      const entries = rows.map(toSourceRegistryEntry);
+      const summary = summarizeRegistry(entries);
+      const overdueByCadence: Record<SourceCadence, number> = { daily: 0, weekly: 0, quarterly: 0 };
+      let dueNow = 0;
+      for (const entry of entries) {
+        if (isSourceDueAt(entry.nextCheckAt, referenceIso)) {
+          dueNow += 1;
+          overdueByCadence[entry.cadence] += 1;
+        }
       }
-    }
 
-    return {
-      citySlug: normalizedCity,
-      totalSources: entries.length,
-      byCadence: summary.byCadence,
-      byPurpose: summary.byPurpose,
-      entries,
-      mode: 'database',
-      dueNow,
-      overdueByCadence
-    };
+      return {
+        citySlug: normalizedCity,
+        totalSources: entries.length,
+        byCadence: summary.byCadence,
+        byPurpose: summary.byPurpose,
+        entries,
+        mode: 'database',
+        dueNow,
+        overdueByCadence
+      };
+    } catch {
+      // Fall through to seed snapshot if operational tables are missing.
+    }
   }
 
   const entries = getSeedSourceRegistry(normalizedCity).filter((entry) => entry.active);
@@ -1239,29 +1252,33 @@ export const listDiscoveryLeadSummaries = async (citySlug: string, limit = 300):
   const db = getDb();
   if (!db) return [];
 
-  const rows = await db
-    .select()
-    .from(discoveryLeads)
-    .where(eq(discoveryLeads.citySlug, normalizedCity))
-    .orderBy(desc(discoveryLeads.lastSeenAt))
-    .limit(limit);
+  try {
+    const rows = await db
+      .select()
+      .from(discoveryLeads)
+      .where(eq(discoveryLeads.citySlug, normalizedCity))
+      .orderBy(desc(discoveryLeads.lastSeenAt))
+      .limit(limit);
 
-  return rows.map((row) => ({
-    id: row.id,
-    citySlug: row.citySlug,
-    sourceUrl: row.sourceUrl,
-    title: row.title,
-    snippet: row.snippet ?? undefined,
-    discoveredFromUrl: row.discoveredFromUrl,
-    status: row.status,
-    assignedTo: row.assignedTo ?? undefined,
-    reviewNotes: row.reviewNotes ?? undefined,
-    reviewedAt: row.reviewedAt?.toISOString(),
-    confidence: parseNumber(row.confidence),
-    tags: row.tags,
-    lastSeenAt: row.lastSeenAt.toISOString(),
-    createdAt: row.createdAt.toISOString()
-  }));
+    return rows.map((row) => ({
+      id: row.id,
+      citySlug: row.citySlug,
+      sourceUrl: row.sourceUrl,
+      title: row.title,
+      snippet: row.snippet ?? undefined,
+      discoveredFromUrl: row.discoveredFromUrl,
+      status: row.status,
+      assignedTo: row.assignedTo ?? undefined,
+      reviewNotes: row.reviewNotes ?? undefined,
+      reviewedAt: row.reviewedAt?.toISOString(),
+      confidence: parseNumber(row.confidence),
+      tags: row.tags,
+      lastSeenAt: row.lastSeenAt.toISOString(),
+      createdAt: row.createdAt.toISOString()
+    }));
+  } catch {
+    return [];
+  }
 };
 
 export const updateDiscoveryLeadReview = async (

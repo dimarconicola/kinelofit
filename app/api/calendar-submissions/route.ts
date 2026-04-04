@@ -8,13 +8,17 @@ const schema = z.object({
   locale: z.enum(['en', 'it']),
   citySlug: z.string().min(1),
   submitterType: z.enum(['studio', 'teacher']),
-  organizationName: z.string().min(1),
-  contactName: z.string().min(1),
-  email: z.string().email(),
+  organizationName: z.string().trim().min(1, 'Indica il nome dello studio o progetto.'),
+  contactName: z.string().trim().min(1, 'Indica il referente operativo.'),
+  email: z.string().email('Inserisci un indirizzo email valido.'),
   phone: z.string().trim().optional(),
-  sourceUrls: z.array(z.string().url()).min(1),
-  scheduleText: z.string().min(8),
-  consent: z.literal(true)
+  sourceUrls: z.array(z.string().url('Ogni fonte deve essere un URL pubblico valido.')).min(1, 'Serve almeno una fonte pubblica da verificare.'),
+  scheduleText: z.string().trim().min(8, 'Aggiungi orari e dettagli minimi del calendario.'),
+  consent: z.literal(true, {
+    errorMap: () => ({
+      message: 'Conferma che i dati inviati sono pubblici o autorizzati alla verifica.'
+    })
+  })
 });
 
 export async function POST(request: Request) {
