@@ -7,12 +7,14 @@ import { MapCanvas } from '@/components/discovery/MapCanvas';
 import type { MapRenderMode, MapUserLocationState, MapVenueSummary } from '@/components/discovery/classes-results.types';
 import type { Locale } from '@/lib/catalog/types';
 import { haversineKm, type GeoPoint } from '@/lib/map/distance';
+import { buildOpenStreetMapHref } from '@/lib/ui/maps';
 
 export interface StudioDirectoryCard {
   slug: string;
   name: string;
   neighborhoodName: string;
   address: string;
+  geo: { lat: number; lng: number };
   tagline: string;
   sessionCount: number;
   nextSessionLabel?: string;
@@ -67,6 +69,7 @@ export function StudiosDirectoryClient({
           locateDenied: 'Posizione non disponibile. Resto sui confini della città.',
           geolocationUnavailable: 'Questo dispositivo non espone la geolocalizzazione.',
           openStudio: 'Apri studio',
+          openMap: 'Mappa',
           noNext: 'Calendario pubblico non ancora visibile.'
         }
       : {
@@ -84,6 +87,7 @@ export function StudiosDirectoryClient({
           locateDenied: 'Location unavailable. Staying on city bounds.',
           geolocationUnavailable: 'This device does not expose geolocation.',
           openStudio: 'Open studio',
+          openMap: 'Map',
           noNext: 'No public next session visible yet.'
         };
 
@@ -198,6 +202,9 @@ export function StudiosDirectoryClient({
                     <a href={card.studioHref} className="button button-primary">
                       {labels.openStudio}
                     </a>
+                    <a href={buildOpenStreetMapHref({ address: card.address, geo: card.geo })} target="_blank" rel="noreferrer" className="button button-secondary">
+                      {labels.openMap}
+                    </a>
                     {card.primaryCtaHref && card.primaryCtaLabel ? (
                       <a href={card.primaryCtaHref} target="_blank" rel="noreferrer" className="button button-ghost">
                         {card.primaryCtaLabel}
@@ -284,6 +291,14 @@ export function StudiosDirectoryClient({
                   <div className="studios-directory-list-actions">
                     <a href={selectedVenue.studioHref} className="button button-primary">
                       {labels.openStudio}
+                    </a>
+                    <a
+                      href={buildOpenStreetMapHref({ address: selectedVenue.address, geo: selectedVenue.geo })}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="button button-secondary"
+                    >
+                      {labels.openMap}
                     </a>
                     {selectedVenue.primaryCtaHref && selectedVenue.primaryCtaLabel ? (
                       <a href={selectedVenue.primaryCtaHref} target="_blank" rel="noreferrer" className="button button-ghost">

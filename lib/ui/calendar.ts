@@ -41,3 +41,19 @@ export const buildIcsCalendar = (calendarName: string, events: CalendarExportEve
   lines.push('END:VCALENDAR');
   return `${lines.join('\r\n')}\r\n`;
 };
+
+export const buildGoogleCalendarHref = (event: CalendarExportEvent) => {
+  const start = toIcsDate(event.startAt);
+  const end = toIcsDate(event.endAt);
+  const details = [event.description, event.url].filter(Boolean).join('\n\n');
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: event.title,
+    dates: `${start}/${end}`
+  });
+
+  if (event.location) params.set('location', event.location);
+  if (details) params.set('details', details);
+
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+};

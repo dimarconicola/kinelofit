@@ -50,6 +50,7 @@ export default async function StudiosIndexPage({
       name: venue.name,
       neighborhoodName: neighborhoods.find((item) => item.slug === venue.neighborhoodSlug)?.name[locale] ?? venue.address,
       address: venue.address,
+      geo: venue.geo,
       tagline: venue.tagline[locale],
       sessionCount: studioSummary?.sessionCount ?? 0,
       nextSessionLabel,
