@@ -14,6 +14,7 @@ type LoopVideoProps = {
 
 export function LoopVideo({ asset, label, className, priority = false }: LoopVideoProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isVisible, setIsVisible] = useState(priority);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [saveDataEnabled, setSaveDataEnabled] = useState(false);
@@ -77,10 +78,29 @@ export function LoopVideo({ asset, label, className, priority = false }: LoopVid
   const shouldAutoplay = Boolean(source) && isVisible && !prefersReducedMotion && !saveDataEnabled;
   const canRenderVideo = Boolean(source);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !source || !isVisible) return;
+
+    // Non-hero videos mount offscreen with autoPlay=false; once visible we need to
+    // explicitly load/play or browsers keep them on the poster frame forever.
+    if (video.networkState === HTMLMediaElement.NETWORK_EMPTY) {
+      video.load();
+    }
+
+    if (shouldAutoplay) {
+      void video.play().catch(() => null);
+      return;
+    }
+
+    video.pause();
+  }, [isVisible, shouldAutoplay, source]);
+
   return (
     <div ref={containerRef} className="loop-video-shell" aria-label={label}>
       {canRenderVideo ? (
         <video
+          ref={videoRef}
           className={`${className ?? ''} loop-video-element`.trim()}
           autoPlay={shouldAutoplay}
           muted
