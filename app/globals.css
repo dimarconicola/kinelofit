@@ -123,6 +123,20 @@ main.site-main {
   font-weight: 600;
 }
 
+.inline-link-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.inline-link-button:hover {
+  color: var(--text);
+}
+
 .hero,
 .city-hero {
   display: grid;
@@ -1564,6 +1578,23 @@ body {
 .button-ghost {
   border-color: rgba(44, 48, 46, 0.16);
   background: rgba(255, 255, 255, 0.68);
+}
+
+.session-detail-summary,
+.session-detail-followups {
+  padding: clamp(1.2rem, 2.4vw, 1.8rem);
+}
+
+.session-detail-summary h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+}
+
+.session-detail-followup-list {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
 }
 
 .hero,

@@ -9,6 +9,8 @@ import type { Locale, Session } from '@/lib/catalog/types';
 import { buildGoogleCalendarHref } from '@/lib/ui/calendar';
 import { formatSessionTime } from '@/lib/ui/format';
 import { buildOpenStreetMapHref } from '@/lib/ui/maps';
+import { buildAbsoluteSessionHref } from '@/lib/ui/session-links';
+import { ShareButton } from '@/components/ui/ShareButton';
 import { BookingLink } from './BookingLink';
 
 interface SessionCardProps {
@@ -44,7 +46,9 @@ export function SessionCard({ session, locale, resolved, scheduleLabel }: Sessio
           savedClass: 'Classe salvata',
           savedSchedule: 'In agenda',
           map: 'Mappa',
-          googleCalendar: 'Google Calendar'
+          googleCalendar: 'Google Calendar',
+          share: 'Condividi',
+          copied: 'Link copiato'
         }
       : {
           verified: 'Verified',
@@ -68,7 +72,9 @@ export function SessionCard({ session, locale, resolved, scheduleLabel }: Sessio
           savedClass: 'Class saved',
           savedSchedule: 'In schedule',
           map: 'Map',
-          googleCalendar: 'Google Calendar'
+          googleCalendar: 'Google Calendar',
+          share: 'Share',
+          copied: 'Link copied'
         };
 
   const start = DateTime.fromISO(session.startAt).setZone('Europe/Rome');
@@ -76,6 +82,8 @@ export function SessionCard({ session, locale, resolved, scheduleLabel }: Sessio
   const durationMinutes = Math.max(30, Math.round(end.diff(start, 'minutes').minutes));
   const priceNote = getPriceNoteForLocale(session.priceNote, locale);
   const mapHref = buildOpenStreetMapHref({ address: venue.address, geo: venue.geo });
+  const sessionHref = buildAbsoluteSessionHref({ locale, citySlug: session.citySlug, sessionId: session.id });
+  const shareText = [session.title[locale], formatSessionTime(session.startAt, locale), venue.name, instructor.name].filter(Boolean).join(' · ');
   const googleCalendarHref = buildGoogleCalendarHref({
     id: session.id,
     title: session.title[locale],
@@ -83,7 +91,7 @@ export function SessionCard({ session, locale, resolved, scheduleLabel }: Sessio
     endAt: session.endAt,
     location: `${venue.name}, ${venue.address}`,
     description: `${style.name[locale]} · ${instructor.name}`,
-    url: `https://kinelofit.vercel.app/${locale}/${session.citySlug}/studios/${venue.slug}`
+    url: sessionHref
   });
 
   return (
@@ -144,6 +152,7 @@ export function SessionCard({ session, locale, resolved, scheduleLabel }: Sessio
                 <ServerLink href={googleCalendarHref} className="inline-link" target="_blank" rel="noreferrer">
                   {labels.googleCalendar}
                 </ServerLink>
+                <ShareButton title={session.title[locale]} text={shareText} url={sessionHref} label={labels.share} copiedLabel={labels.copied} />
               </div>
             </div>
             <div className="session-actions">
