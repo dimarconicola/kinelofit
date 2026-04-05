@@ -15,19 +15,6 @@ interface MapPanelProps {
 }
 
 export function MapPanel({ locale, cityName, venues, bounds, renderMode }: MapPanelProps) {
-  const labels =
-    locale === 'it'
-      ? {
-          eyebrow: 'Mappa',
-          title: `${cityName} sulla mappa`,
-          copy: 'Una lettura rapida delle sedi già verificate in questa zona.'
-        }
-      : {
-          eyebrow: 'Map',
-          title: `${cityName} on the map`,
-          copy: 'A quick read of the verified venues already mapped in this area.'
-        };
-
   const summaries = useMemo<MapVenueSummary[]>(
     () =>
       venues
@@ -49,11 +36,6 @@ export function MapPanel({ locale, cityName, venues, bounds, renderMode }: MapPa
 
   return (
     <aside className="map-shell panel">
-      <div className="map-panel-copy">
-        <p className="eyebrow">{labels.eyebrow}</p>
-        <h3>{labels.title}</h3>
-        <p className="muted">{labels.copy}</p>
-      </div>
       <MapCanvas locale={locale} cityName={cityName} bounds={bounds} venues={summaries} renderMode={renderMode} readOnly />
     </aside>
   );

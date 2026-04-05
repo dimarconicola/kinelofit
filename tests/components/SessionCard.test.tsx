@@ -104,6 +104,21 @@ describe('SessionCard', () => {
     expect(screen.getByText('Morning Yoga')).toBeInTheDocument();
   });
 
+  it('should render a share button for the single class route', () => {
+    render(
+      <TestWrapper>
+        <SessionCard
+          session={mockSession}
+          locale="it"
+          resolved={resolved}
+          scheduleLabel="Salva in agenda"
+        />
+      </TestWrapper>
+    );
+
+    expect(screen.getByRole('button', { name: 'Condividi' })).toBeInTheDocument();
+  });
+
   it('should display Italian title when locale is "it"', () => {
     const italianSession: Session = {
       ...mockSession,

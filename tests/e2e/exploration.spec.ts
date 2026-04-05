@@ -60,6 +60,23 @@ test.describe('critical public exploration', () => {
     await expectNoTechnicalCopy(page);
   });
 
+  test('single class route is public and shareable', async ({ page }) => {
+    await page.goto('/it/palermo/studios/yoga-your-life');
+
+    const shareButton = page.getByRole('button', { name: 'Condividi' }).first();
+    await expect(shareButton).toBeVisible();
+    const shareUrl = await shareButton.getAttribute('data-share-url');
+    expect(shareUrl).toContain('/it/palermo/classes/');
+
+    const sharePath = new URL(shareUrl!).pathname;
+    await page.goto(sharePath);
+
+    await expect(page).toHaveURL(/\/it\/palermo\/classes\/.+/);
+    await expect(page.locator('main h1')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Apri studio' })).toBeVisible();
+    await expectNoTechnicalCopy(page);
+  });
+
   test('studio details keep Italian pricing and expose direct links', async ({ page }) => {
     await page.goto('/it/palermo/studios/ashtanga-shala-sicilia');
 
