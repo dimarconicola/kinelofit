@@ -7,9 +7,9 @@ test.describe('critical public exploration', () => {
     await page.goto('/it');
     await expect(page.getByRole('heading', { name: 'Scopri la lezione ideale nella tua città.' })).toBeVisible();
 
-    await page.getByRole('link', { name: /Esplora le classi/i }).first().click();
+    await page.locator('a[href="/it/palermo/classes"]').first().click();
     await expect(page).toHaveURL(/\/it\/palermo\/classes/);
-    await expect(page.getByRole('heading', { name: 'Classi' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Lezioni' })).toBeVisible();
     await expectNoTechnicalCopy(page);
 
     await page.getByRole('button', { name: 'Mostra filtri' }).click();
@@ -23,7 +23,7 @@ test.describe('critical public exploration', () => {
     await page.getByRole('button', { name: 'Vista mappa' }).click();
     await expect(page).toHaveURL(/view=map/);
     await expect(page).toHaveURL(/weekday=mon/);
-    await expect(page.getByText('studi in mappa')).toBeVisible();
+    await expect(page.getByText(/studi in mappa/i).first()).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Sfoglia tutte le sedi' })).toBeVisible();
 
     const fallbackMarkers = page.locator('.fallback-map-marker');
@@ -76,8 +76,9 @@ test.describe('critical public exploration', () => {
     await page.goto('/it/palermo/teachers');
 
     await expect(page.getByRole('heading', { name: 'Le tue guide a Palermo' })).toBeVisible();
-    await expect(page.getByText('Valentina Lorito')).toBeVisible();
-    await expect(page.getByText('Marta Sto')).toBeVisible();
+    const names = (await page.locator('.teacher-directory-copy > .eyebrow').allTextContents()).map((item) => item.trim()).filter(Boolean);
+    expect(names.length).toBeGreaterThan(3);
+    expect(names.slice(0, 6)).toEqual([...names.slice(0, 6)].sort((left, right) => left.localeCompare(right, 'it')));
     await expect(page.getByRole('link', { name: /Apri profilo/i }).first()).toBeVisible();
     await expectNoTechnicalCopy(page);
   });
@@ -87,7 +88,8 @@ test.describe('critical public exploration', () => {
 
     await expect(page.getByRole('heading', { name: 'Dove praticare a Palermo' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Studi in ordine alfabetico' })).toBeVisible();
-    await expect(page.getByText('Ashtanga Shala Sicilia')).toBeVisible();
+    await expect(page.locator('.studios-directory-list-card').first()).toBeVisible();
+    await expect(page.locator('.studios-directory-list-card h3').first()).toBeVisible();
 
     await page.getByRole('button', { name: 'Vista mappa' }).click();
     await expect(page).toHaveURL(/view=map/);

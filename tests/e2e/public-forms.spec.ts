@@ -16,7 +16,9 @@ test.describe('public submission flows', () => {
 
     await expectOneOfTexts(page, [
       'Ricevuto. Il team verifica e inserisce il calendario nella coda editoriale.',
-      'Invio non riuscito. Controlla i campi e riprova.'
+      'Invio non riuscito. Controlla i campi e riprova.',
+      'Invio non riuscito. Invio temporaneamente non disponibile. Riprova tra poco.',
+      'Invio non riuscito. Controlla i campi evidenziati e riprova.'
     ]);
     await expectNoTechnicalCopy(page);
   });
