@@ -1,28 +1,56 @@
 # kinelo.fit
 
-A Palermo-seeded, bilingual, yoga-led discovery app for local mind-body classes.
+A Palermo-first, bilingual discovery app for recurring classes, studios, and teachers in movement and mind-body practice.
 
-## What is implemented
+## What exists today
 
-- Next.js App Router app with `en` and `it` locale routing.
-- Palermo public city hub, classes calendar, studio pages, teacher pages, category pages, neighborhood pages, and editorial collections.
-- Multi-city architecture with city status control; Palermo is public, Catania is seeded only.
-- Strong typed catalog domain with Drizzle Postgres schema ready for Supabase/Postgres migration.
-- Manual ingestion workflow backed by a CSV sample and a readiness gate script.
-- Supabase-first auth path (magic link + Google OAuth) with a demo fallback when credentials are not configured.
-- Postgres-backed persistence for claims, digest signups, outbound click tracking, favorites, and saved schedule when `DATABASE_URL` is configured.
-- Admin overview, imports, freshness, claims, collections, and taxonomy pages.
-- Admin sources page for cadence registry and quarterly discovery leads.
-- MDX-backed editorial collections.
+The current product includes:
+- public city discovery for Palermo
+- classes discovery with list, map, and calendar views
+- public studios directory with list and map
+- public teachers directory
+- single-class detail pages for direct sharing
+- favorites and saved schedule for signed-in users
+- account and digest preference flows
+- public suggestion and claim flows
+- admin surfaces for moderation, imports, freshness, sources, health, collections, and taxonomy
+- DB-first catalog reads with seed fallback
+- cached public read models and a client-side search index for faster discovery
+- Leaflet public maps with Carto/OSM-compatible tiles by default
+- structured freshness automation, parser adapters, and discovery leads
 
-## Stack
+## Documentation map
 
-- Next.js 15
+### Product and UX
+- [Product overview](/Users/nicoladimarco/code/kinelofit/docs/product-overview.md)
+- [Features and UX flows](/Users/nicoladimarco/code/kinelofit/docs/features-and-flows.md)
+- [Catalog policy](/Users/nicoladimarco/code/kinelofit/docs/catalog-policy.md)
+
+### Architecture and operations
+- [Architecture](/Users/nicoladimarco/code/kinelofit/docs/architecture.md)
+- [Automation and operations](/Users/nicoladimarco/code/kinelofit/docs/automation.md)
+- [Database workflow](/Users/nicoladimarco/code/kinelofit/docs/database.md)
+
+### Testing and release
+- [UX flow coverage](/Users/nicoladimarco/code/kinelofit/docs/testing/ux-flows.md)
+- [Test strategy](/Users/nicoladimarco/code/kinelofit/docs/testing/test-strategy.md)
+- [Release checklist](/Users/nicoladimarco/code/kinelofit/docs/testing/release-checklist.md)
+
+### Future plans
+- [AI-assisted calendar ingestion plan](/Users/nicoladimarco/code/kinelofit/docs/plans/ai-calendar-ingestion.md)
+
+## Tech stack
+
+- Next.js 15 App Router
+- React 19
 - TypeScript
-- Drizzle ORM schema for PostgreSQL
-- Supabase-ready auth/data environment contract
-- Leaflet-based public map with Carto/OSM tiles by default and optional tile-provider overrides
+- Tailwind CSS v4
+- HeroUI
+- Drizzle ORM
+- Supabase Postgres and Supabase Auth
+- Leaflet + Supercluster for public maps
 - Luxon for time handling
+- Vitest, Node test runner, and Playwright for quality gates
 
 ## Run locally
 
@@ -39,13 +67,19 @@ Open `http://localhost:3000/it`.
 ```bash
 npm run lint
 npm run typecheck
-npm run test
-npm run readiness
+npm test
+npm run build
+npm run smoke:routes
+npm run test:e2e
+npm run catalog:bootstrap
 npm run freshness:run
 npm run freshness:run -- palermo --cadence=weekly
 npm run freshness:run -- palermo --cadence=quarterly
+npm run readiness
 npm run validate:import
-npm run build
+npm run catalog:coverage
+npm run freshness:report
+npm run perf:check
 ```
 
 ## Environment variables
@@ -53,29 +87,38 @@ npm run build
 See `.env.example`.
 
 Important values:
+- `DATABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `APP_SESSION_SECRET`
+- `NEXT_PUBLIC_SITE_URL`
+- `NEXT_PUBLIC_MAP_TILE_URL`
+- `NEXT_PUBLIC_MAP_TILE_ATTRIBUTION`
+- `NEXT_PUBLIC_MAP_TILE_SUBDOMAINS`
+- `CRON_SECRET`
 
-- `NEXT_PUBLIC_MAP_TILE_URL`: optional tile template override for the public Leaflet map.
-- `NEXT_PUBLIC_MAP_TILE_ATTRIBUTION`: optional attribution override for the public map provider.
-- `NEXT_PUBLIC_MAP_TILE_SUBDOMAINS`: optional comma-separated subdomains for the tile provider.
-- `APP_SESSION_SECRET`: signs the local demo auth cookie.
-- `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`: enable Supabase Auth in the app.
-- `DATABASE_URL`: enables Drizzle/Postgres persistence for operator and user state.
-- `CRON_SECRET`: protects `/api/cron/freshness` (used by Vercel cron or manual runs).
+## Current runtime behavior
 
-## Current product behavior
+- browsing is public
+- favorites and saved schedule require sign-in
+- auth is Supabase-first, with a controlled local-preview fallback path
+- claims, digest signups, outbound events, favorites, saved schedule, and submissions persist to Postgres when `DATABASE_URL` is configured
+- where allowed, runtime state can fall back to `/tmp/kinelo-fit-runtime`
+- public city snapshots and search indexes are cached and rebuilt from the canonical catalog
+- freshness runs are scheduled by cadence and can also be triggered manually
+- parser adapters and source-event candidate extraction help maintain the Palermo catalog without turning the app into a blind scraper
 
-- Browsing is public.
-- Favorites and saved schedule require sign-in.
-- Claim and digest forms, outbound events, and user state persist to Postgres when `DATABASE_URL` is configured.
-- If `DATABASE_URL` is unset, state falls back to `/tmp/kinelo-fit-runtime`.
-- Supply/readiness is computed live from the active Palermo catalog.
-- Low-resource freshness checks are available at `/api/cron/freshness?city=palermo&cadence=daily|weekly|quarterly` and scheduled via `vercel.json`.
-- The freshness pipeline tracks a source registry by cadence, checks URLs HEAD-first (GET fallback only on 405/501), compares lightweight header signatures, marks impacted sessions stale, applies stale/hidden aging windows, and writes run metrics to `freshness_runs`.
-- Quarterly cadence runs a broader discovery sweep and stores candidate sources in `discovery_leads`.
-- Parser adapters currently support Rishi and Taiji sources to auto-reverify matching weekday/time sessions when those pages change.
+## Product principles
 
-## Next implementation moves
+- Palermo-first before expansion
+- trust over breadth
+- public reliability before account complexity
+- direct action over marketplace lock-in
+- automation with explicit confidence and moderation boundaries
 
-- Move the seed dataset into Postgres and wire the Drizzle schema to live queries.
-- Expand parser-specific source adapters for higher-confidence automatic schedule extraction on top of freshness signals.
-- Turn admin queues into persistent operational tooling.
+## Related operational notes
+
+- Admin base route: `/it/admin`
+- Admin inbox: `/it/admin/inbox`
+- The public submission flow writes into moderation storage; it does not auto-publish.
+- The AI ingestion plan is intentionally documented but not active in runtime today.
