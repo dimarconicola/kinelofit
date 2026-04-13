@@ -1,4 +1,5 @@
 import { AuthShell } from '@/components/auth/AuthShell';
+import { PwaInstallCallout } from '@/components/pwa/PwaInstallCallout';
 import { SavedScheduleClient } from '@/components/state/SavedScheduleClient';
 import { ServerButtonLink, ServerChip } from '@/components/ui/server';
 import { getSessionUser } from '@/lib/auth/session';
@@ -167,6 +168,7 @@ export default async function SchedulePage({ params }: { params: Promise<{ local
             </ServerChip>
           </div>
         </div>
+        <PwaInstallCallout locale={locale} context="schedule" />
       </section>
 
       <section className="panel">

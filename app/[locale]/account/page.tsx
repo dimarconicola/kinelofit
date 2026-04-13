@@ -1,6 +1,7 @@
 import { AuthShell } from '@/components/auth/AuthShell';
 import { AccountDigestForm } from '@/components/account/AccountDigestForm';
 import { AccountProfileForm } from '@/components/account/AccountProfileForm';
+import { PwaInstallCallout } from '@/components/pwa/PwaInstallCallout';
 import { ServerButtonLink, ServerChip } from '@/components/ui/server';
 import { getSessionUser } from '@/lib/auth/session';
 import { getCatalogSnapshot } from '@/lib/catalog/repository';
@@ -185,6 +186,7 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
               {copy.viewSchedule}
             </ServerButtonLink>
           </div>
+          <PwaInstallCallout locale={locale} context="account" />
         </div>
       </div>
     </section>

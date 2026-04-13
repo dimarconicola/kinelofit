@@ -111,3 +111,34 @@ export function clearUser() {
     Sentry.setUser(null);
   });
 }
+
+/**
+ * Lightweight product event tracking through the existing observability layer.
+ * This keeps PWA/install telemetry inside the current Sentry-based setup.
+ */
+export function trackProductEvent(name: string, data?: Record<string, unknown>) {
+  if (typeof window === 'undefined') return;
+
+  console.info(`[product-event] ${name}`, data ?? {});
+
+  const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+  if (!dsn) return;
+
+  import('@sentry/browser').then((Sentry) => {
+    Sentry.addBreadcrumb({
+      category: 'product',
+      message: name,
+      level: 'info',
+      data
+    });
+
+    Sentry.captureMessage(`product:${name}`, {
+      level: 'info',
+      extra: data,
+      tags: {
+        area: 'pwa',
+        event: name
+      }
+    });
+  });
+}

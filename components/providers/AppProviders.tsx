@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { ErrorBoundary } from '@/lib/errors/boundary';
 import { setupGlobalErrorHandlers } from '@/lib/errors/global-handlers';
 import { AuthStatusProvider } from '@/components/providers/AuthStatusProvider';
+import { PwaProvider } from '@/components/providers/PwaProvider';
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -21,7 +22,9 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 
   return (
     <ErrorBoundary>
-      <AuthStatusProvider>{children}</AuthStatusProvider>
+      <PwaProvider>
+        <AuthStatusProvider>{children}</AuthStatusProvider>
+      </PwaProvider>
     </ErrorBoundary>
   );
 }
