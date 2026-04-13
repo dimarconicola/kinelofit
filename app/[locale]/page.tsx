@@ -2,6 +2,8 @@ import { DateTime } from 'luxon';
 
 import { DigestForm } from '@/components/forms/DigestForm';
 import { LoopVideo } from '@/components/media/LoopVideo';
+import { PwaInstallCallout } from '@/components/pwa/PwaInstallCallout';
+import { StandaloneHomeRedirect } from '@/components/pwa/StandaloneHomeRedirect';
 import { ServerButtonLink, ServerCard, ServerCardLink, ServerChip } from '@/components/ui/server';
 import { applyPublicCityFilters } from '@/lib/catalog/public-models';
 import { getPublicCitySnapshot } from '@/lib/catalog/public-read-models';
@@ -232,6 +234,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
   return (
     <div className="home-v2">
       <section className="home-v2-hero">
+        <StandaloneHomeRedirect locale={locale} />
         <div className="home-v2-shell">
           <div className="home-v2-hero-grid">
             <div className="home-v2-hero-copy">
@@ -252,6 +255,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
                   {copy.ctaSecondary}
                 </ServerButtonLink>
               </div>
+              <PwaInstallCallout locale={locale} variant="hero" context="home" />
             </div>
             <div className="home-v2-hero-visual">
               <div className="home-v2-photo-wrap">
