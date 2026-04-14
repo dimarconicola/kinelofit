@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
+import { buildAuthCallbackUrl } from '@/lib/auth/redirect';
 import { getSupabaseServerClient, isSupabaseConfigured } from '@/lib/auth/supabase';
-import { env } from '@/lib/env';
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -17,13 +17,12 @@ export async function POST(request: Request) {
     return NextResponse.redirect(new URL(`/${locale}/sign-in`, request.url));
   }
 
-  const next = encodeURIComponent(`/${locale}/favorites`);
   let data: { url?: string | null } = {};
   try {
     const result = await supabase.auth.signInWithOAuth({
       provider: provider === 'google' ? 'google' : 'google',
       options: {
-        redirectTo: `${env.siteUrl}/auth/callback?next=${next}`
+        redirectTo: buildAuthCallbackUrl(request, locale)
       }
     });
     data = result.data;

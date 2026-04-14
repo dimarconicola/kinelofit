@@ -56,6 +56,35 @@ describe('auth route contracts', () => {
     expect(unavailable.headers.get('location')).toBe('http://localhost:3000/it/sign-in');
   });
 
+  it('magic-link builds callback URLs from the request origin', async () => {
+    mockState.isSupabaseConfigured = true;
+    const signInWithOtp = vi.fn().mockResolvedValue({});
+    getSupabaseServerClient.mockResolvedValue({
+      auth: { signInWithOtp }
+    });
+
+    const { POST } = await import('@/app/api/auth/magic-link/route');
+
+    const formData = new FormData();
+    formData.set('email', 'mobile@example.com');
+    formData.set('locale', 'it');
+
+    const response = await POST(
+      new Request('https://kinelofit.vercel.app/api/auth/magic-link', {
+        method: 'POST',
+        body: formData
+      })
+    );
+
+    expect(signInWithOtp).toHaveBeenCalledWith({
+      email: 'mobile@example.com',
+      options: {
+        emailRedirectTo: 'https://kinelofit.vercel.app/auth/callback?next=%2Fit%2Ffavorites'
+      }
+    });
+    expect(response.headers.get('location')).toBe('https://kinelofit.vercel.app/it/sign-in?checkEmail=1');
+  });
+
   it('oauth preserves locale on unavailable or failed provider setup', async () => {
     const { POST } = await import('@/app/api/auth/oauth/route');
 
@@ -85,6 +114,39 @@ describe('auth route contracts', () => {
       })
     );
     expect(failed.headers.get('location')).toBe('http://localhost:3000/it/sign-in?error=1');
+  });
+
+  it('oauth builds callback URLs from the request origin', async () => {
+    mockState.isSupabaseConfigured = true;
+    const signInWithOAuth = vi.fn().mockResolvedValue({
+      data: {
+        url: 'https://accounts.google.com/mock'
+      }
+    });
+    getSupabaseServerClient.mockResolvedValue({
+      auth: { signInWithOAuth }
+    });
+
+    const { POST } = await import('@/app/api/auth/oauth/route');
+
+    const formData = new FormData();
+    formData.set('locale', 'it');
+    formData.set('provider', 'google');
+
+    const response = await POST(
+      new Request('https://kinelofit.vercel.app/api/auth/oauth', {
+        method: 'POST',
+        body: formData
+      })
+    );
+
+    expect(signInWithOAuth).toHaveBeenCalledWith({
+      provider: 'google',
+      options: {
+        redirectTo: 'https://kinelofit.vercel.app/auth/callback?next=%2Fit%2Ffavorites'
+      }
+    });
+    expect(response.headers.get('location')).toBe('https://accounts.google.com/mock');
   });
 
   it('signout preserves locale and clears the session cookie', async () => {
