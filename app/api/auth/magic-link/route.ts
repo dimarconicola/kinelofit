@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
+import { buildAuthCallbackUrl } from '@/lib/auth/redirect';
 import { getSupabaseServerClient, isSupabaseConfigured } from '@/lib/auth/supabase';
-import { env } from '@/lib/env';
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -21,12 +21,11 @@ export async function POST(request: Request) {
     return NextResponse.redirect(new URL(`/${locale}/sign-in`, request.url));
   }
 
-  const next = encodeURIComponent(`/${locale}/favorites`);
   try {
     await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${env.siteUrl}/auth/callback?next=${next}`
+        emailRedirectTo: buildAuthCallbackUrl(request, locale)
       }
     });
   } catch {
