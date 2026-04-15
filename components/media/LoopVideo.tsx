@@ -16,6 +16,7 @@ export function LoopVideo({ asset, label, className, priority = false }: LoopVid
   const containerRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isVisible, setIsVisible] = useState(priority);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [saveDataEnabled, setSaveDataEnabled] = useState(false);
 
@@ -27,11 +28,17 @@ export function LoopVideo({ asset, label, className, priority = false }: LoopVid
     syncMotion();
     mediaQuery.addEventListener('change', syncMotion);
 
+    const mobileQuery = window.matchMedia('(max-width: 720px)');
+    const syncMobile = () => setIsMobileViewport(mobileQuery.matches);
+    syncMobile();
+    mobileQuery.addEventListener('change', syncMobile);
+
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
     setSaveDataEnabled(Boolean(connection?.saveData));
 
     return () => {
       mediaQuery.removeEventListener('change', syncMotion);
+      mobileQuery.removeEventListener('change', syncMobile);
     };
   }, []);
 
@@ -75,8 +82,9 @@ export function LoopVideo({ asset, label, className, priority = false }: LoopVid
     return null;
   }, [asset.fallbackMp4, asset.muxPlaybackId]);
 
-  const shouldAutoplay = Boolean(source) && isVisible && !prefersReducedMotion && !saveDataEnabled;
-  const canRenderVideo = Boolean(source);
+  const shouldUsePosterOnly = (isMobileViewport && !priority) || prefersReducedMotion || saveDataEnabled;
+  const shouldAutoplay = Boolean(source) && isVisible && !shouldUsePosterOnly;
+  const canRenderVideo = Boolean(source) && !shouldUsePosterOnly;
 
   useEffect(() => {
     const video = videoRef.current;

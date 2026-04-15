@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -20,8 +18,8 @@
   --radius: 28px;
   --radius-sm: 18px;
   --shell: min(1220px, calc(100dvw - 2rem));
-  --display: "Cormorant Garamond", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
-  --body: "Inter", "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+  --display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --body: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
 * {
@@ -1416,8 +1414,8 @@ html[data-standalone='true'] .site-header {
   --shadow: 0 24px 52px rgba(35, 39, 36, 0.12);
   --radius: 30px;
   --radius-sm: 20px;
-  --display: "Cormorant Garamond", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
-  --body: "Inter", "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+  --display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --body: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
 body {
@@ -1753,6 +1751,108 @@ body {
   display: block;
   min-width: 0;
   line-height: 1.45;
+}
+
+@media (max-width: 720px) {
+  .button,
+  .locale-toggle,
+  .site-nav-primary a,
+  .mobile-nav-panel a,
+  .footer-links a,
+  .filter-chip,
+  .quick-filter-link,
+  .button-account-label,
+  .home-v2-btn,
+  .home-v2-class-link,
+  .pwa-install-actions .button,
+  .saved-actions-row .button,
+  .session-card-links .inline-link,
+  .session-card-links .inline-link-button,
+  .classes-map-toolbar .button,
+  .classes-map-toolbar a.button {
+    min-height: 44px;
+  }
+
+  .button,
+  .locale-toggle,
+  .site-nav-primary a,
+  .mobile-nav-panel a,
+  .footer-links a,
+  .filter-chip,
+  .quick-filter-link,
+  .button-account-label,
+  .home-v2-btn,
+  .home-v2-class-link,
+  .pwa-install-actions .button,
+  .saved-actions-row .button,
+  .session-card-links .inline-link,
+  .session-card-links .inline-link-button,
+  .classes-map-toolbar .button,
+  .classes-map-toolbar a.button {
+    display: inline-flex;
+    align-items: center;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .inline-link,
+  .inline-link-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .session-card-links .inline-link,
+  .session-card-links .inline-link-button {
+    border-radius: 0.85rem;
+    padding-left: 0.65rem;
+    padding-right: 0.65rem;
+    background: rgba(255, 255, 255, 0.72);
+  }
+
+  .mobile-nav-panel a {
+    display: flex;
+    padding-left: 0.95rem;
+    padding-right: 0.95rem;
+  }
+
+  .checkbox-field {
+    grid-template-columns: 1.25rem minmax(0, 1fr);
+    align-items: start;
+    gap: 0.85rem;
+    min-height: 44px;
+    padding-top: 0.95rem;
+    padding-bottom: 0.95rem;
+  }
+
+  .checkbox-control {
+    padding-top: 0.18rem;
+  }
+
+  .checkbox-field input {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  .classes-map-canvas .leaflet-control-zoom a,
+  .map-shell .leaflet-control-zoom a {
+    width: 44px !important;
+    height: 44px !important;
+    line-height: 44px !important;
+    font-size: 1.15rem;
+  }
+
+  .classes-map-point-icon,
+  .classes-map-cluster-icon {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .classes-map-point-icon span {
+    width: 30px;
+    height: 30px;
+    border-width: 5px;
+  }
 }
 
 .form-error {
