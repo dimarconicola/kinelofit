@@ -10,9 +10,10 @@ type LoopVideoProps = {
   label: string;
   className?: string;
   priority?: boolean;
+  posterOnly?: boolean;
 };
 
-export function LoopVideo({ asset, label, className, priority = false }: LoopVideoProps) {
+export function LoopVideo({ asset, label, className, priority = false, posterOnly = false }: LoopVideoProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isVisible, setIsVisible] = useState(priority);
@@ -75,12 +76,13 @@ export function LoopVideo({ asset, label, className, priority = false }: LoopVid
     return null;
   }, [asset.fallbackMp4, asset.muxPlaybackId]);
 
-  const shouldAutoplay = Boolean(source) && isVisible && !prefersReducedMotion && !saveDataEnabled;
-  const canRenderVideo = Boolean(source);
+  const shouldUsePosterOnly = posterOnly || prefersReducedMotion || saveDataEnabled;
+  const shouldAutoplay = Boolean(source) && isVisible && !shouldUsePosterOnly;
+  const canRenderVideo = Boolean(source) && !shouldUsePosterOnly;
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !source || !isVisible) return;
+    if (!video || !source || !isVisible || shouldUsePosterOnly) return;
 
     // Non-hero videos mount offscreen with autoPlay=false; once visible we need to
     // explicitly load/play or browsers keep them on the poster frame forever.
@@ -94,7 +96,7 @@ export function LoopVideo({ asset, label, className, priority = false }: LoopVid
     }
 
     video.pause();
-  }, [isVisible, shouldAutoplay, source]);
+  }, [isVisible, shouldAutoplay, shouldUsePosterOnly, source]);
 
   return (
     <div ref={containerRef} className="loop-video-shell" aria-label={label}>

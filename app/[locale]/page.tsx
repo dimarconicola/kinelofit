@@ -260,6 +260,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
                   label={locale === 'it' ? 'Pratica di yoga in flusso' : 'Flow yoga practice'}
                   priority
                   className="home-v2-photo-video"
+                  posterOnly
                 />
                 <div className="home-v2-photo-ring" aria-hidden />
               </div>
@@ -304,7 +305,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
             {motionClips.map((clip) => (
               <article key={clip.title} className="home-v2-motion-card">
                 <div className="home-v2-motion-media">
-                  <LoopVideo asset={clip.asset} label={clip.title} className="home-v2-motion-video" />
+                  <LoopVideo asset={clip.asset} label={clip.title} className="home-v2-motion-video" posterOnly />
                 </div>
                 <div className="home-v2-motion-copy">
                   <h3>{clip.title}</h3>
@@ -387,10 +388,20 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
             <div className="home-v2-newsletter-form">
               <div className="home-v2-newsletter-media-stack" aria-hidden="true">
                 <div className="home-v2-newsletter-media home-v2-newsletter-media-tall">
-                  <LoopVideo asset={publicVideos.rollingMat} label="Rolling the mat" className="home-v2-newsletter-video" />
+                  <LoopVideo
+                    asset={publicVideos.rollingMat}
+                    label="Rolling the mat"
+                    className="home-v2-newsletter-video"
+                    posterOnly
+                  />
                 </div>
                 <div className="home-v2-newsletter-media home-v2-newsletter-media-wide">
-                  <LoopVideo asset={publicVideos.seaPanorama} label="Panorama by the sea" className="home-v2-newsletter-video" />
+                  <LoopVideo
+                    asset={publicVideos.seaPanorama}
+                    label="Panorama by the sea"
+                    className="home-v2-newsletter-video"
+                    posterOnly
+                  />
                 </div>
               </div>
               <DigestForm citySlug="palermo" locale={locale} showIntro={false} compact className="newsletter-inline-digest" surface="plain" />

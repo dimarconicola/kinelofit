@@ -1,3 +1,4 @@
+import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 import { DigestForm } from '@/components/forms/DigestForm';
@@ -12,11 +13,14 @@ import { getLocaleLabel } from '@/lib/catalog/server-data';
 import { getDictionary } from '@/lib/i18n/dictionaries';
 import { resolveLocale } from '@/lib/i18n/routing';
 import { publicVideos } from '@/lib/media/public-videos';
+import { isMobileUserAgent } from '@/lib/runtime/device';
 
 export default async function CityPage({ params }: { params: Promise<{ locale: string; city: string }> }) {
   const { locale: rawLocale, city: citySlug } = await params;
   const locale = resolveLocale(rawLocale);
   const dict = getDictionary(locale);
+  const requestHeaders = await headers();
+  const posterOnlyMedia = isMobileUserAgent(requestHeaders.get('user-agent'));
   const snapshot = await getPublicCitySnapshot(citySlug);
   if (!snapshot) notFound();
   const city = snapshot.city;
@@ -147,10 +151,10 @@ export default async function CityPage({ params }: { params: Promise<{ locale: s
             </div>
             <div className="city-motion-grid" aria-hidden="true">
               <div className="city-motion-media city-motion-media-tall">
-                <LoopVideo asset={publicVideos.stretching} label="Stretching class" className="city-motion-video" />
+                <LoopVideo asset={publicVideos.stretching} label="Stretching class" className="city-motion-video" posterOnly={posterOnlyMedia} />
               </div>
               <div className="city-motion-media">
-                <LoopVideo asset={publicVideos.aerial} label="Aerial practice" className="city-motion-video" />
+                <LoopVideo asset={publicVideos.aerial} label="Aerial practice" className="city-motion-video" posterOnly={posterOnlyMedia} />
               </div>
             </div>
           </div>
