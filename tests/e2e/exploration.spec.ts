@@ -73,7 +73,7 @@ test.describe('critical public exploration', () => {
 
     await expect(page).toHaveURL(/\/it\/palermo\/classes\/.+/);
     await expect(page.locator('main h1')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Apri studio' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Apri studio' }).first()).toBeVisible();
     await expectNoTechnicalCopy(page);
   });
 
