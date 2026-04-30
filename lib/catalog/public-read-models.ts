@@ -30,6 +30,12 @@ const revalidatePublicCityTags = (citySlug: string) => {
       // CLI rebuilds run outside the Next request lifecycle; persisting the read model still matters.
     }
   }
+
+  try {
+    revalidateTag('catalog:snapshot');
+  } catch {
+    // Same rationale as above: the runtime invalidation matters when we are inside a request lifecycle.
+  }
 };
 
 const withReadModelFallback = async <T>(action: () => Promise<T | null>, fallback: T | null = null) => {

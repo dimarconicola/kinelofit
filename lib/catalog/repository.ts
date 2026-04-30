@@ -1,4 +1,5 @@
 import { cache } from 'react';
+import { unstable_cache } from 'next/cache';
 
 import type {
   ActivityCategory,
@@ -248,9 +249,16 @@ const loadDatabaseSnapshot = async (): Promise<CatalogSnapshot | null> => {
   }
 };
 
-export const getCatalogSnapshot = cache(async (): Promise<CatalogSnapshot> => {
+const loadCatalogSnapshot = async (): Promise<CatalogSnapshot> => {
   const databaseSnapshot = await loadDatabaseSnapshot();
   if (databaseSnapshot) return databaseSnapshot;
 
   return (await getSeedResources()).seedSnapshot;
+};
+
+const getCatalogSnapshotCached = unstable_cache(loadCatalogSnapshot, ['catalog-snapshot'], {
+  tags: ['catalog:snapshot'],
+  revalidate: 60 * 30
 });
+
+export const getCatalogSnapshot = async (): Promise<CatalogSnapshot> => getCatalogSnapshotCached();
